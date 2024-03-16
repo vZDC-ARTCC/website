@@ -1,6 +1,5 @@
 import React from 'react';
-import IcaoForm from "@/components/Form/IcaoForm";
-import {Paper, Stack, Typography} from "@mui/material";
+import {Paper} from "@mui/material";
 import ChartsList from "@/components/Charts/ChartsList";
 import {Chart} from "@/types";
 import {fetchCharts} from "@/actions/charts";

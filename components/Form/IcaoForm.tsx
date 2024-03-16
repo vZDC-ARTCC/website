@@ -3,7 +3,7 @@ import {Button, Stack, TextField} from '@mui/material';
 import React from 'react';
 import {z} from "zod";
 import {toast} from "react-toastify";
-import {usePathname, useRouter} from "next/navigation";
+import {useRouter} from "next/navigation";
 
 export default function IcaoForm({basePath}: { basePath: string }) {
 

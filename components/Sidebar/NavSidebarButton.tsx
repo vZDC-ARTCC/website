@@ -1,6 +1,6 @@
 'use client';
 import React, {MouseEventHandler, ReactNode} from 'react';
-import {Button, ListItem, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
+import {ListItem, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
 import {KeyboardArrowRight} from "@mui/icons-material";
 
 export default function NavSidebarButton({icon, text, onClick, isSidebar}: {

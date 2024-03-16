@@ -1,5 +1,5 @@
 import React from 'react';
-import {Menu, MenuItem} from "@mui/material";
+import {Menu} from "@mui/material";
 
 export default function NavDropdown({open, anchorElement, onClose, children}: {
     open: boolean,

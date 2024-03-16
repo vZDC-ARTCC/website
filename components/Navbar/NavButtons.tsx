@@ -3,14 +3,23 @@ import React, {useState} from 'react';
 import {
     Add,
     AddComment,
-    AirplanemodeActive, BarChart,
-    CalendarMonth, Campaign, Description, DeveloperBoard,
-    FileDownload, Handshake, ListAlt, Newspaper, PersonAdd,
-    Radar, Route
+    AirplanemodeActive,
+    BarChart,
+    CalendarMonth,
+    Campaign,
+    Description,
+    DeveloperBoard,
+    FileDownload,
+    Handshake,
+    ListAlt,
+    Newspaper,
+    PersonAdd,
+    Radar,
+    Route
 } from "@mui/icons-material";
 import Link from "next/link";
 import NavButton from "@/components/Navbar/NavButton";
-import {ListItemIcon, ListItemText, Menu, MenuItem} from "@mui/material";
+import {ListItemIcon, ListItemText, MenuItem} from "@mui/material";
 import NavDropdown from "@/components/Navbar/NavDropdown";
 
 export default function NavButtons() {

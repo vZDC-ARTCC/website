@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, Stack, Typography} from "@mui/material";
 import Link from "next/link";
-import {AirplanemodeActive, Home} from "@mui/icons-material";
+import {AirplanemodeActive} from "@mui/icons-material";
 
 export default function NotFound() {
     return (
