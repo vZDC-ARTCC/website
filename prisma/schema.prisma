@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String   @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?  @db.Text
+  access_token      String?  @db.Text
+  expires_at        Int?
+  token_type        String?
+  scopes            String[]
+  id_token          String?  @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  CONTROLLER
+  MENTOR
+  INSTRUCTOR
+  STAFF
+}
+
+enum StaffPosition {
+  ATM
+  DATM
+  TA
+  EC
+  FE
+  WM
+  ATA
+  AWM
+  AEC
+  AFE
+  INS
+  MTR
+}
+
+model User {
+  id             String          @id @default(cuid())
+  cid            String
+  firstName      String?
+  lastName       String?
+  fullName       String?
+  email          String?         @unique
+  emailVerified  DateTime?
+  artcc          String
+  rating         Int
+  division       String
+  roles          Role[]
+  staffPositions StaffPosition[]
+  accounts       Account[]
+  sessions       Session[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
