@@ -6,12 +6,15 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import './globals.css';
 import 'react-toastify/dist/ReactToastify.css';
 import {theme} from "@/theme/theme";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import {ToastContainer} from "react-toastify";
 import {GoogleTagManager} from "@next/third-parties/google";
+import Head from "next/head";
+import {GoogleReCaptchaProvider} from "react-google-recaptcha-v3";
 
 export const metadata: Metadata = {
     title: "Virtual Washington ARTCC",
@@ -34,7 +37,7 @@ export default function RootLayout({
             <GoogleTagManager gtmId={googleAnalyticsId || ''}/>
             <div>
                 <Navbar/>
-                <Container maxWidth="lg" sx={{marginTop: 5,}}>
+                <Container maxWidth="xl" sx={{marginTop: 5,}}>
                     {children}
                 </Container>
                 <Footer/>

@@ -25,11 +25,8 @@ export default async function Navbar() {
                     <NavButtons/>
                 </Stack>
                 <span style={{flexGrow: 1,}}></span>
-                <Box sx={{display: {xs: 'none', md: 'flex',},}}>
-                    <ColorModeSwitcher/>
-                    <LoginButton session={session}/>
-                </Box>
-
+                <ColorModeSwitcher/>
+                <LoginButton session={session}/>
             </Toolbar>
         </AppBar>
     );

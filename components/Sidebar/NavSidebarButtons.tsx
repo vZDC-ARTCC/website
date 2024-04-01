@@ -37,7 +37,7 @@ export default function NavSidebarButtons() {
 
             {openChildSidebar === "controllers" &&
                 <NavSidebar initialOpen title="Controllers" onClose={() => setOpenChildSidebar(undefined)}>
-                    <Link href="/controllers/roster" style={{textDecoration: 'none', color: 'inherit',}}>
+                    <Link href="/controllers/roster/home" style={{textDecoration: 'none', color: 'inherit',}}>
                         <NavSidebarButton icon={<Description/>} text="Roster"/>
                     </Link>
                     <Link href="/visitor/new" style={{textDecoration: 'none', color: 'inherit',}}>

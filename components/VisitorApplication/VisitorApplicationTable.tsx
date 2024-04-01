@@ -1,0 +1,74 @@
+import React from 'react';
+import prisma from "@/lib/db";
+import {
+    Box,
+    IconButton,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow, Tooltip,
+    Typography
+} from "@mui/material";
+import {VisitorApplication, VisitorApplicationStatus} from "@prisma/client";
+import Link from "next/link";
+import {redirect} from "next/navigation";
+import {Grading, Info} from "@mui/icons-material";
+
+export default async function VisitorApplicationTable({status}: { status: VisitorApplicationStatus, }) {
+
+    const applications = await prisma.visitorApplication.findMany({
+        where: {
+            status,
+        },
+        orderBy: {
+            submittedAt: status === "PENDING" ? 'asc' : 'desc',
+        },
+    });
+
+    if (applications.length == 0) {
+        return <Typography sx={{mt: 1,}}>No {status} applications found</Typography>;
+    }
+
+    return (
+        <TableContainer>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>Submitted</TableCell>
+                        <TableCell>First Name</TableCell>
+                        <TableCell>Last Name</TableCell>
+                        <TableCell>Email</TableCell>
+                        <TableCell>CID</TableCell>
+                        <TableCell>Home Facility</TableCell>
+                        <TableCell>Actions</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {applications.map(application => (
+                        <TableRow key={application.id}>
+                            <TableCell>{application.submittedAt.toDateString()}</TableCell>
+                            <TableCell>{application.firstName}</TableCell>
+                            <TableCell>{application.lastName}</TableCell>
+                            <TableCell>{application.email}</TableCell>
+                            <TableCell>{application.cid}</TableCell>
+                            <TableCell>{application.homeFacility}</TableCell>
+                            <TableCell>
+                                <Tooltip title="View Application">
+                                    <Link href={`/admin/visitor-applications/${application.id}`} passHref>
+                                        <IconButton>
+                                            {application.status === "PENDING" ? <Grading/> : <Info/>}
+                                        </IconButton>
+                                    </Link>
+                                </Tooltip>
+
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
+
+    );
+}

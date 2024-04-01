@@ -1,7 +1,7 @@
 // noinspection JSUnusedGlobalSymbols,ES6UnusedImports
 
 import NextAuth from "next-auth"
-import {Role, StaffPosition} from "@prisma/client";
+import {Role, StaffPosition, ControllerStatus} from "@prisma/client";
 
 declare module "next-auth" {
 
@@ -50,35 +50,18 @@ declare module "next-auth" {
         rating: number,
         division: string,
         staffPositions: StaffPosition[],
+        controllerStatus: ControllerStatus,
         roles: Role[],
+        preferredName?: string,
+        bio?: string,
+        avatarUrl?: string,
     }
 
-    interface AdapterUser {
-        cid: string,
-        firstName: string,
-        lastName: string,
-        fullName: string,
-        email: string,
-        artcc: string,
-        rating: number,
-        division: string,
-        staffPositions: StaffPosition[],
-        roles: Role[],
+    interface AdapterUser extends User {
     }
 
     interface Session {
-        user: {
-            cid: string,
-            firstName: string,
-            lastName: string,
-            fullName: string,
-            email: string,
-            artcc: string,
-            rating: number,
-            division: string,
-            staffPositions: StaffPosition[],
-            roles: Role[],
-        }
+        user: User
     }
 
 }

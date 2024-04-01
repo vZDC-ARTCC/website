@@ -1,6 +1,6 @@
 import {OAuthConfig} from "@auth/core/providers";
 import {Profile, User} from "next-auth";
-import {Role, StaffPosition} from "@prisma/client";
+import {ControllerStatus, Role, StaffPosition} from "@prisma/client";
 
 // vatusa facility id from environment variables
 const VATUSA_FACILITY = process.env['VATUSA_FACILITY'];
@@ -45,7 +45,7 @@ export default function VatsimProvider(clientId?: string, clientSecret?: string)
                 artcc: data.vatsim.subdivision.id || '',
                 division: data.vatsim.division.id,
                 rating: data.vatsim.rating.id,
-                ...await getRolesAndStaffPosition(data),
+                ...await getVatusaData(data),
             } as User;
         },
         clientId,
@@ -53,25 +53,31 @@ export default function VatsimProvider(clientId?: string, clientSecret?: string)
     } satisfies OAuthConfig<any>;
 }
 
-const getRolesAndStaffPosition = async (data: Profile): Promise<{
+const getVatusaData = async (data: Profile): Promise<{
+    controllerStatus: ControllerStatus,
     roles: Role[],
     staffPositions: StaffPosition[],
 }> => {
     if (DEV_MODE) {
-        return {roles: ["CONTROLLER", "MENTOR", "INSTRUCTOR", "STAFF"], staffPositions: ["ATM"],};
+        return {
+            controllerStatus: "HOME",
+            roles: ["CONTROLLER", "MENTOR", "INSTRUCTOR", "STAFF"],
+            staffPositions: ["ATM"],
+        };
     }
     const res = await fetch(`https://api.vatusa.net/v2/facility/${VATUSA_FACILITY}/roster/both`);
     const rosterData = await res.json();
     const controllers = rosterData.data as {
         cid: string,
+        membership: 'home' | 'visit',
         roles: {
             facility: string,
             role: string,
         }[],
     }[];
 
-    const controller = controllers.filter(c => c.cid === data.cid)[0];
-    if (!controller) return {roles: [], staffPositions: [],};
+    const controller = controllers.find(c => c.cid === data.cid);
+    if (!controller) return {controllerStatus: "VISITOR", roles: [], staffPositions: [],};
     const roles: Role[] = [];
     const controllerRoles = controller.roles.filter(r => r.facility === VATUSA_FACILITY).map(r => r.role);
     let staffPositions: StaffPosition[] = [];
@@ -110,5 +116,6 @@ const getRolesAndStaffPosition = async (data: Profile): Promise<{
             roles.push("STAFF");
         }
     }
-    return {roles, staffPositions,};
+    const controllerStatus: ControllerStatus = controller && controller.membership === "home" ? "HOME" : "VISITOR";
+    return {controllerStatus, roles, staffPositions,};
 }

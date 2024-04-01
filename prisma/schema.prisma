@@ -33,12 +33,53 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id               String           @id @default(cuid())
+  cid              String           @unique
+  firstName        String?
+  lastName         String?
+  fullName         String?
+  email            String?          @unique
+  emailVerified    DateTime?
+  artcc            String
+  rating           Int
+  division         String
+  roles            Role[]
+  staffPositions   StaffPosition[]
+  preferredName    String?
+  bio              String?
+  avatarUrl        String?
+  controllerStatus ControllerStatus
+
+  accounts              Account[]
+  sessions              Session[]
+  soloCertifications    SoloCertification[]
+  certifications        Certification[]
+  logs                  Log[]
+  dossier               DossierEntry[]      @relation("DossierEntryUser")
+  writtenDossierEntries DossierEntry[]      @relation("DossierEntryWriter")
+  feedback              Feedback[]
+}
+
+enum ControllerStatus {
+  HOME
+  VISITOR
 }
 
 enum Role {
@@ -63,27 +104,117 @@ enum StaffPosition {
   MTR
 }
 
-model User {
-  id             String          @id @default(cuid())
-  cid            String
-  firstName      String?
-  lastName       String?
-  fullName       String?
-  email          String?         @unique
-  emailVerified  DateTime?
-  artcc          String
-  rating         Int
-  division       String
-  roles          Role[]
-  staffPositions StaffPosition[]
-  accounts       Account[]
-  sessions       Session[]
+model DossierEntry {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], name: "DossierEntryUser", map: "dossierEntries")
+  userId    String
+  writer    User     @relation(fields: [writerId], references: [id], name: "DossierEntryWriter", map: "writtenDossierEntries")
+  writerId  String
+  message   String
+  timestamp DateTime
 }
 
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
+enum CertificationOption {
+  NONE
+  MINOR
+  MAJOR
+  SOLO
+}
 
-  @@unique([identifier, token])
+model CertificationType {
+  id                   String                @id @default(cuid())
+  name                 String
+  order                Int
+  canSoloCert          Boolean
+  certificationOptions CertificationOption[]
+  soloCertifications   SoloCertification[]
+  certifications       Certification[]
+}
+
+model SoloCertification {
+  id                  String            @id @default(cuid())
+  controller          User              @relation(fields: [userId], references: [id])
+  expires             DateTime
+  position            String
+  certificationType   CertificationType @relation(fields: [certificationTypeId], references: [id], onDelete: Cascade)
+  userId              String
+  certificationTypeId String
+}
+
+model Certification {
+  id                  String              @id @default(cuid())
+  certificationType   CertificationType   @relation(fields: [certificationTypeId], references: [id], onDelete: Cascade)
+  controller          User                @relation(fields: [userId], references: [id])
+  certificationOption CertificationOption
+  certificationTypeId String
+  userId              String
+}
+
+enum LogType {
+  CREATE
+  UPDATE
+  DELETE
+}
+
+enum LogModel {
+  USER
+  FEEDBACK
+  VISITOR_APPLICATION
+  SOLO_CERTIFICATION
+  CERTIFICATION
+  CERTIFICATION_TYPE
+}
+
+model Log {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  type      LogType
+  model     LogModel
+  message   String
+  timestamp DateTime
+  userId    String
+}
+
+enum VisitorApplicationStatus {
+  PENDING
+  APPROVED
+  DENIED
+}
+
+enum FeedbackStatus {
+  PENDING
+  RELEASED
+  STASHED
+}
+
+model VisitorApplication {
+  id              String                   @id @default(cuid())
+  firstName       String
+  lastName        String
+  email           String
+  rating          String
+  cid             String
+  homeFacility    String
+  whyVisit        String
+  submittedAt     DateTime
+  decidedAt       DateTime?
+  reasonForDenial String?
+  status          VisitorApplicationStatus
+}
+
+model Feedback {
+  id                 String         @id @default(cuid())
+  pilotName          String
+  pilotEmail         String
+  pilotCid           String
+  pilotCallsign      String
+  controller         User           @relation(fields: [controllerId], references: [id])
+  controllerId       String
+  controllerPosition String
+  rating             Int
+  comments           String?
+  staffComments      String?
+  status             FeedbackStatus
+  submittedAt        DateTime
+  decidedAt          DateTime?
 }

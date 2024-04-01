@@ -58,7 +58,7 @@ export default function NavButtons() {
             </NavDropdown>
 
             <NavDropdown open={dropdownOpen === "controllers"} anchorElement={dropdownAnchor} onClose={closeDropdown}>
-                <Link href="/controllers/roster" style={{textDecoration: 'none', color: 'inherit',}}>
+                <Link href="/controllers/roster/home" style={{textDecoration: 'none', color: 'inherit',}}>
                     <MenuItem onClick={closeDropdown}>
                         <ListItemIcon>
                             <ListAlt/>
