@@ -158,6 +158,7 @@ enum LogType {
 
 enum LogModel {
   USER
+  AIRPORT
   FEEDBACK
   VISITOR_APPLICATION
   SOLO_CERTIFICATION
@@ -217,4 +218,37 @@ model Feedback {
   status             FeedbackStatus
   submittedAt        DateTime
   decidedAt          DateTime?
+}
+
+model TraconGroup {
+  id       String    @id @default(cuid())
+  name     String
+  airports Airport[]
+}
+
+model Airport {
+  id            String      @id @default(cuid())
+  icao          String      @unique
+  iata          String
+  name          String
+  city          String
+  traconGroup   TraconGroup @relation(fields: [traconGroupId], references: [id], onDelete: Cascade)
+  traconGroupId String
+  runways       Runway[]
+}
+
+model Runway {
+  id                 String              @id @default(cuid())
+  name               String
+  airport            Airport             @relation(fields: [airportId], references: [id], onDelete: Cascade)
+  airportId          String
+  runwayInstructions RunwayInstruction[]
+}
+
+model RunwayInstruction {
+  id        String @id @default(cuid())
+  runway    Runway @relation(fields: [runwayId], references: [id], onDelete: Cascade)
+  runwayId  String
+  route     String
+  procedure String
 }

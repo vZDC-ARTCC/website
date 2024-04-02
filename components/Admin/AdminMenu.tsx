@@ -1,7 +1,7 @@
 import React from 'react';
-import {Card, Badge, CardContent, List, ListItemButton, ListItemIcon, ListItemText, Typography} from "@mui/material";
+import {Badge, Card, CardContent, List, ListItemButton, ListItemIcon, ListItemText, Typography} from "@mui/material";
 import Link from "next/link";
-import {Badge as BadgeIcon, Book, Feedback, Home, ListAlt, MilitaryTech, Task} from "@mui/icons-material";
+import {AirplanemodeActive, Badge as BadgeIcon, Feedback, Home, ListAlt, MilitaryTech, Task} from "@mui/icons-material";
 import prisma from "@/lib/db";
 
 export default async function AdminMenu() {
@@ -29,6 +29,14 @@ export default async function AdminMenu() {
                                 <Home/>
                             </ListItemIcon>
                             <ListItemText primary="Overview"/>
+                        </ListItemButton>
+                    </Link>
+                    <Link href="/admin/airports" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <AirplanemodeActive/>
+                            </ListItemIcon>
+                            <ListItemText primary="Airports"/>
                         </ListItemButton>
                     </Link>
                     <Link href="/admin/certification-types" style={{textDecoration: 'none', color: 'inherit',}}>

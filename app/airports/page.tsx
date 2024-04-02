@@ -1,21 +1,81 @@
 import React from 'react';
-import {getAirports} from "@/actions/airports";
-import {Paper, Stack} from "@mui/material";
-import IcaoForm from "@/components/Form/IcaoForm";
-import AirportList from "@/components/Airports/AirportList";
+import {
+    Card,
+    CardContent,
+    Divider,
+    IconButton,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Tooltip,
+    Typography
+} from "@mui/material";
+import prisma from "@/lib/db";
+import {Visibility} from "@mui/icons-material";
+import Link from "next/link";
 
-export default async function Page({searchParams}: { searchParams: { icao?: string } }) {
+export default async function Page() {
 
-    const {icao} = searchParams;
-
-    const data = await getAirports(icao);
+    const data = await prisma.traconGroup.findMany({
+        include: {
+            airports: {
+                include: {
+                    runways: {
+                        include: {
+                            runwayInstructions: true,
+                        },
+                    },
+                },
+            },
+        },
+    });
 
     return (
-        <Stack direction="column" spacing={2}>
-            <IcaoForm basePath="/airports"/>
-            <Paper sx={{p: 2,}}>
-                <AirportList airportGroups={data}/>
-            </Paper>
-        </Stack>
+        <>
+            {data.map((group) => (
+                <Card key={group.id}>
+                    <CardContent>
+                        <Typography variant="h6" sx={{mb: 1,}}>{group.name}</Typography>
+                        <Divider/>
+                        <TableContainer sx={{maxHeight: 400,}}>
+                            <Table stickyHeader>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>ICAO</TableCell>
+                                        <TableCell>IATA</TableCell>
+                                        <TableCell>Name</TableCell>
+                                        <TableCell>City</TableCell>
+                                        <TableCell>Actions</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {group.airports.map((airport) => (
+                                        <TableRow key={airport.icao}>
+                                            <TableCell>{airport.icao}</TableCell>
+                                            <TableCell>{airport.iata}</TableCell>
+                                            <TableCell>{airport.name}</TableCell>
+                                            <TableCell>{airport.city}</TableCell>
+                                            <TableCell>
+                                                <Tooltip title="Airport Information">
+                                                    <Link href={`/airports/${airport.icao}`}
+                                                          style={{color: 'inherit',}}>
+                                                        <IconButton>
+                                                            <Visibility/>
+                                                        </IconButton>
+                                                    </Link>
+                                                </Tooltip>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </CardContent>
+                </Card>
+            ))}
+        </>
     );
 }
