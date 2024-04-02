@@ -67,7 +67,7 @@ export default async function Page({params}: { params: { airportId: string, }, }
                                                 </IconButton>
                                             </Link>
                                         </Tooltip>
-                                        <RunwayDeleteButton airport={airport} runway={runway}/>
+                                        <RunwayDeleteButton runway={runway}/>
                                     </TableCell>
                                 </TableRow>
                             ))}

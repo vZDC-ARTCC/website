@@ -1,12 +1,12 @@
 'use client';
 import React, {useState} from 'react';
-import {Airport, Runway} from "@prisma/client";
+import {Runway} from "@prisma/client";
 import {deleteRunway} from "@/actions/airports";
 import {toast} from "react-toastify";
 import {IconButton, Tooltip} from "@mui/material";
 import {Delete} from "@mui/icons-material";
 
-export default function RunwayDeleteButton({airport, runway}: { airport: Airport, runway: Runway }) {
+export default function RunwayDeleteButton({runway}: { runway: Runway }) {
     const [clicked, setClicked] = useState(false);
 
     const handleClick = async () => {
