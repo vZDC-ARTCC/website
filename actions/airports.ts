@@ -23,7 +23,7 @@ export const upsertInstruction = async (instruction: RunwayInstruction, runwayId
             },
         },
     });
-    await log(instruction.id ? "UPDATE" : "CREATE", "AIRPORT", `Saved procedure '${result.route}' for runway ${result.runway.name} at ${result.runway.airport.icao}`);
+    await log(instruction.id ? "UPDATE" : "CREATE", "AIRPORT_PROCEDURE", `Saved procedure '${result.route}' for runway ${result.runway.name} at ${result.runway.airport.icao}`);
     revalidatePath(`/admin/airports/airport/${result.runway.airport.id}/${result.runway.id}`);
 }
 export const upsertRunway = async (runway: Runway, airportId: string) => {
@@ -40,7 +40,7 @@ export const upsertRunway = async (runway: Runway, airportId: string) => {
             airport: true,
         },
     });
-    await log(runway.id ? "UPDATE" : "CREATE", "AIRPORT", `Saved runway ${result.name} at ${result.airport.icao}`);
+    await log(runway.id ? "UPDATE" : "CREATE", "AIRPORT_RUNWAY", `Saved runway ${result.name} at ${result.airport.icao}`);
     revalidatePath(`/admin/airports/airport/${airportId}`);
     revalidatePath(`/airports/${airportId}`);
 }
@@ -71,7 +71,7 @@ export const upsertTraconGroup = async (traconGroup: TraconGroup) => {
             id: traconGroup.id || '',
         },
     });
-    await log(traconGroup.id ? "UPDATE" : "CREATE", "AIRPORT", `Saved TRACON group ${result.name}`);
+    await log(traconGroup.id ? "UPDATE" : "CREATE", "AIRPORT_TRACON_GROUP", `Saved TRACON group ${result.name}`);
     revalidatePath("/admin/airports");
     revalidatePath("/airports");
 }
@@ -82,7 +82,7 @@ export const deleteTraconGroup = async (traconGroupId: string) => {
             id: traconGroupId,
         },
     });
-    await log("DELETE", "AIRPORT", `Deleted TRACON group ${traconGroup.name}`);
+    await log("DELETE", "AIRPORT_TRACON_GROUP", `Deleted TRACON group ${traconGroup.name}`);
     revalidatePath("/admin/airports");
     revalidatePath("/airports");
 }
@@ -107,7 +107,7 @@ export const deleteRunway = async (runwayId: string) => {
             airport: true,
         },
     });
-    await log("UPDATE", "AIRPORT", `Deleted runway ${runway.name} at ${runway.airport.icao}`);
+    await log("DELETE", "AIRPORT_RUNWAY", `Deleted runway ${runway.name} at ${runway.airport.icao}`);
     revalidatePath("/admin/airports");
     revalidatePath("/airports");
     revalidatePath(`/admin/airports/airport/${runway.airport.id}`);
@@ -127,6 +127,6 @@ export const deleteProcedure = async (procedureId: string) => {
             },
         },
     });
-    await log("UPDATE", "AIRPORT", `Deleted procedure ${procedure.route} for runway ${procedure.runway.name} at ${procedure.runway.airport.icao}`);
+    await log("DELETE", "AIRPORT_PROCEDURE", `Deleted procedure ${procedure.route} for runway ${procedure.runway.name} at ${procedure.runway.airport.icao}`);
     revalidatePath(`/admin/airports/airport/${procedure.runway.airport.id}/${procedure.runway.id}`);
 }

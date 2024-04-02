@@ -2,13 +2,17 @@ import React from 'react';
 import {
     Button,
     Card,
-    CardContent, IconButton, Rating, Stack,
+    CardContent,
+    IconButton,
+    Rating,
+    Stack,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
-    TableRow, Tooltip,
+    TableRow,
+    Tooltip,
     Typography
 } from "@mui/material";
 import prisma from "@/lib/db";
@@ -20,7 +24,7 @@ import {KeyboardArrowRight, Visibility} from "@mui/icons-material";
 export default async function FeedbackCard({user}: { user: User, }) {
 
     const recentFeedback = await prisma.feedback.findMany({
-        take: 5,
+        take: 3,
         where: {
             controller: {
                 id: user.id,
@@ -36,15 +40,15 @@ export default async function FeedbackCard({user}: { user: User, }) {
     });
 
     return (
-        <Card>
+        <Card sx={{height: '100%',}}>
             <CardContent>
                 <Typography variant="h6" sx={{mb: 1,}}>Feedback</Typography>
                 {recentFeedback.length == 0 && <Typography>No feedback found</Typography>}
-                <TableContainer>
+                {recentFeedback.length > 0 && <TableContainer>
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell>Released</TableCell>
+                                <TableCell>Submitted</TableCell>
                                 <TableCell>Position</TableCell>
                                 <TableCell>Rating</TableCell>
                                 <TableCell>Actions</TableCell>
@@ -53,7 +57,7 @@ export default async function FeedbackCard({user}: { user: User, }) {
                         <TableBody>
                             {recentFeedback.map(feedback => (
                                 <TableRow key={feedback.id}>
-                                    <TableCell>{getTimeAgo(feedback.decidedAt || new Date())}</TableCell>
+                                    <TableCell>{getTimeAgo(feedback.submittedAt || new Date())}</TableCell>
                                     <TableCell>{feedback.controllerPosition}</TableCell>
                                     <TableCell><Rating readOnly value={feedback.rating}/></TableCell>
                                     <TableCell>
@@ -70,7 +74,7 @@ export default async function FeedbackCard({user}: { user: User, }) {
                             ))}
                         </TableBody>
                     </Table>
-                </TableContainer>
+                </TableContainer>}
                 <Stack direction="row" justifyContent="flex-end" sx={{mt: 1,}}>
                     <Link href="/profile/feedback" style={{color: 'inherit', textDecoration: 'none',}}>
                         <Button color="inherit" endIcon={<KeyboardArrowRight/>}>View all Feedback</Button>

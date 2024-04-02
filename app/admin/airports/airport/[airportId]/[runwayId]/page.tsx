@@ -62,7 +62,7 @@ export default async function Page({params}: { params: { airportId: string, runw
                                     <TableCell>
                                         <Tooltip title="Edit Procedure">
                                             <Link
-                                                href={`/admin/airport/airports/${airportId}/${runwayId}/${instruction.id}`}>
+                                                href={`/admin/airports/airport/${airportId}/${runwayId}/${instruction.id}`}>
                                                 <IconButton>
                                                     <Edit/>
                                                 </IconButton>

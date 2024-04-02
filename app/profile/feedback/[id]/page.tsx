@@ -4,6 +4,9 @@ import {notFound} from "next/navigation";
 import FeedbackCard from "@/components/Feedback/FeedbackCard";
 import {authOptions} from "@/auth/auth";
 import {getServerSession} from "next-auth";
+import {Box, Button} from "@mui/material";
+import Link from "next/link";
+import {KeyboardArrowLeft} from "@mui/icons-material";
 
 export default async function Page({params}: { params: { id: string } }) {
 
@@ -28,6 +31,11 @@ export default async function Page({params}: { params: { id: string } }) {
     }
 
     return (
-        <FeedbackCard feedback={feedback}/>
+        <Box>
+            <Link href="/profile/feedback" style={{color: 'inherit',}}>
+                <Button color="inherit" startIcon={<KeyboardArrowLeft/>} sx={{mb: 2,}}>All feedback</Button>
+            </Link>
+            <FeedbackCard feedback={feedback}/>
+        </Box>
     );
 }

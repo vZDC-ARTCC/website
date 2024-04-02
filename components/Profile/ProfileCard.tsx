@@ -1,15 +1,14 @@
 import React from 'react';
-import {Avatar, Box, Card, CardContent, Grid, IconButton, Paper, Stack, Tooltip, Typography} from "@mui/material";
-import {getLongRole, getLongStaffPosition, getRating, getSubtitle} from "@/lib/vatsim";
-import {getServerSession, User} from "next-auth";
-import {authOptions} from "@/auth/auth";
+import {Avatar, Box, Card, CardContent, Grid, IconButton, Stack, Tooltip, Typography} from "@mui/material";
+import {getRating, getSubtitle} from "@/lib/vatsim";
+import {User} from "next-auth";
 import {Edit} from "@mui/icons-material";
 import Link from "next/link";
 
 export default async function ProfileCard({user, editButton}: { user: User, editButton?: boolean }) {
 
     return (
-        <Card>
+        <Card sx={{height: '100%',}}>
             <CardContent>
                 <Stack direction="row" justifyContent="space-between" spacing={2}>
                     <Stack direction="row" spacing={2} alignItems="center">

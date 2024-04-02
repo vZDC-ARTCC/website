@@ -5,6 +5,8 @@ import {Grid, Typography} from "@mui/material";
 import ProfileCard from "@/components/Profile/ProfileCard";
 import CertificationsCard from "@/components/Profile/CertificationsCard";
 import FeedbackCard from "@/components/Profile/FeedbackCard";
+import TrainingCard from "@/components/Profile/TrainingCard";
+import LinksCard from "@/components/Profile/LinksCard";
 
 export default async function Page() {
 
@@ -16,15 +18,22 @@ export default async function Page() {
             <Grid item xs={6}>
                 <Typography variant="h4">Your Profile</Typography>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={6} md={4}>
                 <ProfileCard user={user} editButton/>
+            </Grid>
+            <Grid item xs={6} md={2}>
+                <CertificationsCard cid={user.cid}/>
             </Grid>
             <Grid item xs={6} md={4}>
                 <FeedbackCard user={user}/>
             </Grid>
             <Grid item xs={6} md={2}>
-                <CertificationsCard cid={user.cid}/>
+                <LinksCard/>
             </Grid>
+            <Grid item xs={6}>
+                <TrainingCard user={user}/>
+            </Grid>
+
         </Grid>
     );
 }
