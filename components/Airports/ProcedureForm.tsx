@@ -4,7 +4,7 @@ import {RunwayInstruction} from "@prisma/client";
 import {z} from "zod";
 import {toast} from "react-toastify";
 import {upsertInstruction} from "@/actions/airports";
-import {Button, Stack, TextField} from "@mui/material";
+import {Button, Grid, Stack, TextField} from "@mui/material";
 import {Save} from "@mui/icons-material";
 
 export default function ProcedureForm({instruction, runwayId}: { instruction?: RunwayInstruction, runwayId: string, }) {
@@ -34,13 +34,17 @@ export default function ProcedureForm({instruction, runwayId}: { instruction?: R
 
     return (
         <form action={handleSubmit}>
-            <Stack direction="column" spacing={2}>
-                <TextField fullWidth variant="filled" label="Route" name="route"
-                           defaultValue={instruction?.route || ''}/>
-                <TextField fullWidth variant="filled" label="Instruction" name="procedure"
-                           defaultValue={instruction?.procedure || ''}/>
-                <Button type="submit" variant="contained" startIcon={<Save/>}>Save</Button>
-            </Stack>
+            <Grid container columns={2} spacing={2}>
+                <Grid item xs={2} md={1}>
+                    <TextField fullWidth variant="filled" label="Route" name="route" defaultValue={instruction?.route || ''}/>
+                </Grid>
+                <Grid item xs={2} md={1}>
+                    <TextField fullWidth variant="filled" label="Instruction" name="procedure" defaultValue={instruction?.procedure || ''}/>
+                </Grid>
+                <Grid item xs={2}>
+                    <Button type="submit" variant="contained" startIcon={<Save/>}>Save</Button>
+                </Grid>
+            </Grid>
         </form>
     );
 }

@@ -14,7 +14,7 @@ export default function TraconGroupDeleteButton({traconGroup}: { traconGroup: Tr
             await deleteTraconGroup(traconGroup.id);
             toast(`TRACON Group '${traconGroup.name}' deleted successfully!`, {type: 'success'});
         } else {
-            toast(`Are you sure you want to delete '${traconGroup.name}'?  Click again to confirm.`, {type: 'warning'});
+            toast(`Are you sure you want to delete '${traconGroup.name}'?  This will delete ALL airports contained inside it.  Click again to confirm.`, {type: 'warning'});
             setClicked(true);
         }
 

@@ -25,6 +25,7 @@ export const upsertInstruction = async (instruction: RunwayInstruction, runwayId
     });
     await log(instruction.id ? "UPDATE" : "CREATE", "AIRPORT_PROCEDURE", `Saved procedure '${result.route}' for runway ${result.runway.name} at ${result.runway.airport.icao}`);
     revalidatePath(`/admin/airports/airport/${result.runway.airport.id}/${result.runway.id}`);
+    return result;
 }
 export const upsertRunway = async (runway: Runway, airportId: string) => {
     const result = await prisma.runway.upsert({
@@ -43,6 +44,7 @@ export const upsertRunway = async (runway: Runway, airportId: string) => {
     await log(runway.id ? "UPDATE" : "CREATE", "AIRPORT_RUNWAY", `Saved runway ${result.name} at ${result.airport.icao}`);
     revalidatePath(`/admin/airports/airport/${airportId}`);
     revalidatePath(`/airports/${airportId}`);
+    return result;
 }
 export const upsertAirport = async (airport: Airport, traconGroupId: string) => {
     const result = await prisma.airport.upsert({
@@ -60,7 +62,7 @@ export const upsertAirport = async (airport: Airport, traconGroupId: string) => 
     revalidatePath("/airports");
     revalidatePath(`/airports/${result.id}`);
     revalidatePath(`/admin/airports/airport/${result.id}`);
-
+    return result;
 }
 
 export const upsertTraconGroup = async (traconGroup: TraconGroup) => {
@@ -74,6 +76,7 @@ export const upsertTraconGroup = async (traconGroup: TraconGroup) => {
     await log(traconGroup.id ? "UPDATE" : "CREATE", "AIRPORT_TRACON_GROUP", `Saved TRACON group ${result.name}`);
     revalidatePath("/admin/airports");
     revalidatePath("/airports");
+    return result;
 }
 
 export const deleteTraconGroup = async (traconGroupId: string) => {
@@ -85,6 +88,7 @@ export const deleteTraconGroup = async (traconGroupId: string) => {
     await log("DELETE", "AIRPORT_TRACON_GROUP", `Deleted TRACON group ${traconGroup.name}`);
     revalidatePath("/admin/airports");
     revalidatePath("/airports");
+    return traconGroup;
 }
 export const deleteAirport = async (icao: string) => {
     const airport = await prisma.airport.delete({
@@ -96,6 +100,7 @@ export const deleteAirport = async (icao: string) => {
     revalidatePath("/admin/airports");
     revalidatePath("/airports");
     revalidatePath(`/airports/${airport.id}`);
+    return airport;
 }
 
 export const deleteRunway = async (runwayId: string) => {
@@ -112,6 +117,7 @@ export const deleteRunway = async (runwayId: string) => {
     revalidatePath("/airports");
     revalidatePath(`/admin/airports/airport/${runway.airport.id}`);
     revalidatePath(`/airports/${runway.airport.id}`);
+    return runway;
 }
 
 export const deleteProcedure = async (procedureId: string) => {
@@ -129,4 +135,5 @@ export const deleteProcedure = async (procedureId: string) => {
     });
     await log("DELETE", "AIRPORT_PROCEDURE", `Deleted procedure ${procedure.route} for runway ${procedure.runway.name} at ${procedure.runway.airport.icao}`);
     revalidatePath(`/admin/airports/airport/${procedure.runway.airport.id}/${procedure.runway.id}`);
+    return procedure;
 }

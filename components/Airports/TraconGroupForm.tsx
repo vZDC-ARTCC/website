@@ -6,8 +6,11 @@ import {Save} from "@mui/icons-material";
 import {z} from "zod";
 import {toast} from "react-toastify";
 import {upsertTraconGroup} from "@/actions/airports";
+import {useRouter} from "next/navigation";
 
 export default function TraconGroupForm({traconGroup}: { traconGroup?: TraconGroup }) {
+
+    const router = useRouter();
 
     const handleSubmit = async (formData: FormData) => {
         const traconGroupZ = z.object({
@@ -25,8 +28,14 @@ export default function TraconGroupForm({traconGroup}: { traconGroup?: TraconGro
             return;
         }
 
-        await upsertTraconGroup(result.data as TraconGroup);
+        const savedTraconGroup = await upsertTraconGroup(result.data as TraconGroup);
         toast(`Tracon group '${result.data.name}' saved successfully!`, {type: 'success'});
+
+        if (!traconGroup) {
+            const query = new URLSearchParams();
+            query.append('traconGroupId', savedTraconGroup.id);
+            router.push(`/admin/airports/airport/new?${query.toString()}`)
+        }
     }
 
     return (
@@ -35,7 +44,6 @@ export default function TraconGroupForm({traconGroup}: { traconGroup?: TraconGro
                 <TextField fullWidth variant="filled" label="Name*" name="name" defaultValue={traconGroup?.name || ''}/>
                 <Button type="submit" variant="contained" size="large" startIcon={<Save/>}>Save</Button>
             </Stack>
-
         </form>
     );
 }

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import {Runway} from "@prisma/client";
-import {Button, Stack, TextField} from "@mui/material";
+import {Box, Button, Stack, TextField} from "@mui/material";
 import {z} from "zod";
 import {toast} from "react-toastify";
 import {upsertRunway} from "@/actions/airports";
@@ -35,8 +35,10 @@ export default function RunwayForm({runway, airportId}: { runway?: Runway, airpo
     return (
         <form action={handleSubmit}>
             <Stack direction="column" spacing={2}>
-                <TextField fullWidth variant="filled" label="Name" name="name" defaultValue={runway?.name || ''}/>
-                <Button type="submit" variant="contained" startIcon={<Save/>}>Save</Button>
+                <TextField fullWidth variant="filled" label="Identifier" name="name" defaultValue={runway?.name || ''}/>
+                <Box>
+                    <Button type="submit" variant="contained" size="large" startIcon={<Save/>}>Save</Button>
+                </Box>
             </Stack>
         </form>
     );

@@ -6,9 +6,11 @@ import {Save} from "@mui/icons-material";
 import {z} from "zod";
 import {toast} from "react-toastify";
 import {upsertAirport} from "@/actions/airports";
+import {useRouter} from "next/navigation";
 
 export default function AirportForm({airport, traconGroupId}: { airport?: Airport, traconGroupId: string, }) {
 
+    const router = useRouter();
     const handleSubmit = async (formData: FormData) => {
         const airportZ = z.object({
             id: z.string().optional(),
@@ -31,9 +33,12 @@ export default function AirportForm({airport, traconGroupId}: { airport?: Airpor
             return;
         }
 
-        await upsertAirport(result.data as Airport, traconGroupId);
+        const savedAirport = await upsertAirport(result.data as Airport, traconGroupId);
         toast(`Airport '${result.data.icao}' saved successfully!`, {type: 'success'});
 
+        if (!airport) {
+            router.push(`/admin/airports/airport/${savedAirport.id}`);
+        }
     }
 
     return (
@@ -52,8 +57,7 @@ export default function AirportForm({airport, traconGroupId}: { airport?: Airpor
                     <TextField fullWidth variant="filled" label="City" name="city" defaultValue={airport?.city || ''}/>
                 </Grid>
                 <Grid item xs={2}>
-                    <Button type="submit" variant="contained" size="large" startIcon={<Save/>}
-                            sx={{width: '100%',}}>Save</Button>
+                    <Button type="submit" variant="contained" size="large" startIcon={<Save/>}>Save</Button>
                 </Grid>
             </Grid>
         </form>
