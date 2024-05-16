@@ -1,8 +1,9 @@
-import {NextAuthOptions} from "next-auth";
+import {NextAuthOptions, Profile} from "next-auth";
 import {PrismaAdapter} from "@auth/prisma-adapter";
-import VatsimProvider from "@/auth/vatsimProvider";
+import VatsimProvider, {getVatusaData} from "@/auth/vatsimProvider";
 import {Adapter} from "next-auth/adapters";
 import prisma from "@/lib/db";
+import {refreshData} from "@/actions/user";
 
 
 export const authOptions: NextAuthOptions = {
@@ -17,9 +18,6 @@ export const authOptions: NextAuthOptions = {
         logo: '/img/logo.png',
     },
     callbacks: {
-        signIn: async ({user}) => {
-            return user.roles.length > 0;
-        },
         session: async ({session, user}) => {
             session.user = user;
             return session;

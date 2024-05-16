@@ -22,6 +22,7 @@ export default async function FeedbackTable({status}: { status: FeedbackStatus, 
         },
         include: {
             controller: true,
+            pilot: true,
         },
         orderBy: {
             submittedAt: status === "PENDING" ? 'asc' : 'desc',
@@ -50,7 +51,7 @@ export default async function FeedbackTable({status}: { status: FeedbackStatus, 
                         <TableRow key={feedback.id}>
                             <TableCell>{feedback.submittedAt.toUTCString()}</TableCell>
                             <TableCell>{feedback.controller.firstName} {feedback.controller.lastName} ({feedback.controller.cid})</TableCell>
-                            <TableCell>{feedback.pilotName}</TableCell>
+                            <TableCell>{feedback.pilot.fullName}</TableCell>
                             <TableCell>{feedback.controllerPosition}</TableCell>
                             <TableCell><Rating readOnly value={feedback.rating}/></TableCell>
                             <TableCell>

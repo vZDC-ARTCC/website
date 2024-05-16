@@ -25,6 +25,7 @@ export default function FeedbackDecisionForm({feedback}: { feedback: Feedback, }
                 <form action={handleRelease}>
                     <Stack direction="row" spacing={1} alignItems="center">
                         <TextField variant="filled" rows={4} fullWidth multiline name="reason" label="Staff comments"
+                                   defaultValue={feedback.staffComments || ''}
                                    helperText="Staff comments are not required, but are highly encouraged"/>
                         <Box>
                             <Button type="submit" variant="contained" size="large" color="success"

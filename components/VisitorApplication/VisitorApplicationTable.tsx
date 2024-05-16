@@ -25,6 +25,9 @@ export default async function VisitorApplicationTable({status}: { status: Visito
         orderBy: {
             submittedAt: status === "PENDING" ? 'asc' : 'desc',
         },
+        include: {
+            user: true,
+        },
     });
 
     if (applications.length == 0) {
@@ -37,8 +40,7 @@ export default async function VisitorApplicationTable({status}: { status: Visito
                 <TableHead>
                     <TableRow>
                         <TableCell>Submitted</TableCell>
-                        <TableCell>First Name</TableCell>
-                        <TableCell>Last Name</TableCell>
+                        <TableCell>Name</TableCell>
                         <TableCell>Email</TableCell>
                         <TableCell>CID</TableCell>
                         <TableCell>Home Facility</TableCell>
@@ -49,10 +51,9 @@ export default async function VisitorApplicationTable({status}: { status: Visito
                     {applications.map(application => (
                         <TableRow key={application.id}>
                             <TableCell>{application.submittedAt.toDateString()}</TableCell>
-                            <TableCell>{application.firstName}</TableCell>
-                            <TableCell>{application.lastName}</TableCell>
-                            <TableCell>{application.email}</TableCell>
-                            <TableCell>{application.cid}</TableCell>
+                            <TableCell>{application.user.fullName}</TableCell>
+                            <TableCell>{application.user.email}</TableCell>
+                            <TableCell>{application.user.cid}</TableCell>
                             <TableCell>{application.homeFacility}</TableCell>
                             <TableCell>
                                 <Tooltip title="View Application">

@@ -30,7 +30,7 @@ export default async function Page({searchParams}: { searchParams: { origin?: st
             <CardContent>
                 <Typography variant="h5" sx={{mb: 1,}}>Preferred Routes</Typography>
                 <PrdForm/>
-                {routes && routes.length === 0 && <Typography>No PRD routes found</Typography>}
+                {routes && routes.length === 0 && <Typography sx={{mt: 2,}}>No PRD routes found</Typography>}
                 {routes && routes.length > 0 &&
                     <TableContainer>
                         <Table>
@@ -57,7 +57,7 @@ export default async function Page({searchParams}: { searchParams: { origin?: st
                                     <TableRow key={idx}>
                                         <TableCell>{route.origin}</TableCell>
                                         <TableCell>{route.destination}</TableCell>
-                                        <TableCell>{route.route}</TableCell>
+                                        <TableCell sx={{fontWeight: 700,}}>{route.route}</TableCell>
                                         <TableCell>{route.hours1}</TableCell>
                                         <TableCell>{route.hours2}</TableCell>
                                         <TableCell>{route.hours3}</TableCell>

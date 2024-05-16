@@ -5,19 +5,15 @@ import prisma from "@/lib/db";
 import {z} from "zod";
 import {revalidatePath} from "next/cache";
 import {log} from "@/actions/log";
+import {User} from "next-auth";
 
 const VATUSA_FACILITY = process.env.VATUSA_FACILITY || 'ZDC';
 const VATUSA_API_KEY = process.env.VATUSA_API_KEY || '';
 const DEV_MODE = process.env.DEV_MODE || '';
 
-export const addVisitingApplication = async (data: VisitorApplication) => {
+export const addVisitingApplication = async (data: VisitorApplication, user: User) => {
 
     const visitorZ = z.object({
-        firstName: z.string().trim().min(1, "First name is required"),
-        lastName: z.string().trim().min(1, "Last name is required"),
-        cid: z.string().trim().min(1, "VATSIM CID is required"),
-        rating: z.string().trim().min(1, "Rating is required"),
-        email: z.string().trim().min(1, "Email is required"),
         homeFacility: z.string().trim().min(1, "Home ARTCC is required"),
         whyVisit: z.string().trim().min(1, "Reason for visiting is required"),
     });
@@ -26,7 +22,7 @@ export const addVisitingApplication = async (data: VisitorApplication) => {
 
     const existing = await prisma.visitorApplication.findFirst({
         where: {
-            cid: result.cid,
+            userId: user.id,
             status: "PENDING",
         },
     });
@@ -37,17 +33,23 @@ export const addVisitingApplication = async (data: VisitorApplication) => {
     await prisma.visitorApplication.create({
         data: {
             ...result,
+            user: {
+                connect: {
+                    id: user.id,
+                }
+            },
             status: "PENDING",
             submittedAt: new Date(),
         },
     });
     revalidatePath('/admin/visitor-applications');
+    revalidatePath('/visitor/new');
 }
 
-export const addVisitor = async (application: VisitorApplication) => {
+export const addVisitor = async (application: VisitorApplication, user: User) => {
     if (application.status !== "PENDING") return;
     if (!DEV_MODE) {
-        await fetch(`https://api.vatusa.net/v2/facility/${VATUSA_FACILITY}/roster/manageVisitor/${application.cid}`, {
+        await fetch(`https://api.vatusa.net/v2/facility/${VATUSA_FACILITY}/roster/manageVisitor/${user.cid}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -57,6 +59,14 @@ export const addVisitor = async (application: VisitorApplication) => {
             }),
         });
     }
+    await prisma.user.update({
+        where: {
+            id: user.id,
+        },
+        data: {
+            controllerStatus: "VISITOR",
+        },
+    });
     await prisma.visitorApplication.update({
         where: {
             id: application.id,
@@ -65,14 +75,18 @@ export const addVisitor = async (application: VisitorApplication) => {
             status: "APPROVED",
             decidedAt: new Date(),
         },
+        include: {
+            user: true,
+        },
     });
-    await log("UPDATE", "VISITOR_APPLICATION", `Approved visitor application for ${application.firstName} ${application.lastName} (${application.cid})`);
+    await log("UPDATE", "VISITOR_APPLICATION", `Approved visitor application for ${user.fullName} (${user.cid})`);
     revalidatePath('/controllers/roster');
     revalidatePath('/admin/visitor-applications');
     revalidatePath(`/admin/visitor-applications/${application.id}`);
+    revalidatePath('/visitor/new');
 }
 
-export const rejectVisitor = async (application: VisitorApplication) => {
+export const rejectVisitor = async (application: VisitorApplication, user: User) => {
     if (application.status !== "PENDING") return;
     await prisma.visitorApplication.update({
         where: {
@@ -83,8 +97,12 @@ export const rejectVisitor = async (application: VisitorApplication) => {
             decidedAt: new Date(),
             reasonForDenial: application.reasonForDenial,
         },
+        include: {
+            user: true,
+        },
     });
-    await log("UPDATE", "VISITOR_APPLICATION", `Rejected visitor application for ${application.firstName} ${application.lastName} (${application.cid})`);
+    await log("UPDATE", "VISITOR_APPLICATION", `Rejected visitor application for ${user.fullName} (${user.cid})`);
     revalidatePath('/admin/visitor-applications');
     revalidatePath(`/admin/visitor-applications/${application.id}`);
+    revalidatePath('/visitor/new');
 }

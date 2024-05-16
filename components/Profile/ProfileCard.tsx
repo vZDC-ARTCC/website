@@ -5,7 +5,7 @@ import {User} from "next-auth";
 import {Edit} from "@mui/icons-material";
 import Link from "next/link";
 
-export default async function ProfileCard({user, editButton}: { user: User, editButton?: boolean }) {
+export default async function ProfileCard({user, admin}: { user: User, admin?: boolean }) {
 
     return (
         <Card sx={{height: '100%',}}>
@@ -18,16 +18,16 @@ export default async function ProfileCard({user, editButton}: { user: User, edit
                             <Typography variant="body2">{getSubtitle(user)}</Typography>
                         </Box>
                     </Stack>
-
-                    {editButton && <Box>
-                        <Link href="/profile/edit" style={{color: 'inherit',}}>
+                    <Box>
+                        <Link href={admin ? `/admin/controller/${user.cid}/edit` : '/profile/edit'}
+                              style={{color: 'inherit',}}>
                             <Tooltip title="Edit Profile">
                                 <IconButton color="inherit">
                                     <Edit/>
                                 </IconButton>
                             </Tooltip>
                         </Link>
-                    </Box>}
+                    </Box>
                 </Stack>
 
                 <Grid container columns={2} spacing={2} sx={{mt: 1,}}>

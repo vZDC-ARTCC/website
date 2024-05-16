@@ -5,12 +5,16 @@ import {Box, Button, Divider, Stack, TextField} from "@mui/material";
 import {Check, Clear} from "@mui/icons-material";
 import {addVisitor, rejectVisitor} from "@/actions/visitor";
 import {toast} from "react-toastify";
+import {User} from "next-auth";
 
-export default function VisitorApplicationDecisionForm({application}: { application: VisitorApplication, }) {
+export default function VisitorApplicationDecisionForm({application, user}: {
+    application: VisitorApplication,
+    user: User,
+}) {
 
     const handleAccept = async () => {
         try {
-            await addVisitor(application);
+            await addVisitor(application, user);
             toast("Controller added to roster successfully!", {type: "success"});
         } catch (e) {
             toast("There was an unexpected error trying to add the controller to the visiting roster.", {type: "error"});
@@ -19,7 +23,7 @@ export default function VisitorApplicationDecisionForm({application}: { applicat
 
     const handleReject = async (formData: FormData) => {
         try {
-            await rejectVisitor({...application, reasonForDenial: formData.get("reason") as string});
+            await rejectVisitor({...application, reasonForDenial: formData.get("reason") as string}, user);
             toast("Visitor rejected successfully", {type: "success"});
         } catch (e) {
             toast("There was an unexpected error trying to reject the visiting request.", {type: "error"});

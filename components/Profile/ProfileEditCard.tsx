@@ -9,8 +9,13 @@ import {toast} from "react-toastify";
 import {updateCurrentProfile} from "@/actions/profile";
 import {useRouter} from "next/navigation";
 import {writeDossier} from "@/actions/dossier";
+import {useSession} from "next-auth/react";
 
-export default function ProfileEditCard({user}: { user: User, }) {
+export default function ProfileEditCard({user, sessionUser, admin = false}: {
+    user: User,
+    sessionUser: User,
+    admin?: boolean,
+}) {
 
     const router = useRouter();
 
@@ -34,13 +39,21 @@ export default function ProfileEditCard({user}: { user: User, }) {
         const filter = new Filter();
 
         if (filter.isProfane(result.data.preferredName) || filter.isProfane(result.data.bio)) {
-            await writeDossier(`Attempted to update profile with profanity in preferred name or bio.`, user.cid);
+            await writeDossier(admin ?
+                    `Staff ${sessionUser.cid} attempted to force update profile with profanity in preferred name or bio.` :
+                    `Attempted to update profile with profanity in preferred name or bio.`,
+                user.cid);
             toast('Please ensure your preferred name and bio do not contain any profanity.', {type: 'error'});
             return;
         }
 
         await updateCurrentProfile({...user, ...result.data});
-        router.push('/profile/overview');
+        if (admin) {
+            router.push(`/admin/controller/${user.cid}`);
+            return;
+        } else {
+            router.push('/profile/overview');
+        }
         toast('Profile updated successfully!', {type: 'success'});
     }
 

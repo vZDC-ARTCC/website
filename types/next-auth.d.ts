@@ -55,6 +55,7 @@ declare module "next-auth" {
         preferredName?: string,
         bio?: string,
         avatarUrl?: string,
+        updatedAt: Date,
     }
 
     interface AdapterUser extends User {

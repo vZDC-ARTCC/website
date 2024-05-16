@@ -5,7 +5,7 @@ import {ControllerStatus, Role, StaffPosition} from "@prisma/client";
 // vatusa facility id from environment variables
 const VATUSA_FACILITY = process.env['VATUSA_FACILITY'];
 // detect if the app is in development mode
-const DEV_MODE = process.env['DEV_MODE'] === 'true';
+const DEV_MODE = process.env.NODE_ENV === "development";
 // vatsim oauth endpoint base url from environment variables
 const VATSIM_URL = process.env.DEV_MODE === "true" ? 'https://auth-dev.vatsim.net' : 'https://auth.vatsim.net';
 
@@ -33,6 +33,7 @@ export default function VatsimProvider(clientId?: string, clientSecret?: string)
         userinfo: {
             url: `${VATSIM_URL}/api/user`,
         },
+
         // user is transformed into a different format than what VATSIM provides before being saved in the database and logged in
         profile: async ({data}: { data: Profile }) => {
             return {
@@ -43,8 +44,9 @@ export default function VatsimProvider(clientId?: string, clientSecret?: string)
                 fullName: data.personal.name_full,
                 email: data.personal.email,
                 artcc: data.vatsim.subdivision.id || '',
-                division: data.vatsim.division.id,
+                division: data.vatsim.division.id || '',
                 rating: data.vatsim.rating.id,
+                updatedAt: new Date(),
                 ...await getVatusaData(data),
             } as User;
         },
@@ -53,7 +55,7 @@ export default function VatsimProvider(clientId?: string, clientSecret?: string)
     } satisfies OAuthConfig<any>;
 }
 
-const getVatusaData = async (data: Profile): Promise<{
+export const getVatusaData = async (data: Profile): Promise<{
     controllerStatus: ControllerStatus,
     roles: Role[],
     staffPositions: StaffPosition[],
@@ -61,8 +63,12 @@ const getVatusaData = async (data: Profile): Promise<{
     if (DEV_MODE) {
         return {
             controllerStatus: "HOME",
-            roles: ["CONTROLLER", "MENTOR", "INSTRUCTOR", "STAFF"],
-            staffPositions: ["ATM"],
+            roles: [
+                "CONTROLLER", "MENTOR", "INSTRUCTOR", "STAFF"
+            ],
+            staffPositions: [
+                "ATM"
+            ],
         };
     }
     const res = await fetch(`https://api.vatusa.net/v2/facility/${VATUSA_FACILITY}/roster/both`);
@@ -77,45 +83,47 @@ const getVatusaData = async (data: Profile): Promise<{
     }[];
 
     const controller = controllers.find(c => c.cid === data.cid);
-    if (!controller) return {controllerStatus: "VISITOR", roles: [], staffPositions: [],};
-    const roles: Role[] = [];
+    if (!controller) return {controllerStatus: "NONE", roles: [], staffPositions: [],};
     const controllerRoles = controller.roles.filter(r => r.facility === VATUSA_FACILITY).map(r => r.role);
-    let staffPositions: StaffPosition[] = [];
-    if (controller) {
-        roles.push("CONTROLLER");
-        if (controllerRoles.includes("MTR")) {
-            staffPositions.push("MTR");
-            roles.push("MENTOR");
-        }
-        if (controllerRoles.includes("INS")) {
-            staffPositions.push("INS");
-            roles.push("INSTRUCTOR");
-        }
-        if (controllerRoles.includes("ATM")) {
-            staffPositions.push("ATM");
-            roles.push("STAFF");
-        }
-        if (controllerRoles.includes("DATM")) {
-            staffPositions.push("DATM");
-            roles.push("STAFF");
-        }
-        if (controllerRoles.includes("TA")) {
-            staffPositions.push("TA");
-            roles.push("STAFF");
-        }
-        if (controllerRoles.includes("EC")) {
-            staffPositions.push("EC");
-            roles.push("STAFF");
-        }
-        if (controllerRoles.includes("FE")) {
-            staffPositions.push("FE");
-            roles.push("STAFF");
-        }
-        if (controllerRoles.includes("WM")) {
-            staffPositions.push("WM");
-            roles.push("STAFF");
-        }
-    }
     const controllerStatus: ControllerStatus = controller && controller.membership === "home" ? "HOME" : "VISITOR";
-    return {controllerStatus, roles, staffPositions,};
+    return {controllerStatus, ...getRolesAndStaffPositions(controllerRoles)};
+}
+
+export const getRolesAndStaffPositions = (controllerRoles: string[]) => {
+    const roles: Role[] = [];
+    const staffPositions: StaffPosition[] = [];
+    roles.push("CONTROLLER");
+    if (controllerRoles.includes("MTR")) {
+        staffPositions.push("MTR");
+        roles.push("MENTOR");
+    }
+    if (controllerRoles.includes("INS")) {
+        staffPositions.push("INS");
+        roles.push("INSTRUCTOR");
+    }
+    if (controllerRoles.includes("ATM")) {
+        staffPositions.push("ATM");
+        roles.push("STAFF");
+    }
+    if (controllerRoles.includes("DATM")) {
+        staffPositions.push("DATM");
+        roles.push("STAFF");
+    }
+    if (controllerRoles.includes("TA")) {
+        staffPositions.push("TA");
+        roles.push("STAFF");
+    }
+    if (controllerRoles.includes("EC")) {
+        staffPositions.push("EC");
+        roles.push("STAFF");
+    }
+    if (controllerRoles.includes("FE")) {
+        staffPositions.push("FE");
+        roles.push("STAFF");
+    }
+    if (controllerRoles.includes("WM")) {
+        staffPositions.push("WM");
+        roles.push("STAFF");
+    }
+    return {roles, staffPositions};
 }

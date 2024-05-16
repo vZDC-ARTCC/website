@@ -73,6 +73,11 @@ export const getLongRole = (role: Role) => {
 }
 
 export const getSubtitle = (user: User, shortStaffRoles?: boolean): string => {
+
+    if (user.controllerStatus === "NONE") {
+        return '';
+    }
+
     if (user.controllerStatus === "VISITOR") {
         return `Visiting Controller - ${user.artcc}`;
     }

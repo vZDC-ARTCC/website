@@ -50,23 +50,26 @@ model Session {
 }
 
 model User {
-  id               String           @id @default(cuid())
-  cid              String           @unique
-  firstName        String?
-  lastName         String?
-  fullName         String?
-  email            String?          @unique
-  emailVerified    DateTime?
-  artcc            String
-  rating           Int
-  division         String
-  roles            Role[]
-  staffPositions   StaffPosition[]
-  preferredName    String?
-  bio              String?
-  avatarUrl        String?
-  controllerStatus ControllerStatus
-  log              ControllerLog?
+  id                 String              @id @default(cuid())
+  cid                String              @unique
+  firstName          String?
+  lastName           String?
+  fullName           String?
+  email              String?             @unique
+  emailVerified      DateTime?
+  artcc              String
+  rating             Int
+  division           String
+  roles              Role[]
+  staffPositions     StaffPosition[]
+  preferredName      String?
+  bio                String?
+  avatarUrl          String?
+  controllerStatus   ControllerStatus
+  log                ControllerLog?
+  visitorApplication VisitorApplication?
+  writtenFeedback    Feedback[]          @relation("FeedbackPilot")
+  updatedAt          DateTime
 
   accounts              Account[]
   sessions              Session[]
@@ -75,7 +78,7 @@ model User {
   logs                  Log[]
   dossier               DossierEntry[]      @relation("DossierEntryUser")
   writtenDossierEntries DossierEntry[]      @relation("DossierEntryWriter")
-  feedback              Feedback[]
+  givenFeedback         Feedback[]          @relation("FeedbackController")
 }
 
 model VatsimUpdateMetadata {
@@ -106,6 +109,7 @@ model ControllerLogMonth {
 enum ControllerStatus {
   HOME
   VISITOR
+  NONE
 }
 
 enum Role {
@@ -184,6 +188,8 @@ enum LogType {
 
 enum LogModel {
   USER
+  STAFF_POSITION
+  ROLE
   AIRPORT_TRACON_GROUP
   AIRPORT_RUNWAY
   AIRPORT_PROCEDURE
@@ -219,11 +225,8 @@ enum FeedbackStatus {
 
 model VisitorApplication {
   id              String                   @id @default(cuid())
-  firstName       String
-  lastName        String
-  email           String
-  rating          String
-  cid             String
+  user            User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String                   @unique
   homeFacility    String
   whyVisit        String
   submittedAt     DateTime
@@ -234,11 +237,10 @@ model VisitorApplication {
 
 model Feedback {
   id                 String         @id @default(cuid())
-  pilotName          String
-  pilotEmail         String
-  pilotCid           String
+  pilot              User           @relation(fields: [pilotId], references: [id], onDelete: Cascade, name: "FeedbackPilot")
+  pilotId            String
   pilotCallsign      String
-  controller         User           @relation(fields: [controllerId], references: [id])
+  controller         User           @relation(fields: [controllerId], references: [id], onDelete: Cascade, name: "FeedbackController")
   controllerId       String
   controllerPosition String
   rating             Int

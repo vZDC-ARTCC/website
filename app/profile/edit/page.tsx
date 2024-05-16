@@ -24,7 +24,7 @@ export default async function Page() {
                 </Link>
                 <Typography variant="h4">Edit Profile</Typography>
             </Stack>
-            <ProfileEditCard user={user}/>
+            <ProfileEditCard user={user} sessionUser={user}/>
         </Stack>
     );
 }

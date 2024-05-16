@@ -51,7 +51,7 @@ export default async function Page({params}: { params: { cid: string, }, }) {
     return (
         <Grid container columns={2} spacing={2}>
             <Grid item xs={2}>
-                <ProfileCard user={controller as User}/>
+                <ProfileCard user={controller as User} admin/>
             </Grid>
             <Grid item xs={2} lg={1}>
                 <Grid container columns={1} spacing={2}>

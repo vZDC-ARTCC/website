@@ -13,6 +13,7 @@ export default async function Page({params}: { params: { id: string } }) {
         },
         include: {
             controller: true,
+            pilot: true,
         },
     });
 

@@ -1,7 +1,16 @@
 import React from 'react';
 import {Badge, Card, CardContent, List, ListItemButton, ListItemIcon, ListItemText, Typography} from "@mui/material";
 import Link from "next/link";
-import {AirplanemodeActive, Badge as BadgeIcon, Feedback, Home, ListAlt, MilitaryTech, Task} from "@mui/icons-material";
+import {
+    AddModerator,
+    AirplanemodeActive,
+    Badge as BadgeIcon,
+    Feedback,
+    Home,
+    ListAlt,
+    MilitaryTech,
+    Task
+} from "@mui/icons-material";
 import prisma from "@/lib/db";
 
 export default async function AdminMenu() {
@@ -53,6 +62,14 @@ export default async function AdminMenu() {
                                 <BadgeIcon/>
                             </ListItemIcon>
                             <ListItemText primary="Controller Management"/>
+                        </ListItemButton>
+                    </Link>
+                    <Link href="/admin/staff" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <AddModerator/>
+                            </ListItemIcon>
+                            <ListItemText primary="Staff Management"/>
                         </ListItemButton>
                     </Link>
                     <Link href="/admin/visitor-applications" style={{textDecoration: 'none', color: 'inherit',}}>

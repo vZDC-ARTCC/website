@@ -32,15 +32,15 @@ export default function FeedbackCard({feedback, admin}: { feedback: Feedback | a
                         <>
                             <Grid item xs={2} md={1}>
                                 <Typography variant="subtitle2">Pilot Name</Typography>
-                                <Typography variant="body2">{feedback.pilotName}</Typography>
+                                <Typography variant="body2">{feedback.pilot.fullName}</Typography>
                             </Grid>
                             <Grid item xs={2} md={1}>
                                 <Typography variant="subtitle2">Pilot CID</Typography>
-                                <Typography variant="body2">{feedback.pilotCid}</Typography>
+                                <Typography variant="body2">{feedback.pilot.cid}</Typography>
                             </Grid>
                             <Grid item xs={2} md={1}>
                                 <Typography variant="subtitle2">Pilot Email</Typography>
-                                <Typography variant="body2">{feedback.pilotEmail}</Typography>
+                                <Typography variant="body2">{feedback.pilot.email}</Typography>
                             </Grid>
                         </>
                     )}
@@ -60,12 +60,12 @@ export default function FeedbackCard({feedback, admin}: { feedback: Feedback | a
                         <Typography variant="subtitle2">Additional Comments</Typography>
                         <Typography variant="body2">{feedback.comments}</Typography>
                     </Grid>
-                    {feedback.status === "RELEASED" && <Grid item xs={2}>
+                    {feedback.status !== "PENDING" && <Grid item xs={2}>
                         <Typography variant="subtitle2">Staff Comments</Typography>
                         <Typography variant="body2">{feedback.staffComments || 'N/A'}</Typography>
                     </Grid>}
                 </Grid>
-                {feedback.status === "PENDING" && admin && <FeedbackDecisionForm feedback={feedback}/>}
+                {admin && <FeedbackDecisionForm feedback={feedback}/>}
             </CardContent>
         </Card>
     );

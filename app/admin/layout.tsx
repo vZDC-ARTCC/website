@@ -11,7 +11,7 @@ export default async function Layout({children}: { children: React.ReactNode }) 
 
     const session = await getServerSession(authOptions);
 
-    if (!session || !session.user.roles.some(r => ["MENTOR", "INSTRUCTOR", "STAFF"].includes(r))) {
+    if (!session || !session.user.roles.some(r => ["STAFF"].includes(r))) {
         return (
             <Typography variant="h5" textAlign="center">You do not have access to this page.</Typography>
         );

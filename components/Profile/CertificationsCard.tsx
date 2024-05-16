@@ -51,7 +51,7 @@ export default async function CertificationsCard({cid}: { cid: string, }) {
 
 
     return (
-        <Card>
+        <Card sx={{height: '100%',}}>
             <CardContent>
                 <Typography variant="h6">Certifications</Typography>
                 <Table>

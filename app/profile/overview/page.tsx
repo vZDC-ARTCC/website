@@ -19,7 +19,7 @@ export default async function Page() {
                 <Typography variant="h4">Your Profile</Typography>
             </Grid>
             <Grid item xs={6} md={4}>
-                <ProfileCard user={user} editButton/>
+                <ProfileCard user={user}/>
             </Grid>
             <Grid item xs={6} md={2}>
                 <CertificationsCard cid={user.cid}/>

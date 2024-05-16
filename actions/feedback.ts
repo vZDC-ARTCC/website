@@ -9,9 +9,7 @@ import {log} from "@/actions/log";
 export const submitFeedback = async (data: Feedback) => {
 
     const feedbackZ = z.object({
-        pilotName: z.string().trim().min(1),
-        pilotEmail: z.string().trim().min(1).email(),
-        pilotCid: z.number().min(0),
+        pilotId: z.string().min(1),
         pilotCallsign: z.string().trim().min(1),
         controllerId: z.string().trim().min(1),
         controllerPosition: z.string().min(1),
@@ -23,9 +21,11 @@ export const submitFeedback = async (data: Feedback) => {
 
     await prisma.feedback.create({
         data: {
-            pilotName: data.pilotName,
-            pilotEmail: data.pilotEmail,
-            pilotCid: data.pilotCid + '',
+            pilot: {
+                connect: {
+                    id: data.pilotId,
+                },
+            },
             pilotCallsign: data.pilotCallsign,
             controller: {
                 connect: {

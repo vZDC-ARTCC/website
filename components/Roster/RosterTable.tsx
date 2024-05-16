@@ -2,8 +2,8 @@ import React from 'react';
 import prisma from "@/lib/db";
 import {User} from "next-auth";
 import {
-    Box,
-    Chip,
+    Box, Card, CardContent,
+    Chip, Paper,
     Table,
     TableBody,
     TableCell,
@@ -12,7 +12,7 @@ import {
     TableRow, Tooltip,
     Typography
 } from "@mui/material";
-import {getSubtitle} from "@/lib/vatsim";
+import {getRating, getSubtitle} from "@/lib/vatsim";
 import {getIconForCertificationOption} from "@/lib/certification";
 import {getDaysLeft} from "@/lib/date";
 
@@ -32,6 +32,8 @@ export default async function RosterTable({membership, search}: {
         cid: number,
         fname: string,
         lname: string,
+        rating: number,
+        facility: string,
         membership: 'home' | 'visit',
         roles: {
             facility: string,
@@ -54,6 +56,9 @@ export default async function RosterTable({membership, search}: {
             },
         },
         where: {
+            controllerStatus: {
+                not: 'NONE',
+            },
             OR: [
                 {
                     fullName: {
@@ -85,6 +90,8 @@ export default async function RosterTable({membership, search}: {
             cid: number,
             fname: string,
             lname: string,
+            rating: number,
+            facility: string,
             membership: 'home' | 'visit',
             roles: {
                 facility: string,
@@ -131,55 +138,36 @@ export default async function RosterTable({membership, search}: {
     });
 
     return (
-        <TableContainer sx={{maxHeight: 600,}}>
-            <Table stickyHeader size="small">
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Controller</TableCell>
-                        {certificationTypes.map((certificationType) => (
-                            <TableCell key={certificationType.id}>{certificationType.name}</TableCell>
-                        ))}
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {controllers.length + users.length === 0 && <Typography>No results found for {search}</Typography>}
-                    {DEV_MODE && users.map((user) => (
-                        <TableRow key={user.cid}>
-                            <TableCell>
-                                <Typography variant="h6">{user.fullName} <Chip label="DEV MODE"/></Typography>
-                                <Typography variant="body2">{user.cid}</Typography>
-                                <Typography variant="subtitle2">{getSubtitle(user as User, true)}</Typography>
-                            </TableCell>
-                            {certificationTypes.map((certificationType) => (
-                                <TableCell key={certificationType.id}>
-                                    {getIconForCertificationOption(user.certifications.find((certification: any) => certification.certificationType.id === certificationType.id)?.certificationOption || "NONE")}
-                                    {user.soloCertifications.filter((soloCertification: any) => soloCertification.certificationType.id === certificationType.id).map((soloCertification: any) => (
-                                        <Tooltip key={soloCertification.id} title="Solo Certified">
-                                            <Box>
-                                                <Typography>{soloCertification.position}*</Typography>
-                                                <Typography
-                                                    variant="subtitle2">{getDaysLeft(soloCertification.expires)}</Typography>
-                                            </Box>
-                                        </Tooltip>
-                                    ))}
-                                </TableCell>
-                            ))}
-                        </TableRow>
-                    ))}
-                    {controllers.map((user) => {
-                        if (user.user) {
-                            return (
-                                <TableRow key={user.user.cid}>
+        <Card elevation={0}>
+            <CardContent>
+                <TableContainer sx={{maxHeight: 600,}}>
+                    <Table stickyHeader size="small">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Controller</TableCell>
+                                {certificationTypes.map((certificationType) => (
+                                    <TableCell key={certificationType.id}>{certificationType.name}</TableCell>
+                                ))}
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {controllers.length + users.length === 0 &&
+                                <Typography>No results found for {search}</Typography>}
+                            {DEV_MODE && users.map((user) => (
+                                <TableRow key={user.cid}>
                                     <TableCell>
-                                        <Typography variant="h6">{user.user.preferredName}</Typography>
-                                        <Typography variant="body2">{user.user.cid}</Typography>
                                         <Typography
-                                            variant="subtitle2">{getSubtitle(user.user as User, true)}</Typography>
+                                            variant="h6">{user.preferredName || `${user.firstName} ${user.lastName}`}
+                                            <Chip label="DEV MODE"/></Typography>
+                                        <Typography
+                                            variant="body2">{user.preferredName && `${user.firstName} ${user.lastName}`}</Typography>
+                                        <Typography variant="body1">{getRating(user.rating)} • {user.cid}</Typography>
+                                        <Typography variant="subtitle2">{getSubtitle(user as User, true)}</Typography>
                                     </TableCell>
                                     {certificationTypes.map((certificationType) => (
                                         <TableCell key={certificationType.id}>
-                                            {getIconForCertificationOption(user.user.certifications.find((certification: any) => certification.certificationType.id === certificationType.id)?.certificationOption || "NONE")}
-                                            {user.user.soloCertifications.filter((soloCertification: any) => soloCertification.certificationType.id === certificationType.id).map((soloCertification: any) => (
+                                            {getIconForCertificationOption(user.certifications.find((certification: any) => certification.certificationType.id === certificationType.id)?.certificationOption || "NONE")}
+                                            {user.soloCertifications.filter((soloCertification: any) => soloCertification.certificationType.id === certificationType.id).map((soloCertification: any) => (
                                                 <Tooltip key={soloCertification.id} title="Solo Certified">
                                                     <Box>
                                                         <Typography>{soloCertification.position}*</Typography>
@@ -191,28 +179,61 @@ export default async function RosterTable({membership, search}: {
                                         </TableCell>
                                     ))}
                                 </TableRow>
-                            )
-                        } else {
-                            return (
-                                <TableRow key={user.vatusa.cid}>
-                                    <TableCell>
-                                        <Typography variant="h6">{user.vatusa.fname} {user.vatusa.lname}</Typography>
-                                        <Typography variant="body2">{user.vatusa.cid}</Typography>
-                                        <Typography
-                                            variant="subtitle2">{user.vatusa.membership === 'home' ? 'Home Controller' : 'Visiting Controller'}</Typography>
-                                    </TableCell>
-                                    {certificationTypes.map((certificationType) => (
-                                        <TableCell key={certificationType.id}>
-                                            {getIconForCertificationOption("NONE")}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            )
-                        }
+                            ))}
+                            {controllers.map((user) => {
+                                if (user.user) {
+                                    return (
+                                        <TableRow key={user.user.cid}>
+                                            <TableCell>
+                                                <Typography
+                                                    variant="h6">{user.user.preferredName || `${user.user.firstName} ${user.user.lastName}`}</Typography>
+                                                <Typography
+                                                    variant="body1">{getRating(user.user.rating)} • {user.user.cid}</Typography>
+                                                <Typography
+                                                    variant="subtitle2">{getSubtitle(user.user as User, true)}</Typography>
+                                            </TableCell>
+                                            {certificationTypes.map((certificationType) => (
+                                                <TableCell key={certificationType.id}>
+                                                    {getIconForCertificationOption(user.user.certifications.find((certification: any) => certification.certificationType.id === certificationType.id)?.certificationOption || "NONE")}
+                                                    {user.user.soloCertifications.filter((soloCertification: any) => soloCertification.certificationType.id === certificationType.id).map((soloCertification: any) => (
+                                                        <Tooltip key={soloCertification.id} title="Solo Certified">
+                                                            <Box>
+                                                                <Typography>{soloCertification.position}*</Typography>
+                                                                <Typography
+                                                                    variant="subtitle2">{getDaysLeft(soloCertification.expires)}</Typography>
+                                                            </Box>
+                                                        </Tooltip>
+                                                    ))}
+                                                </TableCell>
+                                            ))}
+                                        </TableRow>
+                                    )
+                                } else {
+                                    return (
+                                        <TableRow key={user.vatusa.cid}>
+                                            <TableCell>
+                                                <Typography
+                                                    variant="h6">{user.vatusa.fname} {user.vatusa.lname}</Typography>
+                                                <Typography
+                                                    variant="body1">{getRating(user.vatusa.rating)} • {user.vatusa.cid}</Typography>
+                                                <Typography
+                                                    variant="subtitle2">{user.vatusa.membership === 'home' ? 'Home Controller' : `Visiting Controller (${user.vatusa.facility})`}</Typography>
+                                            </TableCell>
+                                            {certificationTypes.map((certificationType) => (
+                                                <TableCell key={certificationType.id}>
+                                                    {getIconForCertificationOption("NONE")}
+                                                </TableCell>
+                                            ))}
+                                        </TableRow>
+                                    )
+                                }
 
-                    })}
-                </TableBody>
-            </Table>
-        </TableContainer>
+                            })}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </CardContent>
+        </Card>
+
     );
 }

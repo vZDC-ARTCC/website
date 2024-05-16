@@ -14,18 +14,14 @@ export const updateCurrentProfile = async (user: User) => {
 
     const result = User.parse(user);
 
-    const session = await getServerSession(authOptions);
-
-    if (!session) {
-        throw new Error("User not authenticated");
-    }
-
     await prisma.user.update({
         data: result,
         where: {
-            id: session.user.id
+            id: user.id
         },
     });
 
     revalidatePath('/profile/overview');
+    revalidatePath(`/admin/controller/${user.cid}`);
+    revalidatePath('/controllers/roster', "layout");
 }

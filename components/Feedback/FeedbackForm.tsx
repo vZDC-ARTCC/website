@@ -21,15 +21,13 @@ import {Feedback} from "@prisma/client";
 import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 import {validateCaptcha} from "@/actions/captcha";
 
-export default function FeedbackForm({controllers}: { controllers: User[], }) {
+export default function FeedbackForm({controllers, user}: { controllers: User[], user: User }) {
 
     const router = useRouter();
     const {executeRecaptcha,} = useGoogleReCaptcha();
     const handleSubmit = async (formData: FormData) => {
         const feedbackZ = z.object({
-            pilotName: z.string().trim().min(1, "Pilot name is required"),
-            pilotEmail: z.string().trim().min(1, "Email is required").email("Invalid email address"),
-            pilotCid: z.number({invalid_type_error: "CID must be a number"}).min(0, "CID is invalid"),
+            pilotId: z.string().trim().min(1, "Cid is required"),
             pilotCallsign: z.string().trim().min(1, "Callsign is required"),
             controllerId: z.string().trim().min(1, "Controller is required"),
             controllerPosition: z.string().min(1, "Position is required"),
@@ -38,9 +36,7 @@ export default function FeedbackForm({controllers}: { controllers: User[], }) {
         });
 
         const result = feedbackZ.safeParse({
-            pilotName: formData.get('pilotName') as string,
-            pilotEmail: formData.get('pilotEmail') as string,
-            pilotCid: parseInt(formData.get('pilotCid') as string),
+            pilotId: user.id,
             pilotCallsign: formData.get('pilotCallsign') as string,
             controllerId: formData.get('controllerId') as string,
             controllerPosition: formData.get('controllerPosition') as string,
@@ -79,13 +75,16 @@ export default function FeedbackForm({controllers}: { controllers: User[], }) {
             <form action={handleSubmit}>
                 <Grid container columns={2} spacing={2}>
                     <Grid item xs={2} sm={1}>
-                        <TextField fullWidth variant="filled" name="pilotName" label="Your Name*"/>
+                        <TextField fullWidth variant="filled" name="pilotName" label="Your Name"
+                                   defaultValue={user.fullName} disabled/>
                     </Grid>
                     <Grid item xs={2} sm={1}>
-                        <TextField fullWidth variant="filled" name="pilotEmail" label="Your Email*"/>
+                        <TextField fullWidth variant="filled" name="pilotEmail" label="Your Email"
+                                   defaultValue={user.email} disabled/>
                     </Grid>
                     <Grid item xs={2} sm={1}>
-                        <TextField fullWidth variant="filled" name="pilotCid" label="Your VATSIM CID*"/>
+                        <TextField fullWidth variant="filled" name="pilotCid" label="Your VATSIM CID"
+                                   defaultValue={user.cid} disabled/>
                     </Grid>
                     <Grid item xs={2} sm={1}>
                         <TextField fullWidth variant="filled" name="pilotCallsign" label="Your Callsign*"/>

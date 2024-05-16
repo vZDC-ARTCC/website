@@ -4,15 +4,22 @@ import {
     Card,
     CardContent,
     Grid,
-    Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip,
     Typography
 } from "@mui/material";
 import prisma from "@/lib/db";
 import {getTimeAgo} from "@/lib/date";
+import {getMonthHours} from "@/lib/hours";
 
 export default async function Page() {
 
-    const membership = await prisma.user.findMany();
+    const membership = await prisma.user.findMany({
+        where: {
+            controllerStatus: {
+                not: 'NONE'
+            },
+        },
+    });
     const visitors = membership.filter((c) => c.controllerStatus === 'VISITOR');
     const trainingStaff = membership.filter((c) => c.roles.includes('INSTRUCTOR') || c.roles.includes('MENTOR'));
     const recentLogs = await prisma.log.findMany({
@@ -24,6 +31,9 @@ export default async function Page() {
             user: true
         },
     });
+
+    const now = new Date();
+    const monthHours = await getMonthHours(now.getMonth(), now.getFullYear());
 
     return (
         <Box>
@@ -56,7 +66,7 @@ export default async function Page() {
                     <Card>
                         <CardContent>
                             <Typography>Month Hours</Typography>
-                            <Typography variant="h4">408.06</Typography>
+                            <Typography variant="h4">{monthHours}</Typography>
                         </CardContent>
                     </Card>
                 </Grid>

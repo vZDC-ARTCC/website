@@ -5,37 +5,27 @@ import {z} from "zod";
 import {toast} from "react-toastify";
 import {addVisitingApplication} from "@/actions/visitor";
 import {useRouter} from "next/navigation";
+import {User} from "next-auth";
+import {getRating} from "@/lib/vatsim";
 
-export default function VisitorForm() {
+export default function VisitorForm({user}: { user: User, }) {
 
     const router = useRouter();
 
     const handleSubmit = async (formData: FormData) => {
         const visitorZ = z.object({
-            firstName: z.string().trim().min(1, "First name is required"),
-            lastName: z.string().trim().min(1, "Last name is required"),
-            cid: z.string().trim().min(1, "VATSIM CID is required"),
-            rating: z.string().trim().min(1, "Rating is required"),
-            email: z.string().trim().min(1, "Email is required"),
             homeFacility: z.string().trim().min(1, "Home ARTCC is required"),
             whyVisit: z.string().trim().min(1, "Reason for visiting is required"),
             meetUsaReqs: z.boolean().refine((val) => val, "You must meet the VATUSA visiting requirements"),
             meetZdcReqs: z.boolean().refine((val) => val, "You must agree to our visiting policy"),
-            nonDuplicate: z.boolean().refine((val) => val, "You must not have a pending application"),
             goodStanding: z.boolean().refine((val) => val, "You must be in good standing with your home ARTCC"),
         });
 
         const result = visitorZ.safeParse({
-            firstName: formData.get("firstName"),
-            lastName: formData.get("lastName"),
-            cid: formData.get("cid"),
-            rating: formData.get("rating"),
-            email: formData.get("email"),
             homeFacility: formData.get("homeFacility"),
             whyVisit: formData.get("whyVisit"),
             meetUsaReqs: formData.get("meetUsaReqs") === 'on',
             meetZdcReqs: formData.get("meetZdcReqs") === 'on',
-            nonDuplicate: formData.get("nonDuplicate") === 'on',
             goodStanding: formData.get("goodStanding") === 'on',
         });
 
@@ -45,7 +35,7 @@ export default function VisitorForm() {
         }
 
         try {
-            await addVisitingApplication(result.data as any);
+            await addVisitingApplication(result.data as any, user);
             router.push('/visitor/success');
         } catch (e: any) {
             toast(e.message, {type: "error"});
@@ -56,19 +46,20 @@ export default function VisitorForm() {
         <form action={handleSubmit}>
             <Grid container spacing={2} rowSpacing={4} columns={2}>
                 <Grid item xs={2} lg={1}>
-                    <TextField variant="filled" fullWidth name="firstName" label="First Name"/>
+                    <TextField variant="filled" fullWidth name="name" label="Full Name" defaultValue={user.fullName}
+                               disabled/>
                 </Grid>
                 <Grid item xs={2} lg={1}>
-                    <TextField variant="filled" fullWidth name="lastName" label="Last Name"/>
+                    <TextField variant="filled" fullWidth name="cid" label="VATSIM CID" defaultValue={user.cid}
+                               disabled/>
                 </Grid>
                 <Grid item xs={2} lg={1}>
-                    <TextField variant="filled" fullWidth name="cid" label="VATSIM CID"/>
+                    <TextField variant="filled" fullWidth name="rating" label="Rating"
+                               defaultValue={getRating(user.rating)} disabled/>
                 </Grid>
                 <Grid item xs={2} lg={1}>
-                    <TextField variant="filled" fullWidth name="rating" label="Rating"/>
-                </Grid>
-                <Grid item xs={2} lg={1}>
-                    <TextField variant="filled" fullWidth name="email" label="Email"/>
+                    <TextField variant="filled" fullWidth name="email" label="Email" defaultValue={user.email}
+                               disabled/>
                 </Grid>
                 <Grid item xs={2} lg={1}>
                     <TextField variant="filled" fullWidth name="homeFacility" label="Home ARTCC/FIR"/>
@@ -84,8 +75,6 @@ export default function VisitorForm() {
                                           label="you meet the VATUSA visiting requirements"/>
                         <FormControlLabel control={<Checkbox name="meetZdcReqs"/>}
                                           label="you agree to our visiting policy"/>
-                        <FormControlLabel control={<Checkbox name="nonDuplicate"/>}
-                                          label="you do NOT have a visiting application that is already pending"/>
                         <FormControlLabel control={<Checkbox name="goodStanding"/>}
                                           label="you are in good standing with your home ARTCC"/>
                         <Button type="submit" variant="contained" size="large">Submit Application</Button>

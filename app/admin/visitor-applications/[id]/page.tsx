@@ -4,6 +4,8 @@ import {notFound} from "next/navigation";
 import {Box, Card, CardContent, Chip, Grid, Stack, Typography} from "@mui/material";
 import VisitorApplicationDecisionForm from "@/components/VisitorApplication/VisitorApplicationDecisionForm";
 import {VisitorApplicationStatus} from "@prisma/client";
+import {getRating} from "@/lib/vatsim";
+import {User} from "next-auth";
 
 export default async function Page({params}: { params: { id: string } }) {
 
@@ -12,6 +14,9 @@ export default async function Page({params}: { params: { id: string } }) {
     const application = await prisma.visitorApplication.findUnique({
         where: {
             id,
+        },
+        include: {
+            user: true,
         },
     });
 
@@ -40,20 +45,20 @@ export default async function Page({params}: { params: { id: string } }) {
                     <Chip label={application.status} color={getStatusColor(application.status)}/>
                 </Stack>
                 <Typography
-                    variant="subtitle2">{application.firstName} {application.lastName} ({application.cid})</Typography>
+                    variant="subtitle2">{application.user.fullName} ({application.user.cid})</Typography>
                 <Typography variant="subtitle2">{application.submittedAt.toUTCString()}</Typography>
                 <Grid container spacing={2} columns={2} sx={{mt: 2, mb: 4,}}>
                     <Grid item xs={2} md={1}>
                         <Typography variant="subtitle2">Email</Typography>
-                        <Typography variant="body2">{application.email}</Typography>
+                        <Typography variant="body2">{application.user.email}</Typography>
                     </Grid>
                     <Grid item xs={2} md={1}>
                         <Typography variant="subtitle2">CID</Typography>
-                        <Typography variant="body2">{application.cid}</Typography>
+                        <Typography variant="body2">{application.user.cid}</Typography>
                     </Grid>
                     <Grid item xs={2} md={1}>
                         <Typography variant="subtitle2">Rating</Typography>
-                        <Typography variant="body2">{application.rating}</Typography>
+                        <Typography variant="body2">{getRating(application.user.rating)}</Typography>
                     </Grid>
                     <Grid item xs={2} md={1}>
                         <Typography variant="subtitle2">Home Facility</Typography>
@@ -68,7 +73,8 @@ export default async function Page({params}: { params: { id: string } }) {
                         <Typography variant="body2">{application.reasonForDenial || 'N/A'}</Typography>
                     </Grid>}
                 </Grid>
-                {application.status === "PENDING" && <VisitorApplicationDecisionForm application={application}/>}
+                {application.status === "PENDING" &&
+                    <VisitorApplicationDecisionForm application={application} user={application.user as User}/>}
             </CardContent>
         </Card>
     );
