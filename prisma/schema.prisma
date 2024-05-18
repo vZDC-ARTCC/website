@@ -70,6 +70,7 @@ model User {
   visitorApplication VisitorApplication?
   writtenFeedback    Feedback[]          @relation("FeedbackPilot")
   updatedAt          DateTime
+  eventSignups       EventPosition[]
 
   accounts              Account[]
   sessions              Session[]
@@ -190,6 +191,8 @@ enum LogModel {
   USER
   STAFF_POSITION
   ROLE
+  EVENT
+  EVENT_POSITION
   AIRPORT_TRACON_GROUP
   AIRPORT_RUNWAY
   AIRPORT_PROCEDURE
@@ -282,4 +285,25 @@ model RunwayInstruction {
   runwayId  String
   route     String
   procedure String
+}
+
+model Event {
+  id          String          @id @default(cuid())
+  name        String
+  description String
+  start       DateTime
+  end         DateTime
+  external    Boolean
+  host        String?
+  bannerUrl   String
+  positions   EventPosition[]
+}
+
+model EventPosition {
+  id          String @id @default(cuid())
+  event       Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId     String
+  position    String
+  signupCap   Int?
+  controllers User[]
 }

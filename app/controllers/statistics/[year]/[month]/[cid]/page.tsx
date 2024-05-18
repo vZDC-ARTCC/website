@@ -1,0 +1,135 @@
+import React from 'react';
+import prisma from "@/lib/db";
+import {getMonth} from "@/lib/date";
+import {Card, CardContent, Grid, Typography} from "@mui/material";
+import {getRating} from "@/lib/vatsim";
+import StatisticsTableNew from "@/components/Statistics/StatisticsTableNew";
+import {getMonthLog, getTotalHours} from "@/lib/hours";
+import {notFound} from "next/navigation";
+
+export default async function Page({params}: { params: { year: string, month: string, cid: string, } }) {
+
+    const {year, month, cid} = params;
+
+    if (!Number(year) || Number(year) < 2000 || Number(year) > new Date().getFullYear() || Number(month) < 0 || Number(month) > 11) {
+        return (
+            <Card>
+                <CardContent>
+                    <Typography variant="h4">Invalid Timeframe</Typography>
+                    <Typography sx={{mt: 1,}}>Year must be after 2000 and not after this year. Month must also be within
+                        0-11 range.</Typography>
+                </CardContent>
+            </Card>
+        );
+    }
+
+    const user = await prisma.user.findUnique({
+        where: {
+            cid: cid,
+            controllerStatus: {
+                not: 'NONE',
+            },
+        },
+    });
+
+    if (!user) {
+        notFound();
+    }
+
+    const logs = await prisma.controllerLogMonth.findMany({
+        where: {
+            year: parseInt(year),
+            month: {equals: parseInt(month) || undefined,},
+            log: {
+                user: {
+                    cid,
+                },
+            },
+        },
+        include: {
+            log: {
+                include: {
+                    user: true
+                }
+            }
+        }
+    });
+
+    const totalHours = getTotalHours(logs);
+
+    const monthLog = getMonthLog(logs);
+
+    return (
+        <Grid container columns={30} spacing={2}>
+            <Grid item xs={30}>
+                <Card>
+                    <CardContent>
+                        <Typography
+                            variant="h5">{user.preferredName || `${user.firstName} ${user.lastName}`}</Typography>
+                        <Typography
+                            variant="body2">{user.preferredName && `${user.firstName} ${user.lastName}`}</Typography>
+                        <Typography>{getRating(user.rating)} • {user.cid}</Typography>
+                        <Typography>{parseInt(month) >= 0 && `${getMonth(parseInt(month))}, `}{year} Statistics</Typography>
+                    </CardContent>
+                </Card>
+            </Grid>
+            <Grid item xs={30} sm={15} md={5}>
+                <Card>
+                    <CardContent>
+                        <Typography>Delivery Hours</Typography>
+                        <Typography variant="h6">{totalHours.deliveryHours.toPrecision(3)} hours</Typography>
+                    </CardContent>
+                </Card>
+            </Grid>
+            <Grid item xs={30} sm={15} md={5}>
+                <Card>
+                    <CardContent>
+                        <Typography>Ground Hours</Typography>
+                        <Typography variant="h6">{totalHours.groundHours.toPrecision(3)} hours</Typography>
+                    </CardContent>
+                </Card>
+            </Grid>
+            <Grid item xs={30} sm={15} md={5}>
+                <Card>
+                    <CardContent>
+                        <Typography>Tower Hours</Typography>
+                        <Typography variant="h6">{totalHours.towerHours.toPrecision(3)} hours</Typography>
+                    </CardContent>
+                </Card>
+            </Grid>
+            <Grid item xs={30} sm={15} md={5}>
+                <Card>
+                    <CardContent>
+                        <Typography>TRACON Hours</Typography>
+                        <Typography variant="h6">{totalHours.approachHours.toPrecision(3)} hours</Typography>
+                    </CardContent>
+                </Card>
+            </Grid>
+            <Grid item xs={30} sm={15} md={5}>
+                <Card>
+                    <CardContent>
+                        <Typography>Center Hours</Typography>
+                        <Typography variant="h6">{totalHours.centerHours.toPrecision(3)} hours</Typography>
+                    </CardContent>
+                </Card>
+            </Grid>
+            <Grid item xs={30} sm={15} md={5}>
+                <Card>
+                    <CardContent>
+                        <Typography>Total Hours</Typography>
+                        <Typography
+                            variant="h6">{(totalHours.deliveryHours + totalHours.groundHours + totalHours.towerHours + totalHours.approachHours + totalHours.centerHours).toPrecision(3)} hours</Typography>
+                    </CardContent>
+                </Card>
+            </Grid>
+            {parseInt(month) >= 0 ? <Grid item xs={30}>
+                <Card>
+                    <CardContent>
+                        <Typography variant="h6">Monthly Totals</Typography>
+                        <StatisticsTableNew heading="Month" logs={monthLog.filter((log) => !!log)}/>
+                    </CardContent>
+                </Card>
+            </Grid> : ''}
+        </Grid>
+    );
+}

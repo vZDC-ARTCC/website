@@ -5,6 +5,7 @@ import {
     AddModerator,
     AirplanemodeActive,
     Badge as BadgeIcon,
+    CalendarMonth,
     Feedback,
     Home,
     ListAlt,
@@ -46,6 +47,14 @@ export default async function AdminMenu() {
                                 <AirplanemodeActive/>
                             </ListItemIcon>
                             <ListItemText primary="Airports"/>
+                        </ListItemButton>
+                    </Link>
+                    <Link href="/admin/events" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <CalendarMonth/>
+                            </ListItemIcon>
+                            <ListItemText primary="Events"/>
                         </ListItemButton>
                     </Link>
                     <Link href="/admin/certification-types" style={{textDecoration: 'none', color: 'inherit',}}>

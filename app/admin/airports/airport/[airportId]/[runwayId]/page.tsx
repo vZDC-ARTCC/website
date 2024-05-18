@@ -45,7 +45,7 @@ export default async function Page({params}: { params: { airportId: string, runw
                 <Typography variant="h5" sx={{mb: 2,}}>Runway {runway.name} - {runway.airport.icao}</Typography>
                 <RunwayForm runway={runway} airportId={runway.airportId}/>
                 <Typography variant="h6" sx={{my: 2,}}>Procedures</Typography>
-                <TableContainer>
+                <TableContainer sx={{maxHeight: 600,}}>
                     <Table size="small">
                         <TableHead>
                             <TableRow>
