@@ -38,10 +38,10 @@ export const createOrUpdateEvent = async (formData: FormData, id: string) => {
             .any()
             .optional()
             .refine((file) => {
-                return !file || file.size <= MAX_FILE_SIZE;
+                return id || !file || file.size <= MAX_FILE_SIZE;
             }, 'File size must be less than 4MB')
             .refine((file) => {
-                return ALLOWED_FILE_TYPES.includes(file?.type || '');
+                return id || ALLOWED_FILE_TYPES.includes(file?.type || '');
             }, 'File must be a PNG, JPEG, or GIF'),
     });
 
@@ -55,20 +55,37 @@ export const createOrUpdateEvent = async (formData: FormData, id: string) => {
         bannerImage: formData.get('bannerImage') as File,
     });
 
-    const eventExists = !!(await prisma.event.findUnique({
+    if (result.start.getTime() >= result.end.getTime()) {
+        throw new Error("Event start time must be before the end time");
+    }
+
+    const eventExists = await prisma.event.findUnique({
             where: {
                 id,
             }
-    }));
+    });
 
     if (!eventExists && !result.bannerImage) {
         throw new Error("Banner image is required for new events");
     }
 
-    const res = await ut.uploadFiles(result.bannerImage);
-
-    if (!res.data) {
-        throw new Error("Failed to upload banner image");
+    let bannerKey = eventExists?.bannerKey || '';
+    if (!eventExists) {
+        const res = await ut.uploadFiles(result.bannerImage);
+        if (!res.data) {
+            throw new Error("Failed to upload banner image");
+        }
+        bannerKey = res.data?.key;
+    } else if (result.bannerImage) {
+        const deletion = await ut.deleteFiles(eventExists.bannerKey);
+        if (!deletion.success) {
+            throw new Error("Failed to delete old banner image");
+        }
+        const res = await ut.uploadFiles(result.bannerImage);
+        if (!res.data) {
+            throw new Error("Failed to upload banner image");
+        }
+        bannerKey = res.data.key;
     }
 
     const data = await prisma.event.upsert({
@@ -80,7 +97,8 @@ export const createOrUpdateEvent = async (formData: FormData, id: string) => {
             end: result.end,
             external: !!result.host,
             featuredFields: result.featuredFields,
-            bannerKey: res.data.key,
+            positionsLocked: false,
+            bannerKey,
         },
         update: {
             name: result.name,
@@ -90,7 +108,7 @@ export const createOrUpdateEvent = async (formData: FormData, id: string) => {
             end: result.end,
             external: !!result.host,
             featuredFields: result.featuredFields,
-            bannerKey: res.data.key,
+            bannerKey,
         },
         where: {
             id,
@@ -107,5 +125,23 @@ export const createOrUpdateEvent = async (formData: FormData, id: string) => {
     revalidatePath(`/events`);
     revalidatePath(`/events/${data.id}`);
 
+    return data;
+}
+
+export const setPositionsLock = async (event: Event, lock: boolean) => {
+    const data = await prisma.event.update({
+        where: {
+            id: event.id,
+        },
+        data: {
+            positionsLocked: lock,
+        },
+    });
+
+    await log('UPDATE', 'EVENT', `Set positions lock for event ${data.name} to ${lock}`);
+
+    revalidatePath(`/admin/events/${event.id}/positions`);
+    revalidatePath(`/admin/events/${event.id}`);
+    revalidatePath(`/admin/events`);
     return data;
 }

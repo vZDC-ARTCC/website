@@ -13,6 +13,8 @@ import {toast} from "react-toastify";
 import {createOrUpdateEvent} from "@/actions/event";
 import {useRouter} from "next/navigation";
 import dynamic from "next/dynamic";
+import Image from "next/image";
+import Link from "next/link";
 
 const MarkdownEditor = dynamic(
     () => import("@uiw/react-markdown-editor").then((mod) => mod.default),
@@ -40,10 +42,10 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
             bannerImage: z.any()
                 .optional()
                 .refine((file) => {
-                    return !file || file.size <= MAX_FILE_SIZE;
+                    return event?.id || !file || file.size <= MAX_FILE_SIZE;
                 }, 'File size must be less than 4MB')
                 .refine((file) => {
-                    return ALLOWED_FILE_TYPES.includes(file?.type || '');
+                    return event?.id || ALLOWED_FILE_TYPES.includes(file?.type || '');
                 }, 'File must be a PNG, JPEG, or GIF'),
         });
 
@@ -62,8 +64,13 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
             return;
         }
 
+        if (result.data.start.getTime() >= result.data.end.getTime()) {
+            toast("Event start time must be before the end time", {type: 'error'});
+            return;
+        }
+
         formData.set('description', description);
-        toast("Saving event...", {type: 'info'})
+        toast("Saving event and uploading banner image...", {type: 'info'})
         const data = await createOrUpdateEvent(formData, event?.id || '');
         router.push('/admin/events');
         toast(`Event '${data.name}' saved successfully!`, {type: 'success'});
@@ -99,9 +106,21 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
                     <Grid item xs={2} md={1}>
                         <DateTimePicker name="end" defaultValue={dayjs.utc(event?.end)} label="End"/>
                     </Grid>
-                    <Grid item xs={2}>
-                        <input type="file" name="bannerImage" accept="image/*" value={imageUrl} />
+                    <Grid item xs={2} md={1}>
+                        <Typography variant="h6" sx={{mb: 2,}}>Upload Banner Image</Typography>
+                        <input type="file" name="bannerImage" accept="image/*"/>
                     </Grid>
+                    {imageUrl &&
+                        <Grid item xs={2} md={1}>
+                            <Typography variant="h6">Active Banner Image</Typography>
+                            <Typography>Click to open in a new tab.</Typography>
+                            <Link href={imageUrl} target="_blank" passHref>
+                                <Box sx={{position: 'relative', width: '100%', height: '100%', minHeight: '200px',}}>
+                                    <Image src={imageUrl} alt={event?.name || ''} fill style={{objectFit: 'contain',}}/>
+                                </Box>
+                            </Link>
+                        </Grid>
+                    }
                     <Grid item xs={2}>
                         <Button type="submit" variant="contained" size="large" startIcon={<Save />}>
                             Save

@@ -2,7 +2,8 @@ import React from 'react';
 import {
     Button,
     Card,
-    CardContent, IconButton,
+    CardContent,
+    IconButton,
     Stack,
     Table,
     TableBody,
@@ -13,9 +14,8 @@ import {
     Typography
 } from "@mui/material";
 import Link from "next/link";
-import {Add, Edit, OpenInNew} from "@mui/icons-material";
+import {Add, Checklist, Edit} from "@mui/icons-material";
 import prisma from "@/lib/db";
-import CertificationTypeDeleteButton from "@/components/CertificationTypes/CertificationTypeDeleteButton";
 import EventDeleteButton from "@/components/Events/EventDeleteButton";
 
 const VATUSA_FACILITY = process.env.VATUSA_FACILITY;
@@ -48,7 +48,6 @@ export default async function Page() {
                                 <TableCell>Name</TableCell>
                                 <TableCell>Start</TableCell>
                                 <TableCell>End</TableCell>
-                                <TableCell>Banner</TableCell>
                                 <TableCell>Host</TableCell>
                                 <TableCell>Actions</TableCell>
                             </TableRow>
@@ -59,15 +58,15 @@ export default async function Page() {
                                     <TableCell>{event.name}</TableCell>
                                     <TableCell>{new Date(event.start).toUTCString()}</TableCell>
                                     <TableCell>{new Date(event.end).toUTCString()}</TableCell>
+                                    <TableCell>{event.external ? event.host :
+                                        <Typography fontWeight="bold">{VATUSA_FACILITY}</Typography>}</TableCell>
                                     <TableCell>
-                                        <Link href={event.bannerUrl || ''}>
+                                        <Link href={`/admin/events/edit/${event.id}/positions`}
+                                              style={{color: 'inherit',}}>
                                             <IconButton>
-                                                <OpenInNew />
+                                                <Checklist/>
                                             </IconButton>
                                         </Link>
-                                    </TableCell>
-                                    <TableCell>{event.external ? event.host : <Typography fontWeight="bold">{VATUSA_FACILITY}</Typography>}</TableCell>
-                                    <TableCell>
                                         <Link href={`/admin/events/edit/${event.id}`}
                                               style={{color: 'inherit',}}>
                                             <IconButton>

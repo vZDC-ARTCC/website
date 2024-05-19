@@ -1,12 +1,12 @@
 import React from 'react';
 import prisma from "@/lib/db";
 import {notFound} from "next/navigation";
-import {Box, Card, CardContent, IconButton, Stack, Tooltip, Typography} from "@mui/material";
+import {Box, Button, Card, CardContent, IconButton, Stack, Tooltip, Typography} from "@mui/material";
 import Link from "next/link";
-import {ArrowBack} from "@mui/icons-material";
-import CertificationTypeForm from "@/components/CertificationTypes/CertificationTypeForm";
+import {ArrowBack, Checklist} from "@mui/icons-material";
 import EventForm from "@/components/Events/EventForm";
 import {UTApi} from "uploadthing/server";
+import EventPositionsLockButton from "@/components/EventPosition/EventPositionsLockButton";
 
 const ut = new UTApi();
 
@@ -39,6 +39,10 @@ export default async function Page({ params }: { params: { id: string; } }) {
                         </Tooltip>
                     </Link>
                     <Typography variant="h5">Edit Event</Typography>
+                    <Link href={`/admin/events/edit/${id}/positions`} style={{color: 'inherit',}}>
+                        <Button variant="contained" startIcon={<Checklist/>}>Manage Positions</Button>
+                    </Link>
+                    <EventPositionsLockButton event={event}/>
                 </Stack>
                 <Box sx={{mt: 1,}}>
                     <EventForm event={event} imageUrl={imageUrl}/>
