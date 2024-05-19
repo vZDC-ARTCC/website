@@ -2,7 +2,7 @@ import React from 'react';
 import {
     Button,
     Card,
-    CardContent,
+    CardContent, IconButton,
     Stack,
     Table,
     TableBody,
@@ -13,8 +13,12 @@ import {
     Typography
 } from "@mui/material";
 import Link from "next/link";
-import {Add} from "@mui/icons-material";
+import {Add, Edit, OpenInNew} from "@mui/icons-material";
 import prisma from "@/lib/db";
+import CertificationTypeDeleteButton from "@/components/CertificationTypes/CertificationTypeDeleteButton";
+import EventDeleteButton from "@/components/Events/EventDeleteButton";
+
+const VATUSA_FACILITY = process.env.VATUSA_FACILITY;
 
 export default async function Page() {
 
@@ -31,7 +35,7 @@ export default async function Page() {
                     <Stack direction="column" spacing={1}>
                         <Typography variant="h5">Events</Typography>
                         <Typography>Events are automatically deleted one week from the end date</Typography>
-                        <Typography>All times are in UTC</Typography>
+                        <Typography>All times are in GMT</Typography>
                     </Stack>
                     <Link href="/admin/events/new">
                         <Button variant="contained" size="large" startIcon={<Add/>}>New Event</Button>
@@ -44,7 +48,8 @@ export default async function Page() {
                                 <TableCell>Name</TableCell>
                                 <TableCell>Start</TableCell>
                                 <TableCell>End</TableCell>
-                                <TableCell>External</TableCell>
+                                <TableCell>Banner</TableCell>
+                                <TableCell>Host</TableCell>
                                 <TableCell>Actions</TableCell>
                             </TableRow>
                         </TableHead>
@@ -52,13 +57,24 @@ export default async function Page() {
                             {events.map((event) => (
                                 <TableRow key={event.id}>
                                     <TableCell>{event.name}</TableCell>
-                                    <TableCell>{new Date(event.start).toISOString()}</TableCell>
-                                    <TableCell>{new Date(event.end).toISOString()}</TableCell>
-                                    <TableCell>{event.external ? 'Yes' : 'No'}</TableCell>
+                                    <TableCell>{new Date(event.start).toUTCString()}</TableCell>
+                                    <TableCell>{new Date(event.end).toUTCString()}</TableCell>
                                     <TableCell>
-                                        <Link href={`/admin/events/edit/${event.id}`}>
-                                            <Button variant="contained" size="small">Edit</Button>
+                                        <Link href={event.bannerUrl || ''}>
+                                            <IconButton>
+                                                <OpenInNew />
+                                            </IconButton>
                                         </Link>
+                                    </TableCell>
+                                    <TableCell>{event.external ? event.host : <Typography fontWeight="bold">{VATUSA_FACILITY}</Typography>}</TableCell>
+                                    <TableCell>
+                                        <Link href={`/admin/events/edit/${event.id}`}
+                                              style={{color: 'inherit',}}>
+                                            <IconButton>
+                                                <Edit/>
+                                            </IconButton>
+                                        </Link>
+                                        <EventDeleteButton event={event} />
                                     </TableCell>
                                 </TableRow>
                             ))}

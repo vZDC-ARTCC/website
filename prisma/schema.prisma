@@ -288,15 +288,16 @@ model RunwayInstruction {
 }
 
 model Event {
-  id          String          @id @default(cuid())
-  name        String
-  description String
-  start       DateTime
-  end         DateTime
-  external    Boolean
-  host        String?
-  bannerUrl   String
-  positions   EventPosition[]
+  id             String          @id @default(cuid())
+  name           String
+  description    String
+  start          DateTime
+  end            DateTime
+  external       Boolean
+  host           String?
+  bannerKey      String
+  featuredFields String[]
+  positions      EventPosition[]
 }
 
 model EventPosition {

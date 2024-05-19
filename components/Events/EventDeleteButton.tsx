@@ -1,3 +1,4 @@
+'use client';
 import React, {useState} from 'react';
 import {Event} from "@prisma/client";
 import {toast} from "react-toastify";

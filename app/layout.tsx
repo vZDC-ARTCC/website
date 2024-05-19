@@ -13,9 +13,6 @@ import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import {ToastContainer} from "react-toastify";
 import {GoogleTagManager} from "@next/third-parties/google";
-import {NextSSRPlugin} from "@uploadthing/react/next-ssr-plugin";
-import {extractRouterConfig} from "uploadthing/server";
-import {fileRouter} from "@/app/api/uploadthing/core";
 
 export const metadata: Metadata = {
     title: "Virtual Washington ARTCC",
@@ -34,7 +31,6 @@ export default function RootLayout({
     <body>
     <AppRouterCacheProvider>
         <CssVarsProvider theme={theme}>
-            <NextSSRPlugin routerConfig={extractRouterConfig(fileRouter)}/>
             <CssBaseline/>
             <GoogleTagManager gtmId={googleAnalyticsId || ''}/>
             <div>
