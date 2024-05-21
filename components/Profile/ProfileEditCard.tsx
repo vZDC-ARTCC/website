@@ -10,6 +10,7 @@ import {updateCurrentProfile} from "@/actions/profile";
 import {useRouter} from "next/navigation";
 import {writeDossier} from "@/actions/dossier";
 import {useSession} from "next-auth/react";
+import FormSaveButton from "@/components/Form/FormSaveButton";
 
 export default function ProfileEditCard({user, sessionUser, admin = false}: {
     user: User,
@@ -70,7 +71,7 @@ export default function ProfileEditCard({user, sessionUser, admin = false}: {
                                    defaultValue={user.preferredName || ''}/>
                         <TextField fullWidth multiline rows={5} variant="filled" name="bio" label="Bio"
                                    defaultValue={user.bio || ''}/>
-                        <Button type="submit" variant="contained" size="large" startIcon={<Save/>}>Save</Button>
+                        <FormSaveButton />
                     </Stack>
                 </form>
             </CardContent>

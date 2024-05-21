@@ -3,7 +3,7 @@ import prisma from "@/lib/db";
 import {getMonth} from "@/lib/date";
 import {Card, CardContent, Grid, Typography} from "@mui/material";
 import {getRating} from "@/lib/vatsim";
-import StatisticsTableNew from "@/components/Statistics/StatisticsTableNew";
+import StatisticsTable from "@/components/Statistics/StatisticsTable";
 import {getMonthLog, getTotalHours} from "@/lib/hours";
 import {notFound} from "next/navigation";
 
@@ -39,7 +39,7 @@ export default async function Page({params}: { params: { year: string, month: st
     const logs = await prisma.controllerLogMonth.findMany({
         where: {
             year: parseInt(year),
-            month: {equals: parseInt(month) || undefined,},
+            month: {equals: parseInt(month) < 0 ? undefined : parseInt(month),},
             log: {
                 user: {
                     cid,
@@ -122,14 +122,14 @@ export default async function Page({params}: { params: { year: string, month: st
                     </CardContent>
                 </Card>
             </Grid>
-            {parseInt(month) >= 0 ? <Grid item xs={30}>
+            {parseInt(month) < 0 && <Grid item xs={30}>
                 <Card>
                     <CardContent>
                         <Typography variant="h6">Monthly Totals</Typography>
-                        <StatisticsTableNew heading="Month" logs={monthLog.filter((log) => !!log)}/>
+                        <StatisticsTable heading="Month" logs={monthLog.filter((log) => !!log)}/>
                     </CardContent>
                 </Card>
-            </Grid> : ''}
+            </Grid>}
         </Grid>
     );
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography} from "@mui/material";
 
-export default function StatisticsTableNew({heading, logs,}: {
+export default function StatisticsTable({heading, logs,}: {
     heading: string, logs: {
         title: string,
         deliveryHours: number,

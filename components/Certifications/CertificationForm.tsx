@@ -9,6 +9,7 @@ import {toast} from "react-toastify";
 import {getIconForCertificationOption} from "@/lib/certification";
 import {z} from "zod";
 import {useRouter} from "next/navigation";
+import FormSaveButton from "@/components/Form/FormSaveButton";
 
 export default function CertificationForm({cid, certificationTypes, certifications, soloCertifications}: {
     cid: string,
@@ -85,7 +86,7 @@ export default function CertificationForm({cid, certificationTypes, certificatio
                 {certificationTypes.length > 0 &&
                     <TextField variant="filled" fullWidth label="Dossier Entry*" name="dossier"/>}
                 {certificationTypes.length > 0 &&
-                    <Button type="submit" variant="contained" size="large" startIcon={<Save/>}>Save</Button>}
+                    <FormSaveButton />}
             </Stack>
 
         </form>

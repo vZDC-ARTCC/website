@@ -7,6 +7,7 @@ import {z} from "zod";
 import {toast} from "react-toastify";
 import {upsertRunway} from "@/actions/airports";
 import {Save} from "@mui/icons-material";
+import FormSaveButton from "@/components/Form/FormSaveButton";
 
 export default function RunwayForm({runway, airportId}: { runway?: Runway, airportId: string, }) {
 
@@ -37,7 +38,7 @@ export default function RunwayForm({runway, airportId}: { runway?: Runway, airpo
             <Stack direction="column" spacing={2}>
                 <TextField fullWidth variant="filled" label="Identifier" name="name" defaultValue={runway?.name || ''}/>
                 <Box>
-                    <Button type="submit" variant="contained" size="large" startIcon={<Save/>}>Save</Button>
+                    <FormSaveButton />
                 </Box>
             </Stack>
         </form>

@@ -1,12 +1,11 @@
 'use client';
 import React from 'react';
-import {Event} from "@prisma/client";
-import {Box, Button, Grid, Stack, TextField, Typography} from "@mui/material";
+import {Event, EventType} from "@prisma/client";
+import {Box, Grid, MenuItem, TextField, Typography} from "@mui/material";
 import {DateTimePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
-import {Save} from "@mui/icons-material";
 import {z} from "zod";
 import {useColorScheme} from "@mui/material/styles";
 import {toast} from "react-toastify";
@@ -15,6 +14,9 @@ import {useRouter} from "next/navigation";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
+import FormSaveButton from "@/components/Form/FormSaveButton";
+import Markdown from "react-markdown";
+import { getCommands } from "@uiw/react-markdown-editor";
 
 const MarkdownEditor = dynamic(
     () => import("@uiw/react-markdown-editor").then((mod) => mod.default),
@@ -35,6 +37,7 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
         const eventZ = z.object({
             name: z.string().min(1, "Name is required"),
             host: z.string().optional(),
+            type: z.string().min(1, "Type is required"),
             description: z.string().min(1, "Description is required"),
             start: z.date(),
             end: z.date(),
@@ -52,6 +55,7 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
         const result = eventZ.safeParse({
             name: formData.get('name'),
             host: formData.get('host'),
+            type: formData.get('type'),
             description,
             start: new Date(formData.get('start') as unknown as string),
             end: new Date(formData.get('end') as unknown as string),
@@ -64,13 +68,21 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
             return;
         }
 
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+        if (result.data.end.getTime() <= oneWeekAgo.getTime()) {
+            toast("Event end time is more than a week ago.", {type: 'error'});
+            return;
+        }
+
         if (result.data.start.getTime() >= result.data.end.getTime()) {
             toast("Event start time must be before the end time", {type: 'error'});
             return;
         }
 
         formData.set('description', description);
-        toast("Saving event and uploading banner image...", {type: 'info'})
+        toast("Saving event. This might take a couple seconds.", {type: 'info'})
         const data = await createOrUpdateEvent(formData, event?.id || '');
         router.push('/admin/events');
         toast(`Event '${data.name}' saved successfully!`, {type: 'success'});
@@ -89,22 +101,33 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
                                    helperText="Leave blank if this ARTCC is hosting the event"
                                    defaultValue={event?.host || ''}/>
                     </Grid>
-                    <Grid item xs={2}>
+                    <Grid item xs={2} md={1}>
                         <TextField variant="filled" fullWidth name="featuredFields" label="Featured Fields" helperText="Seperate using commas (IAD,DCA,BWI,KATL)" defaultValue={event?.featuredFields.join(',') || ''} />
                     </Grid>
+                    <Grid item xs={2} md={1}>
+                        <TextField variant="filled" fullWidth name="type" label="Type" select defaultValue={event?.type || ''}>
+                            {Object.keys(EventType).map((type) => (
+                                <MenuItem key={type} value={type}>{type}</MenuItem>
+                            ))}
+                        </TextField>
+                    </Grid>
+                    <Grid item xs={2} md={1}>
+                        <DateTimePicker name="start" defaultValue={dayjs(event?.start)} label="Start"/>
+                    </Grid>
+                    <Grid item xs={2} md={1}>
+                        <DateTimePicker name="end" defaultValue={dayjs(event?.end)} label="End"/>
+                    </Grid>
                     <Grid item xs={2}>
-                        <Stack direction="column" spacing={2} data-color-mode={mode}>
-                            <Typography variant="h6">Description</Typography>
-                            <Box sx={{ minHeight: '350px', }}>
-                                <MarkdownEditor value={description} height="300px" onChange={(d) => setDescription(d)}/>
-                            </Box>
-                        </Stack>
-                    </Grid>
-                    <Grid item xs={2} md={1}>
-                        <DateTimePicker name="start" defaultValue={dayjs.utc(event?.start)} label="Start"/>
-                    </Grid>
-                    <Grid item xs={2} md={1}>
-                        <DateTimePicker name="end" defaultValue={dayjs.utc(event?.end)} label="End"/>
+                        <Box sx={{ maxWidth: '700px', }} data-color-mode={mode || 'light'}>
+                            <Typography variant="h6" sx={{ mb: 2, }}>Description</Typography>
+                            <MarkdownEditor
+                                enableScroll={false}
+                                minHeight="300px"
+                                value={description}
+                                onChange={(d) => setDescription(d)}
+                            />
+                        </Box>
+
                     </Grid>
                     <Grid item xs={2} md={1}>
                         <Typography variant="h6" sx={{mb: 2,}}>Upload Banner Image</Typography>
@@ -122,9 +145,7 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
                         </Grid>
                     }
                     <Grid item xs={2}>
-                        <Button type="submit" variant="contained" size="large" startIcon={<Save />}>
-                            Save
-                        </Button>
+                        <FormSaveButton />
                     </Grid>
                 </Grid>
             </form>

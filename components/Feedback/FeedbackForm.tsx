@@ -20,6 +20,7 @@ import {useRouter} from "next/navigation";
 import {Feedback} from "@prisma/client";
 import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 import {validateCaptcha} from "@/actions/captcha";
+import FeedbackFormSubmitButton from "@/components/Feedback/FeedbackFormSubmitButton";
 
 export default function FeedbackForm({controllers, user}: { controllers: User[], user: User }) {
 
@@ -121,8 +122,7 @@ export default function FeedbackForm({controllers, user}: { controllers: User[],
                                    label="Additional Comments"/>
                     </Grid>
                     <Grid item xs={2}>
-                        <Button type="submit" variant="contained" size="large" sx={{width: '100%',}}>Submit
-                            Feedback</Button>
+                       <FeedbackFormSubmitButton />
                     </Grid>
                 </Grid>
             </form>

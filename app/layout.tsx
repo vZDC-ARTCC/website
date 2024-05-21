@@ -13,6 +13,7 @@ import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import {ToastContainer} from "react-toastify";
 import {GoogleTagManager} from "@next/third-parties/google";
+import {deleteStaleEvents, lockUpcomingEvents} from "@/actions/event";
 
 export const metadata: Metadata = {
     title: "Virtual Washington ARTCC",
@@ -21,11 +22,15 @@ export const metadata: Metadata = {
 
 const googleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
     children: ReactNode;
 }>) {
+
+    await lockUpcomingEvents();
+    await deleteStaleEvents();
+
   return (
     <html lang="en">
     <body>

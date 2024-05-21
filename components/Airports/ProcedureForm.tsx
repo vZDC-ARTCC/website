@@ -6,6 +6,7 @@ import {toast} from "react-toastify";
 import {upsertInstruction} from "@/actions/airports";
 import {Button, Grid, Stack, TextField} from "@mui/material";
 import {Save} from "@mui/icons-material";
+import FormSaveButton from "@/components/Form/FormSaveButton";
 
 export default function ProcedureForm({instruction, runwayId}: { instruction?: RunwayInstruction, runwayId: string, }) {
     const handleSubmit = async (formData: FormData) => {
@@ -42,7 +43,7 @@ export default function ProcedureForm({instruction, runwayId}: { instruction?: R
                     <TextField fullWidth variant="filled" label="Instruction" name="procedure" defaultValue={instruction?.procedure || ''}/>
                 </Grid>
                 <Grid item xs={2}>
-                    <Button type="submit" variant="contained" startIcon={<Save/>}>Save</Button>
+                    <FormSaveButton />
                 </Grid>
             </Grid>
         </form>

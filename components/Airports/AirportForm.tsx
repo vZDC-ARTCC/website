@@ -7,6 +7,7 @@ import {z} from "zod";
 import {toast} from "react-toastify";
 import {upsertAirport} from "@/actions/airports";
 import {useRouter} from "next/navigation";
+import FormSaveButton from "@/components/Form/FormSaveButton";
 
 export default function AirportForm({airport, traconGroupId}: { airport?: Airport, traconGroupId: string, }) {
 
@@ -57,7 +58,7 @@ export default function AirportForm({airport, traconGroupId}: { airport?: Airpor
                     <TextField fullWidth variant="filled" label="City" name="city" defaultValue={airport?.city || ''}/>
                 </Grid>
                 <Grid item xs={2}>
-                    <Button type="submit" variant="contained" size="large" startIcon={<Save/>}>Save</Button>
+                    <FormSaveButton />
                 </Grid>
             </Grid>
         </form>

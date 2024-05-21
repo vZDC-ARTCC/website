@@ -7,6 +7,7 @@ import {toast} from "react-toastify";
 import {createOrUpdateCertificationType} from "@/actions/certificationTypes";
 import {Button, FormControlLabel, Stack, Switch, TextField, Typography} from "@mui/material";
 import {Save} from "@mui/icons-material";
+import FormSaveButton from "@/components/Form/FormSaveButton";
 
 export default function CertificationTypeForm({certificationType}: { certificationType?: CertificationType }) {
     const router = useRouter();
@@ -61,8 +62,8 @@ export default function CertificationTypeForm({certificationType}: { certificati
                                   label="Can get solo certified?"/>
                 <FormControlLabel name="canMinorCert"
                                   control={<Switch defaultChecked={certificationType?.canSoloCert || true}/>}
-                                  label="Can get minor certified?"/>
-                <Button type="submit" variant="contained" size="large" startIcon={<Save/>}>Save</Button>
+                                  label="Split certification?"/>
+                <FormSaveButton />
             </Stack>
         </form>
     );

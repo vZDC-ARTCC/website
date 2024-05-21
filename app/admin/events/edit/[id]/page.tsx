@@ -30,7 +30,7 @@ export default async function Page({ params }: { params: { id: string; } }) {
     return (
         <Card>
             <CardContent>
-                <Stack direction="row" spacing={2} alignItems="center">
+                <Stack direction={{ xs: 'column', md: 'row', }} spacing={2} alignItems="center">
                     <Link href="/admin/events" style={{color: 'inherit',}}>
                         <Tooltip title="Go Back">
                             <IconButton color="inherit">

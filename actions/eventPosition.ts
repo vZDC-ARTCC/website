@@ -5,6 +5,7 @@ import {log} from "@/actions/log";
 import {Event, EventPosition} from "@prisma/client";
 import {z} from "zod";
 import {revalidatePath} from "next/cache";
+import {User} from "next-auth";
 
 export const deleteEventPosition = async (id: string) => {
     const data = await prisma.eventPosition.delete({
@@ -61,4 +62,106 @@ export const createOrUpdateEventPosition = async (event: Event, eventPosition: E
     revalidatePath(`/admin/events/edit/${event.id}/positions`);
     revalidatePath(`/admin/events`);
     return data;
+}
+
+export const assignEventPosition = async (event: Event, eventPosition: EventPosition,  controllers: User[], user: User) => {
+    if (!isAbleToSignup(eventPosition, controllers, user)) {
+        throw new Error("User is not able to signup for this position");
+    }
+    const signedUpPositions = await prisma.eventPosition.findMany({
+        where: {
+            controllers: {
+                some: {
+                    id: user.id,
+                },
+            },
+            id: {
+                not: eventPosition.id,
+            },
+        },
+    });
+    if (signedUpPositions.length > 0) {
+        throw new Error("User is already signed up for another position");
+    }
+    if (event.positionsLocked) {
+        throw new Error("Event positions are locked");
+    }
+    if (eventPosition.signupCap && controllers.length >= eventPosition.signupCap) {
+        throw new Error("Position is full");
+    }
+    const data = await prisma.eventPosition.update({
+        where: {
+            id: eventPosition.id,
+        },
+        data: {
+            controllers: {
+                connect: {
+                    id: user.id,
+                },
+            },
+        },
+    });
+
+    revalidatePath(`/admin/events/edit/${eventPosition.eventId}/positions`);
+    revalidatePath(`/events/${eventPosition.eventId}`);
+    return data;
+}
+
+export const unassignEventPosition = async (event: Event, eventPosition: EventPosition, user: User) => {
+
+    if (event.positionsLocked) {
+        throw new Error("Event positions are locked");
+    }
+
+    const data = await prisma.eventPosition.update({
+        where: {
+            id: eventPosition.id,
+        },
+        data: {
+            controllers: {
+                disconnect: {
+                    id: user.id,
+                },
+            },
+        },
+    });
+
+    revalidatePath(`/admin/events/edit/${event.id}/positions`);
+    revalidatePath(`/events/${event.id}`);
+    return data;
+}
+
+export const forceAssignPosition = async (eventPositionId: string, userId: string) => {
+    const eventPosition = await prisma.eventPosition.update({
+        where: {
+            id: eventPositionId,
+        },
+        data: {
+            controllers: {
+                connect: {
+                    id: userId,
+                },
+            },
+        },
+    });
+    const controller = await prisma.user.findUniqueOrThrow({
+        where: {
+            id: userId,
+        }
+    });
+    await log('UPDATE', 'EVENT_POSITION', `Forced assigned ${eventPosition.position} to ${controller.firstName} ${controller.lastName} (${controller.cid})`);
+    revalidatePath(`/admin/events/edit/${eventPosition.eventId}/positions`);
+    revalidatePath(`/events/${eventPosition.eventId}`);
+    return { eventPosition, controller };
+}
+
+const isAbleToSignup = (eventPosition: EventPosition, controllersSignedUp: User[], controller: User) => {
+    if (controller.controllerStatus === "NONE") {
+        return false;
+    }
+    if (eventPosition.signupCap && controllersSignedUp.length >= eventPosition.signupCap) {
+        return false;
+    }
+    return !(eventPosition.minRating && eventPosition.minRating > controller.rating);
+
 }

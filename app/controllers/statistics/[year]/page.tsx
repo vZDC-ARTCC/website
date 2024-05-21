@@ -4,7 +4,7 @@ import {Box, Card, CardContent, Grid, IconButton, Stack, Tooltip, Typography} fr
 import Link from "next/link";
 import {StackedLineChart} from "@mui/icons-material";
 import {getRating} from "@/lib/vatsim";
-import StatisticsTableNew from "@/components/Statistics/StatisticsTableNew";
+import StatisticsTable from "@/components/Statistics/StatisticsTable";
 import {getControllerLog, getMonthLog, getTop3Controllers} from "@/lib/hours";
 
 export default async function Page({params}: { params: { year: string } }) {
@@ -147,7 +147,7 @@ export default async function Page({params}: { params: { year: string } }) {
                 <Card>
                     <CardContent>
                         <Typography variant="h6">Monthly Totals</Typography>
-                        <StatisticsTableNew heading="Month" logs={monthLog.filter((log) => !!log)}/>
+                        <StatisticsTable heading="Month" logs={monthLog.filter((log) => !!log)}/>
                     </CardContent>
                 </Card>
             </Grid>
@@ -155,7 +155,7 @@ export default async function Page({params}: { params: { year: string } }) {
                 <Card>
                     <CardContent>
                         <Typography variant="h6">Controller Totals</Typography>
-                        <StatisticsTableNew heading="Controller" logs={controllerLog.filter((log) => !!log)}/>
+                        <StatisticsTable heading="Controller" logs={controllerLog.filter((log) => !!log)}/>
                     </CardContent>
                 </Card>
             </Grid>

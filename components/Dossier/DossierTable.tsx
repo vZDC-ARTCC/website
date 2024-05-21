@@ -16,7 +16,7 @@ function DossierTable({dossier}: { dossier: DossierEntry[] }) {
                 {dossier.map((entry) => (
                     <TableRow key={entry.id}>
                         <TableCell>{entry.timestamp.toDateString()}</TableCell>
-                        <TableCell>{(entry as any).writer.cid}</TableCell>
+                        <TableCell>{(entry as any).writer.firstName} {(entry as any).writer.lastName} ({(entry as any).writer.cid})</TableCell>
                         <TableCell>{entry.message}</TableCell>
                     </TableRow>
                 ))}

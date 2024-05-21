@@ -17,10 +17,14 @@ import Link from "next/link";
 import {Add, Checklist, Edit} from "@mui/icons-material";
 import prisma from "@/lib/db";
 import EventDeleteButton from "@/components/Events/EventDeleteButton";
+import {format} from "date-fns";
+import {deleteStaleEvents} from "@/actions/event";
 
 const VATUSA_FACILITY = process.env.VATUSA_FACILITY;
 
 export default async function Page() {
+
+    await deleteStaleEvents();
 
     const events = await prisma.event.findMany({
         orderBy: {
@@ -46,6 +50,7 @@ export default async function Page() {
                         <TableHead>
                             <TableRow>
                                 <TableCell>Name</TableCell>
+                                <TableCell>Type</TableCell>
                                 <TableCell>Start</TableCell>
                                 <TableCell>End</TableCell>
                                 <TableCell>Host</TableCell>
@@ -56,8 +61,9 @@ export default async function Page() {
                             {events.map((event) => (
                                 <TableRow key={event.id}>
                                     <TableCell>{event.name}</TableCell>
-                                    <TableCell>{new Date(event.start).toUTCString()}</TableCell>
-                                    <TableCell>{new Date(event.end).toUTCString()}</TableCell>
+                                    <TableCell>{event.type}</TableCell>
+                                    <TableCell>{format(new Date(event.start), 'M/d/yy HHmm')}z</TableCell>
+                                    <TableCell>{format(new Date(event.end), 'M/d/yy HHmm')}z</TableCell>
                                     <TableCell>{event.external ? event.host :
                                         <Typography fontWeight="bold">{VATUSA_FACILITY}</Typography>}</TableCell>
                                     <TableCell>

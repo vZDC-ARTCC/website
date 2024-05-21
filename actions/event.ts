@@ -1,5 +1,5 @@
 'use server';
-import {Event} from "@prisma/client";
+import {Event, EventType} from "@prisma/client";
 import {revalidatePath} from "next/cache";
 import prisma from "@/lib/db";
 import {log} from "@/actions/log";
@@ -9,6 +9,44 @@ import {UTApi} from "uploadthing/server";
 const MAX_FILE_SIZE = 1024 * 1024 * 4;
 const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
 const ut = new UTApi();
+
+export const lockUpcomingEvents = async () => {
+    const in48Hours = new Date();
+    in48Hours.setHours(in48Hours.getHours() + 48);
+
+    await prisma.event.updateMany({
+        where: {
+            start: {
+                lte: in48Hours,
+            },
+            positionsLocked: false,
+        },
+        data: {
+            positionsLocked: true,
+        },
+    });
+}
+
+export const deleteStaleEvents = async () => {
+
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+    const eventsToDelete = await prisma.event.findMany({
+        where: {
+            end: {
+                lte: oneWeekAgo,
+            },
+        },
+    });
+
+    for (const event of eventsToDelete) {
+        await deleteEvent(event.id);
+        await ut.deleteFiles(eventsToDelete.map((e) => e.bannerKey));
+    }
+
+}
+
 
 export const deleteEvent = async (id: string) => {
     revalidatePath('/admin/events');
@@ -30,6 +68,7 @@ export const createOrUpdateEvent = async (formData: FormData, id: string) => {
     const Event = z.object({
         name: z.string(),
         host: z.string().optional(),
+        type: z.string().min(1, "Type is required"),
         description: z.string(),
         start: z.date(),
         end: z.date(),
@@ -48,6 +87,7 @@ export const createOrUpdateEvent = async (formData: FormData, id: string) => {
     const result = Event.parse({
         name: formData.get('name'),
         host: formData.get('host'),
+        type: formData.get('type'),
         description: formData.get('description'),
         featuredFields: formData.get('featuredFields')?.toString().split(',').map((f) => f.trim()) || [],
         start: new Date(formData.get('start') as unknown as string),
@@ -76,7 +116,7 @@ export const createOrUpdateEvent = async (formData: FormData, id: string) => {
             throw new Error("Failed to upload banner image");
         }
         bannerKey = res.data?.key;
-    } else if (result.bannerImage) {
+    } else if ((result.bannerImage as File).size > 0) {
         const deletion = await ut.deleteFiles(eventExists.bannerKey);
         if (!deletion.success) {
             throw new Error("Failed to delete old banner image");
@@ -92,6 +132,7 @@ export const createOrUpdateEvent = async (formData: FormData, id: string) => {
         create: {
             name: result.name,
             host: result.host,
+            type: result.type as EventType,
             description: result.description,
             start: result.start,
             end: result.end,
@@ -103,6 +144,7 @@ export const createOrUpdateEvent = async (formData: FormData, id: string) => {
         update: {
             name: result.name,
             host: result.host,
+            type: result.type as EventType,
             description: result.description,
             start: result.start,
             end: result.end,

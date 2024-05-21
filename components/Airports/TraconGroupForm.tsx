@@ -7,6 +7,7 @@ import {z} from "zod";
 import {toast} from "react-toastify";
 import {upsertTraconGroup} from "@/actions/airports";
 import {useRouter} from "next/navigation";
+import FormSaveButton from "@/components/Form/FormSaveButton";
 
 export default function TraconGroupForm({traconGroup}: { traconGroup?: TraconGroup }) {
 
@@ -42,7 +43,7 @@ export default function TraconGroupForm({traconGroup}: { traconGroup?: TraconGro
         <form action={handleSubmit}>
             <Stack direction="column" spacing={2}>
                 <TextField fullWidth variant="filled" label="Name*" name="name" defaultValue={traconGroup?.name || ''}/>
-                <Button type="submit" variant="contained" size="large" startIcon={<Save/>}>Save</Button>
+                <FormSaveButton />
             </Stack>
         </form>
     );

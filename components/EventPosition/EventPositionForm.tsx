@@ -6,8 +6,12 @@ import {Save} from "@mui/icons-material";
 import {z} from "zod";
 import {toast} from "react-toastify";
 import {createOrUpdateEventPosition} from "@/actions/eventPosition";
+import FormSaveButton from "@/components/Form/FormSaveButton";
+import {useRouter} from "next/navigation";
 
 function EventPositionForm({event, eventPosition}: { event: Event, eventPosition?: EventPosition }) {
+
+    const router = useRouter();
 
     const handleSubmit = async (formData: FormData) => {
         const eventPositionZ = z.object({
@@ -34,6 +38,7 @@ function EventPositionForm({event, eventPosition}: { event: Event, eventPosition
         } as EventPosition);
 
         toast(`Position ${data.position} saved successfully!`, {type: 'success'});
+        router.push(`/admin/events/edit/${event.id}/positions`);
     }
 
     return (
@@ -63,7 +68,7 @@ function EventPositionForm({event, eventPosition}: { event: Event, eventPosition
                     </TextField>
                 </Grid>
                 <Grid item xs={2}>
-                    <Button type="submit" variant="contained" startIcon={<Save/>}>Save</Button>
+                    <FormSaveButton />
                 </Grid>
             </Grid>
         </form>

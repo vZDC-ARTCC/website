@@ -290,6 +290,7 @@ model RunwayInstruction {
 model Event {
   id              String          @id @default(cuid())
   name            String
+  type            EventType
   description     String
   start           DateTime
   end             DateTime
@@ -299,6 +300,13 @@ model Event {
   bannerKey       String
   featuredFields  String[]
   positions       EventPosition[]
+}
+
+enum EventType {
+  HOME
+  SUPPORT
+  GROUP_FLIGHT
+  TRAINING
 }
 
 model EventPosition {

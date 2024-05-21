@@ -5,6 +5,7 @@ import {Add} from "@mui/icons-material";
 import {z} from "zod";
 import {toast} from "react-toastify";
 import {writeDossier} from "@/actions/dossier";
+import FormSaveButton from "@/components/Form/FormSaveButton";
 
 export default function DossierForm({cid}: { cid: string, }) {
 
@@ -26,7 +27,7 @@ export default function DossierForm({cid}: { cid: string, }) {
         <form ref={formRef} action={handleSubmit}>
             <Stack direction="row" spacing={1}>
                 <TextField variant="filled" fullWidth name="message" label="Message*"/>
-                <Button type="submit" variant="contained" startIcon={<Add/>}>Add</Button>
+                <FormSaveButton />
             </Stack>
         </form>
     );

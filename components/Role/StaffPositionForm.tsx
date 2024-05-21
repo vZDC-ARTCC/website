@@ -18,6 +18,7 @@ import {Save} from "@mui/icons-material";
 import {z} from "zod";
 import {toast} from "react-toastify";
 import {saveStaffPositions} from "@/actions/role";
+import FormSaveButton from "@/components/Form/FormSaveButton";
 
 function StaffPositionForm({user}: { user: User }) {
 
@@ -75,7 +76,7 @@ function StaffPositionForm({user}: { user: User }) {
                     </FormControl>
                     <TextField variant="filled" fullWidth label="Dossier Entry*" name="dossier"/>
                     <Box>
-                        <Button type="submit" variant="contained" startIcon={<Save/>}>Save</Button>
+                        <FormSaveButton />
                     </Box>
                 </Stack>
             </form>}

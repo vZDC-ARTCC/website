@@ -22,6 +22,9 @@ import EventPositionDeleteButton from "@/components/EventPosition/EventPositionD
 import EventPositionForm from "@/components/EventPosition/EventPositionForm";
 import {getRating} from "@/lib/vatsim";
 import EventPositionsLockButton from "@/components/EventPosition/EventPositionsLockButton";
+import EventControllerRemoveForm from "@/components/EventPosition/EventControllerRemoveForm";
+import {User} from "next-auth";
+import ControllerManualAddForm from "@/components/EventPosition/ControllerManualAddForm";
 
 export default async function Page({params}: { params: { id: string, } }) {
 
@@ -36,6 +39,9 @@ export default async function Page({params}: { params: { id: string, } }) {
                 include: {
                     controllers: true,
                 },
+                orderBy: {
+                    position: 'asc',
+                }
             },
         },
     });
@@ -43,6 +49,17 @@ export default async function Page({params}: { params: { id: string, } }) {
     if (!event) {
         notFound();
     }
+
+    const users = await prisma.user.findMany({
+        where: {
+            controllerStatus: {
+                not: "NONE",
+            },
+        },
+        orderBy: {
+            lastName: 'asc',
+        }
+    });
 
     return (
         <Card>
@@ -59,6 +76,8 @@ export default async function Page({params}: { params: { id: string, } }) {
                     <EventPositionsLockButton event={event}/>
                 </Stack>
                 <Box sx={{my: 3,}}>
+                    <Typography variant="h6" sx={{mb: 1,}}>Add Controller</Typography>
+                    <ControllerManualAddForm eventPositions={event.positions} users={users as User[]} />
                     <TableContainer sx={{maxHeight: 600,}}>
                         <Table>
                             <TableHead>
@@ -78,10 +97,14 @@ export default async function Page({params}: { params: { id: string, } }) {
                                         <TableCell>{getRating(position.minRating || -1) || 'N/A'}</TableCell>
                                         <TableCell>
                                             {position.controllers.map((controller) => (
-                                                <Link key={controller.id} href={`/admin/controller/${controller.cid}`}
-                                                      style={{color: 'inherit'}}>
-                                                    <Typography>{controller.firstName}</Typography>
-                                                </Link>
+                                                <Stack key={controller.id}  direction="row" spacing={1} alignItems="center">
+                                                    <Link href={`/admin/controller/${controller.cid}`} target="_blank"
+                                                          style={{color: 'inherit'}}>
+                                                        <Typography>{controller.firstName} {controller.lastName} - {getRating(controller.rating)}</Typography>
+                                                    </Link>
+                                                    <EventControllerRemoveForm event={event} position={position} controller={controller as User} />
+                                                </Stack>
+
                                             ))}
                                         </TableCell>
                                         <TableCell>

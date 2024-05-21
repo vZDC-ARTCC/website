@@ -7,6 +7,7 @@ import {addVisitingApplication} from "@/actions/visitor";
 import {useRouter} from "next/navigation";
 import {User} from "next-auth";
 import {getRating} from "@/lib/vatsim";
+import VisitorFormSubmitButton from "@/components/Visitor/VisitorFormSubmitButton";
 
 export default function VisitorForm({user}: { user: User, }) {
 
@@ -77,7 +78,7 @@ export default function VisitorForm({user}: { user: User, }) {
                                           label="you agree to our visiting policy"/>
                         <FormControlLabel control={<Checkbox name="goodStanding"/>}
                                           label="you are in good standing with your home ARTCC"/>
-                        <Button type="submit" variant="contained" size="large">Submit Application</Button>
+                        <VisitorFormSubmitButton />
                     </Stack>
                 </Grid>
             </Grid>
