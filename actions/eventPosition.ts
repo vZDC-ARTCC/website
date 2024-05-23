@@ -107,9 +107,9 @@ export const assignEventPosition = async (event: Event, eventPosition: EventPosi
     return data;
 }
 
-export const unassignEventPosition = async (event: Event, eventPosition: EventPosition, user: User) => {
+export const unassignEventPosition = async (event: Event, eventPosition: EventPosition, user: User, force?: boolean) => {
 
-    if (event.positionsLocked) {
+    if (event.positionsLocked && !force) {
         throw new Error("Event positions are locked");
     }
 
@@ -143,13 +143,16 @@ export const forceAssignPosition = async (eventPositionId: string, userId: strin
                 },
             },
         },
+        include: {
+            event: true,
+        }
     });
     const controller = await prisma.user.findUniqueOrThrow({
         where: {
             id: userId,
         }
     });
-    await log('UPDATE', 'EVENT_POSITION', `Forced assigned ${eventPosition.position} to ${controller.firstName} ${controller.lastName} (${controller.cid})`);
+    await log('UPDATE', 'EVENT_POSITION', `Forced assigned ${eventPosition.position} to ${controller.firstName} ${controller.lastName} (${controller.cid}) in ${eventPosition.event.name}`);
     revalidatePath(`/admin/events/edit/${eventPosition.eventId}/positions`);
     revalidatePath(`/events/${eventPosition.eventId}`);
     return { eventPosition, controller };

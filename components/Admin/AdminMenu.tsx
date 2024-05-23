@@ -6,6 +6,7 @@ import {
     AirplanemodeActive,
     Badge as BadgeIcon,
     CalendarMonth,
+    DeleteSweep,
     Feedback,
     Home,
     ListAlt,
@@ -63,6 +64,14 @@ export default async function AdminMenu() {
                                 <MilitaryTech/>
                             </ListItemIcon>
                             <ListItemText primary="Certification Types"/>
+                        </ListItemButton>
+                    </Link>
+                    <Link href="/admin/purge-assistant" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <DeleteSweep/>
+                            </ListItemIcon>
+                            <ListItemText primary="Purge Assistant"/>
                         </ListItemButton>
                     </Link>
                     <Link href="/admin/controller" style={{textDecoration: 'none', color: 'inherit',}}>

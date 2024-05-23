@@ -15,8 +15,6 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import FormSaveButton from "@/components/Form/FormSaveButton";
-import Markdown from "react-markdown";
-import { getCommands } from "@uiw/react-markdown-editor";
 
 const MarkdownEditor = dynamic(
     () => import("@uiw/react-markdown-editor").then((mod) => mod.default),
@@ -112,10 +110,10 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
                         </TextField>
                     </Grid>
                     <Grid item xs={2} md={1}>
-                        <DateTimePicker name="start" defaultValue={dayjs(event?.start)} label="Start"/>
+                        <DateTimePicker name="start" defaultValue={dayjs(event?.start)} label="Start (Zulu)"/>
                     </Grid>
                     <Grid item xs={2} md={1}>
-                        <DateTimePicker name="end" defaultValue={dayjs(event?.end)} label="End"/>
+                        <DateTimePicker name="end" defaultValue={dayjs(event?.end)} label="End (Zulu)"/>
                     </Grid>
                     <Grid item xs={2}>
                         <Box sx={{ maxWidth: '700px', }} data-color-mode={mode || 'light'}>

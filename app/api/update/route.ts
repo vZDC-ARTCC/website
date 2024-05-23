@@ -139,7 +139,7 @@ const devUpdate = async () => {
         const year = now.getFullYear();
         const log = controller.log?.months.find((controllerMonth) => controllerMonth.month === month && controllerMonth.year === year);
 
-        const onlineTimeSinceLastUpdate = 15 / 3600;
+        const onlineTimeSinceLastUpdate = 400 / 3600;
 
         if (!log) {
             await prisma.controllerLogMonth.create({

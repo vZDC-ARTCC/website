@@ -1,7 +1,6 @@
 'use client';
 import React, {useRef} from 'react';
-import {Button, Stack, TextField} from "@mui/material";
-import {Add} from "@mui/icons-material";
+import {Stack, TextField} from "@mui/material";
 import {z} from "zod";
 import {toast} from "react-toastify";
 import {writeDossier} from "@/actions/dossier";
@@ -26,7 +25,8 @@ export default function DossierForm({cid}: { cid: string, }) {
     return (
         <form ref={formRef} action={handleSubmit}>
             <Stack direction="row" spacing={1}>
-                <TextField variant="filled" fullWidth name="message" label="Message*"/>
+                <TextField variant="filled" fullWidth name="message" label="Message*"
+                           helperText="If confidential, start message with a '^'"/>
                 <FormSaveButton />
             </Stack>
         </form>

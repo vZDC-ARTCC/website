@@ -1,0 +1,24 @@
+import React from 'react';
+import {Card, CardContent, Container, Stack, Typography} from "@mui/material";
+import {CheckCircle} from "@mui/icons-material";
+
+export default function Page() {
+
+    return (
+        <Container maxWidth="md">
+            <Card>
+                <CardContent>
+                    <Stack direction="row" spacing={1} alignItems="center" justifyContent="center" sx={{mb: 2,}}>
+                        <CheckCircle color="success" fontSize="large"/>
+                        <Typography variant="h5">Request Submitted</Typography>
+                    </Stack>
+                    <Container maxWidth="sm">
+                        <Typography>You will receive an email from our staff within 7 business days regarding your
+                            request.</Typography>
+                    </Container>
+                </CardContent>
+            </Card>
+        </Container>
+    );
+
+}

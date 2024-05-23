@@ -3,10 +3,11 @@ import prisma from "@/lib/db";
 import {notFound} from "next/navigation";
 import {Card, CardContent, Grid, Typography} from "@mui/material";
 import ProfileCard from "@/components/Profile/ProfileCard";
-import {User} from "next-auth";
+import {getServerSession, User} from "next-auth";
 import CertificationForm from "@/components/Certifications/CertificationForm";
 import DossierTable from "@/components/Dossier/DossierTable";
 import DossierForm from "@/components/Dossier/DossierForm";
+import {authOptions} from "@/auth/auth";
 
 export default async function Page({params}: { params: { cid: string, }, }) {
 
@@ -48,7 +49,9 @@ export default async function Page({params}: { params: { cid: string, }, }) {
         },
     });
 
-    return (
+    const session = await getServerSession(authOptions);
+
+    return session?.user && (
         <Grid container columns={2} spacing={2}>
             <Grid item xs={2}>
                 <ProfileCard user={controller as User} admin/>
@@ -61,7 +64,10 @@ export default async function Page({params}: { params: { cid: string, }, }) {
                                 <Typography variant="h6" sx={{mb: 1,}}>Add Dossier Entry</Typography>
                                 <DossierForm cid={controller.cid}/>
                                 <Typography variant="h6" sx={{my: 2,}}>Member Dossier</Typography>
-                                <DossierTable dossier={controller.dossier}/>
+                                <DossierTable dossier={controller.dossier}
+                                              ableToViewConfidential={session.user.staffPositions.some((sp) => {
+                                                  return sp === 'ATM' || sp === 'DATM' || sp === 'TA';
+                                              })}/>
                             </CardContent>
                         </Card>
                     </Grid>

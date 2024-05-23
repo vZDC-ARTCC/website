@@ -15,8 +15,11 @@ export default function EventPositionsLockButton({event}: { event: Event, }) {
         toast(`Signups ${newLock ? 'locked!' : 'unlocked!'}`, {type: 'success',});
     }
 
+    const eventIsWithin48Hours = new Date(event.start).getTime() - Date.now() < 48 * 60 * 60 * 1000;
+
     return (
-        <FormControlLabel onChange={(e, b) => changeLock(b)} control={<Switch checked={positionsLocked}/>}
+        <FormControlLabel disabled={eventIsWithin48Hours} onChange={(e, b) => changeLock(b)}
+                          control={<Switch checked={positionsLocked}/>}
                           label="Lock Signups"/>
     );
 
