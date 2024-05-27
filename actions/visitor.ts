@@ -9,7 +9,6 @@ import {User} from "next-auth";
 
 const VATUSA_FACILITY = process.env.VATUSA_FACILITY || 'ZDC';
 const VATUSA_API_KEY = process.env.VATUSA_API_KEY || '';
-const DEV_MODE = process.env.DEV_MODE || '';
 
 export const addVisitingApplication = async (data: VisitorApplication, user: User) => {
 

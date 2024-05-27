@@ -6,11 +6,8 @@ import FormSaveButton from "@/components/Form/FormSaveButton";
 import {z} from "zod";
 import {toast} from "react-toastify";
 import {createOrUpdateFileCategory} from "@/actions/files";
-import {useRouter} from "next/navigation";
 
 export default function FileCategoryForm({fileCategory}: { fileCategory?: FileCategory }) {
-
-    const router = useRouter();
 
     const handleSubmit = async (formData: FormData) => {
         const fileCategoryZ = z.object({
