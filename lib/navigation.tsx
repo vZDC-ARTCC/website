@@ -1,11 +1,16 @@
 import React from "react";
 import {
-    Add, AddComment,
+    Add,
+    AddComment,
     AirplanemodeActive,
-    BarChart, CalendarMonth, Campaign,
+    BarChart,
+    CalendarMonth,
     Description,
     DeveloperBoard,
-    FileDownload, Handshake, ListAlt, Newspaper,
+    FileDownload,
+    FileOpen,
+    Group,
+    ListAlt,
     PersonAdd,
     Radar,
     Route
@@ -58,6 +63,11 @@ export const NAVIGATION: NavigationButton[] = [
                     icon: <ListAlt/>,
                 },
                 {
+                    label: 'ARTCC Staff',
+                    link: '/controllers/staff',
+                    icon: <Group/>,
+                },
+                {
                     label: 'Visit ZDC',
                     link: '/visitor/new',
                     icon: <PersonAdd/>,
@@ -87,28 +97,13 @@ export const NAVIGATION: NavigationButton[] = [
     },
     {
         label: 'Publications',
-        icon: <FileDownload/>,
+        icon: <FileOpen/>,
         dropdown: {
             buttons: [
                 {
-                    label: 'Announcements',
-                    link: '/publications/announcements',
-                    icon: <Campaign/>,
-                },
-                {
-                    label: 'News',
-                    link: '/publications/news',
-                    icon: <Newspaper/>,
-                },
-                {
-                    label: 'SOPs',
-                    link: '/publications/sops',
+                    label: 'Wiki',
+                    link: 'https://wiki.vzdc.org',
                     icon: <Description/>,
-                },
-                {
-                    label: 'LOAs',
-                    link: '/publications/loas',
-                    icon: <Handshake/>,
                 },
                 {
                     label: 'Downloads',

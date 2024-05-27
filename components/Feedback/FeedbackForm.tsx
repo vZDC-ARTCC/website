@@ -1,26 +1,15 @@
 "use client";
 import React from 'react';
 import {User} from "next-auth";
-import {
-    Box,
-    Button,
-    FormControl,
-    Grid,
-    InputLabel,
-    MenuItem,
-    Rating,
-    Select,
-    TextField,
-    Typography
-} from "@mui/material";
+import {Box, FormControl, Grid, InputLabel, MenuItem, Rating, Select, TextField, Typography} from "@mui/material";
 import {z} from "zod";
 import {toast} from "react-toastify";
 import {submitFeedback} from "@/actions/feedback";
 import {useRouter} from "next/navigation";
 import {Feedback} from "@prisma/client";
 import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
-import {validateCaptcha} from "@/actions/captcha";
 import FeedbackFormSubmitButton from "@/components/Feedback/FeedbackFormSubmitButton";
+import {checkCaptcha} from "@/lib/captcha";
 
 export default function FeedbackForm({controllers, user}: { controllers: User[], user: User }) {
 
@@ -51,21 +40,7 @@ export default function FeedbackForm({controllers, user}: { controllers: User[],
         }
 
         const recaptchaToken = await executeRecaptcha?.('submit_feedback');
-        if (!recaptchaToken) {
-            toast('Recaptcha validation failed', {type: 'error'});
-            return;
-        }
-        const captchaResult = await validateCaptcha(recaptchaToken);
-
-        if (!captchaResult.success) {
-            toast('Recaptcha validation failed', {type: 'error'});
-            return;
-        }
-
-        if (captchaResult.score < 0.5) {
-            toast('Recaptcha validation failed', {type: 'error'});
-            return;
-        }
+        await checkCaptcha(recaptchaToken);
 
         await submitFeedback(result.data as unknown as Feedback);
         router.push('/feedback/success');

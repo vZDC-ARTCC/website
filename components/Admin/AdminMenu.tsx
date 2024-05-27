@@ -8,9 +8,11 @@ import {
     CalendarMonth,
     DeleteSweep,
     Feedback,
+    Folder,
     Home,
     ListAlt,
     MilitaryTech,
+    QuestionAnswer,
     Task
 } from "@mui/icons-material";
 import prisma from "@/lib/db";
@@ -28,6 +30,8 @@ export default async function AdminMenu() {
             status: "PENDING",
         },
     });
+
+    const staffingRequests = await prisma.staffingRequest.findMany();
 
     return (
         <Card>
@@ -56,6 +60,16 @@ export default async function AdminMenu() {
                                 <CalendarMonth/>
                             </ListItemIcon>
                             <ListItemText primary="Events"/>
+                        </ListItemButton>
+                    </Link>
+                    <Link href="/admin/staffing-requests" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <Badge color="primary" badgeContent={staffingRequests.length}>
+                                    <QuestionAnswer/>
+                                </Badge>
+                            </ListItemIcon>
+                            <ListItemText primary="Staffing Requests"/>
                         </ListItemButton>
                     </Link>
                     <Link href="/admin/certification-types" style={{textDecoration: 'none', color: 'inherit',}}>
@@ -108,6 +122,14 @@ export default async function AdminMenu() {
                                 </Badge>
                             </ListItemIcon>
                             <ListItemText primary="Feedback"/>
+                        </ListItemButton>
+                    </Link>
+                    <Link href="/admin/files" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <Folder/>
+                            </ListItemIcon>
+                            <ListItemText primary="File Center"/>
                         </ListItemButton>
                     </Link>
                     <Link href="/admin/logs" style={{textDecoration: 'none', color: 'inherit',}}>

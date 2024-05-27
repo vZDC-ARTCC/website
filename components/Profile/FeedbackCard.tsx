@@ -43,7 +43,7 @@ export default async function FeedbackCard({user}: { user: User, }) {
         <Card sx={{height: '100%',}}>
             <CardContent>
                 <Typography variant="h6" sx={{mb: 1,}}>Feedback</Typography>
-                {recentFeedback.length == 0 && <Typography>No feedback found</Typography>}
+                {recentFeedback.length == 0 && <Typography>You have no feedback.</Typography>}
                 {recentFeedback.length > 0 && <TableContainer>
                     <Table>
                         <TableHead>
@@ -68,18 +68,17 @@ export default async function FeedbackCard({user}: { user: User, }) {
                                                 </IconButton>
                                             </Link>
                                         </Tooltip>
-
                                     </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
                 </TableContainer>}
-                <Stack direction="row" justifyContent="flex-end" sx={{mt: 1,}}>
+                {recentFeedback.length > 3 && <Stack direction="row" justifyContent="flex-end" sx={{mt: 1,}}>
                     <Link href="/profile/feedback" style={{color: 'inherit', textDecoration: 'none',}}>
                         <Button color="inherit" endIcon={<KeyboardArrowRight/>}>View all Feedback</Button>
                     </Link>
-                </Stack>
+                </Stack>}
             </CardContent>
         </Card>
     );

@@ -71,6 +71,7 @@ model User {
   writtenFeedback    Feedback[]          @relation("FeedbackPilot")
   updatedAt          DateTime
   eventSignups       EventPosition[]
+  staffingRequests   StaffingRequest[]
 
   accounts              Account[]
   sessions              Session[]
@@ -193,6 +194,9 @@ enum LogModel {
   ROLE
   EVENT
   EVENT_POSITION
+  FILE_CATEGORY
+  FILE
+  STAFFING_REQUEST
   AIRPORT_TRACON_GROUP
   AIRPORT_RUNWAY
   AIRPORT_PROCEDURE
@@ -317,4 +321,28 @@ model EventPosition {
   minRating   Int?
   signupCap   Int?
   controllers User[]
+}
+
+model StaffingRequest {
+  id          String @id @default(cuid())
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  name        String
+  description String
+}
+
+model FileCategory {
+  id    String @id @default(cuid())
+  name  String
+  files File[]
+}
+
+model File {
+  id          String       @id @default(cuid())
+  name        String
+  description String
+  category    FileCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId  String
+  key         String
+  updatedAt   DateTime
 }

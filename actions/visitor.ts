@@ -48,17 +48,11 @@ export const addVisitingApplication = async (data: VisitorApplication, user: Use
 
 export const addVisitor = async (application: VisitorApplication, user: User) => {
     if (application.status !== "PENDING") return;
-    if (!DEV_MODE) {
-        await fetch(`https://api.vatusa.net/v2/facility/${VATUSA_FACILITY}/roster/manageVisitor/${user.cid}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                apiKey: VATUSA_API_KEY,
-            }),
-        });
-    }
+    const res = await fetch(`https://api.vatusa.net/v2/facility/${VATUSA_FACILITY}/roster/manageVisitor/${user.cid}?apiKey=${VATUSA_API_KEY}`, {
+        method: 'POST',
+    });
+    const json = await res.json();
+    console.log(json);
     await prisma.user.update({
         where: {
             id: user.id,

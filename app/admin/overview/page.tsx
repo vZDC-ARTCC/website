@@ -4,11 +4,16 @@ import {
     Card,
     CardContent,
     Grid,
-    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
     Typography
 } from "@mui/material";
 import prisma from "@/lib/db";
-import {getTimeAgo} from "@/lib/date";
+import {getMonth, getTimeAgo} from "@/lib/date";
 import {getMonthHours} from "@/lib/hours";
 
 export default async function Page() {
@@ -65,7 +70,7 @@ export default async function Page() {
                 <Grid item xs={4} md={2} lg={1}>
                     <Card>
                         <CardContent>
-                            <Typography>Month Hours</Typography>
+                            <Typography>{getMonth(now.getMonth())} Hours</Typography>
                             <Typography variant="h4">{monthHours}</Typography>
                         </CardContent>
                     </Card>

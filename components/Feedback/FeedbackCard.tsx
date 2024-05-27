@@ -32,7 +32,8 @@ export default function FeedbackCard({feedback, admin}: { feedback: Feedback | a
                         <>
                             <Grid item xs={2} md={1}>
                                 <Typography variant="subtitle2">Pilot Name</Typography>
-                                <Typography variant="body2">{feedback.pilot.fullName}</Typography>
+                                <Typography
+                                    variant="body2">{feedback.pilot.firstName} {feedback.pilot.lastName}</Typography>
                             </Grid>
                             <Grid item xs={2} md={1}>
                                 <Typography variant="subtitle2">Pilot CID</Typography>

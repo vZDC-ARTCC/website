@@ -4,6 +4,7 @@ import {getServerSession} from "next-auth";
 import {authOptions} from "@/auth/auth";
 import prisma from "@/lib/db";
 import {getRolesAndStaffPositions} from "@/auth/vatsimProvider";
+import {revalidatePath} from "next/cache";
 
 const DEV_MODE = process.env.NODE_ENV === "development";
 export const refreshData = async () => {
@@ -80,5 +81,7 @@ export const refreshData = async () => {
             cid: user.cid,
         }
     });
+
+    revalidatePath('/', "layout");
 
 }

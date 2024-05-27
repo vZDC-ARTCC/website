@@ -8,7 +8,7 @@ export default function Error({error}: { error: Error }) {
         <Container maxWidth="md">
             <Card>
                 <CardContent>
-                    <Typography variant="h5">Feedback</Typography>
+                    <Typography variant="h5">Staffing Request</Typography>
                     <Stack direction="row" spacing={1} alignItems="center" sx={{mt: 2,}}>
                         <Info color="error"/>
                         <Typography>{error.message}</Typography>

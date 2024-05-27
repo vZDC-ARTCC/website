@@ -25,16 +25,6 @@ export default async function Page({searchParams,}: {
             controllerStatus: {
                 not: "NONE",
             },
-            log: {
-                months: {
-                    every: {
-                        month: {
-                            gte: parseInt(startMonth),
-                            lte: parseInt(endMonth),
-                        },
-                    },
-                },
-            },
         },
         include: {
             log: {
@@ -45,9 +35,12 @@ export default async function Page({searchParams,}: {
         },
     });
 
-
     let condensedControllers = controllers.map(controller => {
-        const totalHours = controller.log?.months.reduce((sum, month) => sum + month.deliveryHours + month.groundHours + month.towerHours + month.approachHours + month.centerHours, 0);
+        const filteredMonths = controller.log?.months.filter(month => {
+            const monthInBounds = month.month >= parseInt(startMonth) && month.month <= parseInt(endMonth);
+            return monthInBounds && month.year === parseInt(year);
+        });
+        const totalHours = filteredMonths?.reduce((sum, month) => sum + month.deliveryHours + month.groundHours + month.towerHours + month.approachHours + month.centerHours, 0);
         return {
             controller: controller as User,
             totalHours: totalHours || 0,

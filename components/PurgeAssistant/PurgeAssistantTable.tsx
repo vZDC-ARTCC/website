@@ -43,11 +43,12 @@ export default function PurgeAssistantTable({controllers, user}: {
         await purgeControllers(selectedIds);
         setClickedOnce(false);
         setDisabled(false);
+        setSelectedIds([]);
         toast("Purge complete.", {type: "success",});
     }
 
     if (controllers.length === 0) {
-        return <Typography>No controllers found</Typography>
+        return <Typography>No controllers match criteria</Typography>
     }
 
     return (

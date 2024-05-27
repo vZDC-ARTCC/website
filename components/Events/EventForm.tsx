@@ -1,13 +1,12 @@
 'use client';
 import React from 'react';
 import {Event, EventType} from "@prisma/client";
-import {Box, Grid, MenuItem, TextField, Typography} from "@mui/material";
+import {Box, Grid, MenuItem, TextField, Typography, useTheme} from "@mui/material";
 import {DateTimePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
 import {z} from "zod";
-import {useColorScheme} from "@mui/material/styles";
 import {toast} from "react-toastify";
 import {createOrUpdateEvent} from "@/actions/event";
 import {useRouter} from "next/navigation";
@@ -26,7 +25,7 @@ const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
 
 export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl?: string }) {
 
-    const {mode} = useColorScheme();
+    const theme = useTheme();
     const [description, setDescription] = React.useState<string>(event?.description || '');
     const router = useRouter();
     dayjs.extend(utc);
@@ -86,6 +85,8 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
         toast(`Event '${data.name}' saved successfully!`, {type: 'success'});
     }
 
+    console.log(theme.palette.mode);
+
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
             <form action={handleSubmit}>
@@ -116,7 +117,7 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
                         <DateTimePicker name="end" defaultValue={dayjs(event?.end)} label="End (Zulu)"/>
                     </Grid>
                     <Grid item xs={2}>
-                        <Box sx={{ maxWidth: '700px', }} data-color-mode={mode || 'light'}>
+                        <Box sx={{maxWidth: '700px',}} data-color-mode={theme.palette.mode}>
                             <Typography variant="h6" sx={{ mb: 2, }}>Description</Typography>
                             <MarkdownEditor
                                 enableScroll={false}

@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import {Event} from '@prisma/client';
-import {FormControlLabel, Switch} from "@mui/material";
+import {FormControlLabel, Switch, Tooltip} from "@mui/material";
 import {setPositionsLock} from "@/actions/event";
 import {toast} from "react-toastify";
 
@@ -18,9 +18,11 @@ export default function EventPositionsLockButton({event}: { event: Event, }) {
     const eventIsWithin48Hours = new Date(event.start).getTime() - Date.now() < 48 * 60 * 60 * 1000;
 
     return (
-        <FormControlLabel disabled={eventIsWithin48Hours} onChange={(e, b) => changeLock(b)}
-                          control={<Switch checked={positionsLocked}/>}
-                          label="Lock Signups"/>
+        <Tooltip title={eventIsWithin48Hours ? 'Event is within 48 hours of start time.' : ''}>
+            <FormControlLabel disabled={eventIsWithin48Hours} onChange={(e, b) => changeLock(b)}
+                              control={<Switch checked={positionsLocked}/>}
+                              label="Lock Signups"/>
+        </Tooltip>
     );
 
 }
