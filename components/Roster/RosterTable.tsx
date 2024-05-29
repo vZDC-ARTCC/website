@@ -2,14 +2,18 @@ import React from 'react';
 import prisma from "@/lib/db";
 import {User} from "next-auth";
 import {
-    Box, Card, CardContent,
-    Chip, Paper,
+    Box,
+    Card,
+    CardContent,
+    Chip,
+    Stack,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
-    TableRow, Tooltip,
+    TableRow,
+    Tooltip,
     Typography
 } from "@mui/material";
 import {getRating, getSubtitle} from "@/lib/vatsim";
@@ -166,16 +170,19 @@ export default async function RosterTable({membership, search}: {
                                     </TableCell>
                                     {certificationTypes.map((certificationType) => (
                                         <TableCell key={certificationType.id}>
-                                            {getIconForCertificationOption(user.certifications.find((certification: any) => certification.certificationType.id === certificationType.id)?.certificationOption || "NONE")}
-                                            {user.soloCertifications.filter((soloCertification: any) => soloCertification.certificationType.id === certificationType.id).map((soloCertification: any) => (
-                                                <Tooltip key={soloCertification.id} title="Solo Certified">
-                                                    <Box>
-                                                        <Typography>{soloCertification.position}*</Typography>
-                                                        <Typography
-                                                            variant="subtitle2">{getDaysLeft(soloCertification.expires)}</Typography>
-                                                    </Box>
-                                                </Tooltip>
-                                            ))}
+                                            <Box>
+                                                <Stack direction="column" spacing={0.5}>
+                                                    {getIconForCertificationOption(user.certifications.find((certification: any) => certification.certificationType.id === certificationType.id)?.certificationOption || "NONE")}
+                                                    {user.soloCertifications.filter((soloCertification: any) => soloCertification.certificationType.id === certificationType.id).map((soloCertification: any) => (
+                                                        <>
+                                                            <Typography
+                                                                fontSize={12}>{soloCertification.position}*</Typography>
+                                                            <Typography fontSize={12}
+                                                                        variant="subtitle2">{getDaysLeft(soloCertification.expires)}</Typography>
+                                                        </>
+                                                    ))}
+                                                </Stack>
+                                            </Box>
                                         </TableCell>
                                     ))}
                                 </TableRow>
@@ -198,9 +205,11 @@ export default async function RosterTable({membership, search}: {
                                                     {user.user.soloCertifications.filter((soloCertification: any) => soloCertification.certificationType.id === certificationType.id).map((soloCertification: any) => (
                                                         <Tooltip key={soloCertification.id} title="Solo Certified">
                                                             <Box>
-                                                                <Typography>{soloCertification.position}*</Typography>
                                                                 <Typography
-                                                                    variant="subtitle2">{getDaysLeft(soloCertification.expires)}</Typography>
+                                                                    textAlign="center">{soloCertification.position}*</Typography>
+                                                                <Typography
+                                                                    variant="subtitle2"
+                                                                    textAlign="center">{getDaysLeft(soloCertification.expires)}</Typography>
                                                             </Box>
                                                         </Tooltip>
                                                     ))}

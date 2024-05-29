@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import {signIn, signOut} from "next-auth/react";
 import {ListItemIcon, ListItemText, MenuItem} from "@mui/material";
 import {Session} from "next-auth";
-import {AdminPanelSettings, Logout, Person, Refresh, Settings} from "@mui/icons-material";
+import {AdminPanelSettings, Class, Logout, Person, Refresh, Settings} from "@mui/icons-material";
 import NavDropdown from "@/components/Navbar/NavDropdown";
 import Link from "next/link";
 import {getRating} from "@/lib/vatsim";
@@ -64,9 +64,13 @@ export default function LoginButton({session, sidebar,}: { session: Session | nu
                     <Link href="/profile/overview" style={{textDecoration: 'none', color: 'inherit',}}>
                     <NavSidebarButton icon={<Settings/>} text="Profile"/>
                     </Link>}
-                {session?.user.roles.some((r) => ["MENTOR", "INSTRUCTOR", "STAFF"].includes(r)) &&
+                {session?.user.roles.some((r) => ["STAFF"].includes(r)) &&
                     <Link href="/admin/overview" style={{textDecoration: 'none', color: 'inherit',}}>
                         <NavSidebarButton icon={<AdminPanelSettings/>} text="Facility Administration"/>
+                    </Link>}
+                {session?.user.roles.some((r) => ["MENTOR", "INSTRUCTOR", "STAFF"].includes(r)) &&
+                    <Link href="/training/overview" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <NavSidebarButton icon={<Class/>} text="Training Administration"/>
                     </Link>}
                 <NavSidebarButton icon={<Refresh/>} text="Sync VATUSA information" onClick={() => handleRefresh()}/>
                 <NavSidebarButton icon={<Logout/>} text="Logout" onClick={logout}/>
@@ -84,13 +88,22 @@ export default function LoginButton({session, sidebar,}: { session: Session | nu
                         <ListItemText>Profile</ListItemText>
                     </MenuItem>
                     </Link>}
-                {session?.user.roles.some((r) => ["MENTOR", "INSTRUCTOR", "STAFF"].includes(r)) &&
+                {session?.user.roles.some((r) => ["STAFF"].includes(r)) &&
                     <Link href="/admin/overview" style={{textDecoration: 'none', color: 'inherit',}}>
                         <MenuItem onClick={closeDropdown}>
                             <ListItemIcon>
                                 <AdminPanelSettings/>
                             </ListItemIcon>
                             <ListItemText>Facility Administration</ListItemText>
+                        </MenuItem>
+                    </Link>}
+                {session?.user.roles.some((r) => ["MENTOR", "INSTRUCTOR", "STAFF"].includes(r)) &&
+                    <Link href="/training/overview" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <MenuItem onClick={closeDropdown}>
+                            <ListItemIcon>
+                                <Class/>
+                            </ListItemIcon>
+                            <ListItemText>Training Administration</ListItemText>
                         </MenuItem>
                     </Link>}
                 <MenuItem onClick={() => handleRefresh()}>

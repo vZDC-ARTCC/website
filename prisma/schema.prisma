@@ -81,6 +81,8 @@ model User {
   dossier               DossierEntry[]      @relation("DossierEntryUser")
   writtenDossierEntries DossierEntry[]      @relation("DossierEntryWriter")
   givenFeedback         Feedback[]          @relation("FeedbackController")
+  trainingSessionsGiven TrainingSession[]   @relation("TrainingsInstructor")
+  trainingSessions      TrainingSession[]   @relation("TrainingsStudent")
 }
 
 model VatsimUpdateMetadata {
@@ -180,6 +182,8 @@ model Certification {
   certificationOption CertificationOption
   certificationTypeId String
   userId              String
+
+  @@unique([certificationOption, userId])
 }
 
 enum LogType {
@@ -206,6 +210,10 @@ enum LogModel {
   SOLO_CERTIFICATION
   CERTIFICATION
   CERTIFICATION_TYPE
+  LESSON
+  COMMON_MISTAKE
+  LESSON_RUBRIC
+  TRAINING_SESSION
 }
 
 model Log {
@@ -345,4 +353,83 @@ model File {
   categoryId  String
   key         String
   updatedAt   DateTime
+}
+
+model Lesson {
+  id              String           @id @default(cuid())
+  identifier      String
+  name            String
+  description     String
+  facility        String
+  rubric          LessonRubric?    @relation(fields: [rubricId], references: [id])
+  rubricId        String?          @unique
+  updatedAt       DateTime
+  trainingTickets TrainingTicket[]
+}
+
+model LessonRubric {
+  id     String                 @id @default(cuid())
+  Lesson Lesson?
+  items  LessonRubricCriteria[]
+}
+
+model LessonRubricCriteria {
+  id          String               @id @default(cuid())
+  rubric      LessonRubric         @relation(fields: [rubricId], references: [id])
+  rubricId    String
+  criteria    String
+  description String
+  cells       LessonRubricCell[]
+  maxPoints   Int
+  scores      RubricCriteraScore[]
+}
+
+model LessonRubricCell {
+  id         String               @id @default(cuid())
+  criteria   LessonRubricCriteria @relation(fields: [criteriaId], references: [id])
+  criteriaId String
+
+  points      Int
+  description String
+  scores      RubricCriteraScore[]
+}
+
+model CommonMistake {
+  id               String          @id @default(cuid())
+  name             String
+  description      String
+  facility         String?
+  TrainingTicket   TrainingTicket? @relation(fields: [trainingTicketId], references: [id])
+  trainingTicketId String?
+}
+
+model TrainingSession {
+  id           String           @id @default(cuid())
+  student      User             @relation(fields: [studentId], references: [id], onDelete: Cascade, name: "TrainingsStudent", map: "trainingSessions")
+  studentId    String
+  instructor   User             @relation(fields: [instructorId], references: [id], onDelete: Cascade, name: "TrainingsInstructor", map: "trainingSessionsGiven")
+  instructorId String
+  start        DateTime
+  end          DateTime
+  tickets      TrainingTicket[]
+}
+
+model TrainingTicket {
+  id        String               @id @default(cuid())
+  session   TrainingSession      @relation(fields: [sessionId], references: [id])
+  sessionId String
+  lesson    Lesson               @relation(fields: [lessonId], references: [id])
+  lessonId  String
+  mistakes  CommonMistake[]
+  scores    RubricCriteraScore[]
+}
+
+model RubricCriteraScore {
+  id               String               @id @default(cuid())
+  criteria         LessonRubricCriteria @relation(fields: [criteriaId], references: [id])
+  criteriaId       String
+  cell             LessonRubricCell     @relation(fields: [cellId], references: [id])
+  cellId           String
+  trainingTicket   TrainingTicket?      @relation(fields: [trainingTicketId], references: [id])
+  trainingTicketId String?
 }

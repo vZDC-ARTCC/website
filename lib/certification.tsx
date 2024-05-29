@@ -12,7 +12,7 @@ export const getIconForCertificationOption = (certificationOption: Certification
         case "MAJOR":
             return <Tooltip title="Major Certified"><Check fontSize="large" color="success"/></Tooltip>;
         case "SOLO":
-            return null;
+            return <Tooltip title="Solo Certified"><Circle fontSize="large" color="info"/></Tooltip>;
         default:
             return <Clear fontSize="large" color="error"/>;
     }

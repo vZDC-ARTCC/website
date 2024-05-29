@@ -1,14 +1,12 @@
 'use client';
 import React from 'react';
 import {Certification, CertificationOption, CertificationType, SoloCertification} from "@prisma/client";
-import {Button, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography} from "@mui/material";
+import {FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography} from "@mui/material";
 import Link from "next/link";
-import {Save} from "@mui/icons-material";
 import {saveCertifications} from "@/actions/certifications";
 import {toast} from "react-toastify";
 import {getIconForCertificationOption} from "@/lib/certification";
 import {z} from "zod";
-import {useRouter} from "next/navigation";
 import FormSaveButton from "@/components/Form/FormSaveButton";
 
 export default function CertificationForm({cid, certificationTypes, certifications, soloCertifications}: {
@@ -17,8 +15,6 @@ export default function CertificationForm({cid, certificationTypes, certificatio
     certifications: Certification[],
     soloCertifications: SoloCertification[]
 }) {
-
-    const router = useRouter();
 
     const handleSubmit = async (formData: FormData) => {
         const newCertifications: Certification[] = [];
@@ -59,30 +55,44 @@ export default function CertificationForm({cid, certificationTypes, certificatio
                 {certificationTypes.length === 0 &&
                     <Typography textAlign="center">No certification types found. Create certification types <Link
                         href="/admin/certification-types" style={{color: 'inherit',}}>here</Link>.</Typography>}
-                {certificationTypes.map((certificationType) => (
-                    <FormControl key={certificationType.id} fullWidth>
-                        <InputLabel id={certificationType.id + 'label'}>{certificationType.name}</InputLabel>
-                        <Select
-                            labelId={certificationType.id + 'label'}
-                            id={certificationType.id}
-                            defaultValue={getCertificationForType(certifications, certificationType)?.certificationOption || ''}
-                            label="Certification"
-                            name={certificationType.id}
-                        >
-                            {certificationType.certificationOptions.map((certificationOption) => (
-                                <MenuItem key={certificationOption} value={certificationOption}>
+                {certificationTypes.map((certificationType) => {
+                    const soloCertification = soloCertifications.find(
+                        (soloCert) => soloCert.certificationTypeId === certificationType.id
+                    );
+                    const isSolo = Boolean(soloCertification);
+                    return (
+                        <FormControl key={certificationType.id} fullWidth>
+                            <InputLabel id={certificationType.id + 'label'}>{certificationType.name}</InputLabel>
+                            <Select
+                                labelId={certificationType.id + 'label'}
+                                id={certificationType.id}
+                                defaultValue={isSolo ? 'SOLO' : getCertificationForType(certifications, certificationType)?.certificationOption || ''}
+                                label="Certification"
+                                name={certificationType.id}
+                                disabled={isSolo}
+                            >
+                                {certificationType.certificationOptions.map((certificationOption) => (
+                                    <MenuItem key={certificationOption} value={certificationOption}>
+                                        <Stack direction="row" spacing={1} alignItems="center">
+                                            {getIconForCertificationOption(certificationOption)}
+                                            <Typography>
+                                                {certificationOption}
+                                            </Typography>
+                                        </Stack>
+                                    </MenuItem>
+                                ))}
+                                {isSolo && <MenuItem value="SOLO">
                                     <Stack direction="row" spacing={1} alignItems="center">
-                                        {getIconForCertificationOption(certificationOption)}
+                                        {getIconForCertificationOption('SOLO')}
                                         <Typography>
-                                            {certificationOption}
+                                            SOLO (revoke solo to change)
                                         </Typography>
                                     </Stack>
-
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                ))}
+                                </MenuItem>}
+                            </Select>
+                        </FormControl>
+                    );
+                })}
                 {certificationTypes.length > 0 &&
                     <TextField variant="filled" fullWidth label="Dossier Entry*" name="dossier"/>}
                 {certificationTypes.length > 0 &&
