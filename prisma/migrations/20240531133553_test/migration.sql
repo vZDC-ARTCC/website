@@ -380,11 +380,13 @@ CREATE TABLE "CommonMistake"
 -- CreateTable
 CREATE TABLE "TrainingSession"
 (
-    "id"           TEXT         NOT NULL,
-    "studentId"    TEXT         NOT NULL,
-    "instructorId" TEXT         NOT NULL,
-    "start"        TIMESTAMP(3) NOT NULL,
-    "end"          TIMESTAMP(3) NOT NULL,
+    "id"                 TEXT         NOT NULL,
+    "studentId"          TEXT         NOT NULL,
+    "instructorId"       TEXT         NOT NULL,
+    "start"              TIMESTAMP(3) NOT NULL,
+    "end"                TIMESTAMP(3) NOT NULL,
+    "additionalComments" TEXT,
+    "trainerComments"    TEXT,
 
     CONSTRAINT "TrainingSession_pkey" PRIMARY KEY ("id")
 );
@@ -392,9 +394,10 @@ CREATE TABLE "TrainingSession"
 -- CreateTable
 CREATE TABLE "TrainingTicket"
 (
-    "id"        TEXT NOT NULL,
-    "sessionId" TEXT NOT NULL,
-    "lessonId"  TEXT NOT NULL,
+    "id"        TEXT    NOT NULL,
+    "sessionId" TEXT    NOT NULL,
+    "lessonId"  TEXT    NOT NULL,
+    "passed"    BOOLEAN NOT NULL,
 
     CONSTRAINT "TrainingTicket_pkey" PRIMARY KEY ("id")
 );

@@ -1,14 +1,14 @@
 'use client';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {LessonRubricCell, LessonRubricCriteria, RubricCriteraScore} from "@prisma/client";
 import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip} from "@mui/material";
 import Markdown from "react-markdown";
 
-export default function LessonRubricGridInteractive({criteria, cells, scores, getScores}: {
+export default function LessonRubricGridInteractive({criteria, cells, scores, updateScores}: {
     criteria: LessonRubricCriteria[],
     cells: LessonRubricCell[],
     scores?: RubricCriteraScore[]
-    getScores: (scores: Record<string, number>) => void
+    updateScores: (scores: Record<string, number>) => void
 }) {
 
     const [selectedScores, setSelectedScores] = useState<Record<string, number>>(criteria.reduce((acc, criterion) => {
@@ -20,17 +20,13 @@ export default function LessonRubricGridInteractive({criteria, cells, scores, ge
     const maxPoints = Math.max(...criteria.map(criterion => criterion.maxPoints));
 
     const handleCellClick = (criterionId: string, points: number) => {
-        setSelectedScores((prev) => {
-            return {
-                ...prev,
-                [criterionId]: points
-            }
+        setSelectedScores({
+            ...selectedScores,
+            [criterionId]: points
         });
-    }
 
-    useEffect(() => {
-        getScores(selectedScores);
-    }, [getScores, selectedScores]);
+        updateScores(selectedScores);
+    }
 
     return (
         <>

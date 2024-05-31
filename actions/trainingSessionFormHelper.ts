@@ -25,3 +25,16 @@ export const getCriteriaForLesson = async (lessonId: string) => {
 
     return {criteria, cells: criteria.map(c => c.cells).flat()};
 }
+
+export const getTicketsForSession = async (trainingSessionId: string) => {
+    return prisma.trainingTicket.findMany({
+        where: {
+            sessionId: trainingSessionId,
+        },
+        include: {
+            mistakes: true,
+            scores: true,
+            lesson: true,
+        },
+    });
+}

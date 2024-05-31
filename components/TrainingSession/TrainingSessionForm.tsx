@@ -1,7 +1,7 @@
 'use client';
 import React, {useCallback, useEffect, useState} from 'react';
 import {CommonMistake, Lesson, RubricCriteraScore, TrainingSession} from "@prisma/client";
-import {getAllData} from "@/actions/trainingSessionFormHelper";
+import {getAllData, getTicketsForSession} from "@/actions/trainingSessionFormHelper";
 import {
     Accordion,
     AccordionDetails,
@@ -47,8 +47,8 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
         mistakes: CommonMistake[],
         scores: RubricCriteraScore[],
     }[]>([]);
-    const [additionalNotes, setAdditionalNotes] = useState<string>('');
-    const [trainerNotes, setTrainerNotes] = useState<string>('');
+    const [additionalNotes, setAdditionalNotes] = useState<string>(trainingSession?.additionalComments || '');
+    const [trainerNotes, setTrainerNotes] = useState<string>(trainingSession?.trainerComments || '');
 
     const getInitialData = useCallback(async () => {
         setAllLoading(true);
@@ -57,10 +57,26 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
         setAllCommonMistakes(commonMistakes);
         setAllUsers(users as User[]);
         setAllLoading(false);
+        if (trainingSession) {
+            const tickets = await getTicketsForSession(trainingSession.id);
+            setTrainingTickets(tickets.map((ticket) => {
+                return {
+                    passed: ticket.passed,
+                    lesson: ticket.lesson,
+                    mistakes: ticket.mistakes,
+                    scores: ticket.scores,
+                }
+            }));
+        }
     }, []);
 
-    const handleSubmit = async (formData: FormData) => {
-
+    const handleSubmit = async () => {
+        console.log(student);
+        console.log(start);
+        console.log(end);
+        console.log(trainingTickets);
+        console.log(additionalNotes);
+        console.log(trainerNotes);
     }
 
     useEffect(() => {
@@ -86,11 +102,11 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
                         />
                     </Grid>
                     <Grid item xs={2} md={1}>
-                        <DateTimePicker name="start" label="Start (Zulu)" value={dayjs(start)}
+                        <DateTimePicker label="Start (Zulu)" value={dayjs(start)}
                                         onChange={(d) => setStart(d?.toDate() || null)}/>
                     </Grid>
                     <Grid item xs={2} md={1}>
-                        <DateTimePicker name="end" label="End (Zulu)" value={dayjs(end)}
+                        <DateTimePicker label="End (Zulu)" value={dayjs(end)}
                                         onChange={(d) => setEnd(d?.toDate() || null)}/>
                     </Grid>
                     <Grid item xs={2}>

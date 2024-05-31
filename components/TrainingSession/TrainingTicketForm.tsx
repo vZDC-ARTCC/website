@@ -36,32 +36,23 @@ export default function TrainingTicketForm({
         const {criteria, cells} = await getCriteriaForLesson(lessonId);
         setCriteria(criteria);
         setCells(cells);
-        if (rubricScores.length > 0 && !hasPassed) {
-            const totalScore = rubricScores.reduce((total, score) => {
-                const cell = cells.find(cell => cell.id === score.cellId);
-                return total + (cell ? cell.points : 0);
-            }, 0);
-
-            const maxScore = cells.reduce((total, cell) => total + cell.points, 0);
-
-            setPassed(totalScore / maxScore >= 0.8);
-        }
-    }, [hasPassed, rubricScores]);
+    }, []);
 
     const handleSubmit = async () => {
         if (!selectedLesson) {
             toast('Please select a lesson', {type: 'error'});
-            return;
+        } else {
+            onSubmit(selectedLesson, selectedMistakes, rubricScores, passed);
+            if (!lesson) {
+                setRubricScores([]);
+                setSelectedLesson(null);
+                setSelectedMistakes([]);
+                setCriteria(undefined);
+                setCells(undefined);
+                setPassed(false);
+            }
         }
-        onSubmit(selectedLesson, selectedMistakes, rubricScores, passed);
-        if (!lesson) {
-            setRubricScores([]);
-            setSelectedLesson(null);
-            setSelectedMistakes([]);
-            setCriteria(undefined);
-            setCells(undefined);
-            setPassed(false);
-        }
+
     }
 
     useEffect(() => {
@@ -98,7 +89,7 @@ export default function TrainingTicketForm({
             <Grid item xs={2}>
                 {selectedLesson && (!criteria || !cells) && <CircularProgress/>}
                 {criteria && cells && <LessonRubricGridInteractive criteria={criteria} cells={cells} scores={scores}
-                                                                   getScores={(scores) => {
+                                                                   updateScores={(scores) => {
                                                                        setRubricScores(Object.keys(scores).map((criteriaId) => {
                                                                            return {
                                                                                id: rubricScores.find((score) => score.criteriaId === criteriaId)?.id || '',
