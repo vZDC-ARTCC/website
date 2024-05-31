@@ -16,7 +16,7 @@ export default async function Layout({children}: { children: React.ReactNode }) 
     return (
         <Grid container columns={9} spacing={2}>
             <Grid item xs={9} lg={2}>
-                <TrainingMenu user={session.user}/>
+                <TrainingMenu/>
             </Grid>
             <Grid item xs>
                 {children}

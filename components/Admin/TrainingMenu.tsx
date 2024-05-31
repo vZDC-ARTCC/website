@@ -2,10 +2,9 @@ import React from 'react';
 import {Badge, Card, CardContent, List, ListItemButton, ListItemIcon, ListItemText, Typography} from "@mui/material";
 import Link from "next/link";
 import {Class, FmdBad, Home, LocalActivity, MilitaryTech, WorkspacePremium,} from "@mui/icons-material";
-import {User} from "next-auth";
 import prisma from "@/lib/db";
 
-export default async function TrainingMenu({user}: { user: User, }) {
+export default async function TrainingMenu() {
 
     const soloCertifications = await prisma.soloCertification.count();
 

@@ -30,7 +30,7 @@ export default function LessonRubricGridInteractive({criteria, cells, scores, ge
 
     useEffect(() => {
         getScores(selectedScores);
-    }, [selectedScores]);
+    }, [getScores, selectedScores]);
 
     return (
         <>
