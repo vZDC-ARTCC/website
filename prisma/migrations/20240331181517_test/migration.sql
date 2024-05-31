@@ -1,2 +1,0 @@
--- AlterEnum
-ALTER TYPE "LogModel" ADD VALUE 'VISITOR_APPLICATION';

@@ -404,14 +404,16 @@ model CommonMistake {
 }
 
 model TrainingSession {
-  id           String           @id @default(cuid())
-  student      User             @relation(fields: [studentId], references: [id], onDelete: Cascade, name: "TrainingsStudent", map: "trainingSessions")
-  studentId    String
-  instructor   User             @relation(fields: [instructorId], references: [id], onDelete: Cascade, name: "TrainingsInstructor", map: "trainingSessionsGiven")
-  instructorId String
-  start        DateTime
-  end          DateTime
-  tickets      TrainingTicket[]
+  id                 String           @id @default(cuid())
+  student            User             @relation(fields: [studentId], references: [id], onDelete: Cascade, name: "TrainingsStudent", map: "trainingSessions")
+  studentId          String
+  instructor         User             @relation(fields: [instructorId], references: [id], onDelete: Cascade, name: "TrainingsInstructor", map: "trainingSessionsGiven")
+  instructorId       String
+  start              DateTime
+  end                DateTime
+  additionalComments String?
+  trainerComments    String?
+  tickets            TrainingTicket[]
 }
 
 model TrainingTicket {
@@ -420,6 +422,7 @@ model TrainingTicket {
   sessionId String
   lesson    Lesson               @relation(fields: [lessonId], references: [id])
   lessonId  String
+  passed    Boolean
   mistakes  CommonMistake[]
   scores    RubricCriteraScore[]
 }

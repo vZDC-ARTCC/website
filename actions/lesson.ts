@@ -69,8 +69,7 @@ export const createOrUpdateLessonDetails = async (formData: FormData) => {
         return {id: lesson.id, error: null};
     }
 
-    revalidatePath("/training/lessons");
-    revalidatePath(`/training/lessons/${result.data.lessonId || ''}`);
+    revalidatePath(`/training/lessons/`, "layout");
 
     return {id: result.data.lessonId, error: null};
 }

@@ -3,11 +3,9 @@ import prisma from "@/lib/db";
 import {notFound} from "next/navigation";
 import {
     Box,
-    Button,
     Card,
     CardContent,
     IconButton,
-    Stack,
     Table,
     TableBody,
     TableCell,
@@ -19,8 +17,9 @@ import {
 import LessonRubricCriteriaForm from "@/components/Lesson/LessonRubricCriteriaForm";
 import {LessonRubricCriteria} from "@prisma/client";
 import Link from "next/link";
-import {Add, Edit} from "@mui/icons-material";
+import {Edit} from "@mui/icons-material";
 import LessonCriteriaCellDeleteButton from "@/components/Lesson/LessonCriteriaCellDeleteButton";
+import LessonCriteriaCellForm from "@/components/Lesson/LessonCriteriaCellForm";
 
 export default async function Page({params}: { params: { id: string, criteriaId: string } }) {
 
@@ -56,13 +55,7 @@ export default async function Page({params}: { params: { id: string, criteriaId:
                             sx={{mb: 2,}}>{criteria.rubric.Lesson.identifier} - {criteria.rubric.Lesson.name}</Typography>
                 <LessonRubricCriteriaForm lesson={criteria.rubric.Lesson} criteria={criteria as LessonRubricCriteria}/>
                 <Box>
-                    <Stack direction={{xs: 'column', md: 'row',}} spacing={2} justifyContent="space-between"
-                           sx={{my: 2,}}>
-                        <Typography variant="h6">Criteria Cells</Typography>
-                        <Link href={`/training/lessons/${criteria.rubric.Lesson.id}/edit/${criteria.id}/new`}>
-                            <Button variant="contained" startIcon={<Add/>}>New Criteria Cell</Button>
-                        </Link>
-                    </Stack>
+                    <Typography variant="h6" sx={{my: 2,}}>Criteria Cells</Typography>
                     <TableContainer>
                         <Table>
                             <TableHead>
@@ -91,6 +84,8 @@ export default async function Page({params}: { params: { id: string, criteriaId:
                             </TableBody>
                         </Table>
                     </TableContainer>
+                    <Typography variant="h6" sx={{my: 2,}}>New Criteria Cell</Typography>
+                    <LessonCriteriaCellForm lesson={criteria.rubric.Lesson} criteria={criteria}/>
                 </Box>
             </CardContent>
         </Card>

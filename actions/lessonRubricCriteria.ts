@@ -3,6 +3,7 @@
 import {z} from "zod";
 import prisma from "@/lib/db";
 import {log} from "@/actions/log";
+import {revalidatePath} from "next/cache";
 
 export const createOrUpdateLessonRubricCriteria = async (formData: FormData) => {
     const criteriaZ = z.object({
@@ -48,6 +49,8 @@ export const createOrUpdateLessonRubricCriteria = async (formData: FormData) => 
 
         await log("UPDATE", "LESSON_RUBRIC", `Updated rubric criteria ${rubricCriteria.criteria} from lesson ${rubricCriteria.rubric.Lesson?.identifier}`)
 
+        revalidatePath(`/training/lessons/`, "layout");
+
         return {rubricCriteria};
     } else {
         const rubricCriteria = await prisma.lessonRubricCriteria.create({
@@ -81,6 +84,8 @@ export const createOrUpdateLessonRubricCriteria = async (formData: FormData) => 
 
         await log("CREATE", "LESSON_RUBRIC", `Created rubric criteria ${rubricCriteria.criteria} for lesson ${rubricCriteria.rubric.Lesson?.identifier}`)
 
+        revalidatePath(`/training/lessons/`, "layout");
+
         return {rubricCriteria};
     }
 
@@ -101,4 +106,6 @@ export const deleteLessonRubricCriteria = async (id: string) => {
     });
 
     await log("DELETE", "LESSON_RUBRIC", `Deleted rubric criteria ${criteria.criteria} from lesson ${criteria.rubric.Lesson?.identifier}`);
+
+    revalidatePath(`/training/lessons/`, "layout");
 }

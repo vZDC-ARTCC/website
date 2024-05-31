@@ -23,7 +23,7 @@ export default function LessonCriteriaCellForm({lesson, criteria, cell}: {
             return;
         }
 
-        router.push(`/training/lessons/${lesson.id}/edit/${criteria.id}`);
+        router.replace(`/training/lessons/${lesson.id}/edit/${criteria.id}`);
         toast("Criteria cell saved successfully!", {type: 'success'});
     }
 
@@ -37,7 +37,7 @@ export default function LessonCriteriaCellForm({lesson, criteria, cell}: {
                 <Grid item xs={2} md={1}>
                     <TextField fullWidth variant="filled" type="number" required name="points" label="Points"
                                helperText={`Points must be less than or equal to the maximum points in this criteria: ${criteria.maxPoints}`}
-                               defaultValue={cell?.points || ''}/>
+                               defaultValue={cell?.points || 0}/>
                 </Grid>
                 <Grid item xs={2} md={1}>
                     <TextField fullWidth variant="filled" type="text" required name="description" label="Description"

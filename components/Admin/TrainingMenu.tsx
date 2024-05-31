@@ -22,7 +22,7 @@ export default async function TrainingMenu({user}: { user: User, }) {
                             <ListItemText primary="Overview"/>
                         </ListItemButton>
                     </Link>
-                    <Link href="/training/tickets" style={{textDecoration: 'none', color: 'inherit',}}>
+                    <Link href="/training/sessions" style={{textDecoration: 'none', color: 'inherit',}}>
                         <ListItemButton>
                             <ListItemIcon>
                                 <LocalActivity/>

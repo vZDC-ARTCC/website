@@ -25,7 +25,7 @@ export default function LessonRubricCriteriaForm({lesson, criteria}: {
         }
 
         if (!criteria?.id) {
-            router.push(`/training/lessons/${lesson.id}/edit/${rubricCriteria?.id}`);
+            router.replace(`/training/lessons/${lesson.id}/edit/${rubricCriteria?.id}`);
         }
         toast("Criteria saved successfully!", {type: 'success'});
     }

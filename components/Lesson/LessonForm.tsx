@@ -23,7 +23,7 @@ export default function LessonForm({lesson}: { lesson?: Lesson, }) {
         }
 
         if (!lesson?.id) {
-            router.push(`/training/lessons/${id}/edit`);
+            router.replace(`/training/lessons/${id}/edit`);
         }
         toast("Lesson saved successfully!", {type: 'success'});
     }

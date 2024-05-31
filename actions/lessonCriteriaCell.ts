@@ -58,8 +58,7 @@ export const createOrUpdateLessonCriteriaCell = async (formData: FormData) => {
 
         await log("UPDATE", "LESSON_RUBRIC", `Updated criteria cell (${criteriaCell.points}) for ${criteriaCell.criteria.criteria}`)
 
-        revalidatePath(`/training/lessons/${result.data.lessonId}/edit/${criteriaCell.criteriaId}`);
-        revalidatePath(`/training/lessons/${result.data.lessonId}/edit`);
+        revalidatePath(`/training/lessons/`, "layout");
 
         return {criteriaCell};
     } else {
@@ -80,9 +79,7 @@ export const createOrUpdateLessonCriteriaCell = async (formData: FormData) => {
 
         await log("CREATE", "LESSON_RUBRIC", `Created criteria cell (${criteriaCell.points}) for ${criteriaCell.criteria.criteria}`)
 
-        revalidatePath(`/training/lessons/${result.data.lessonId}/edit/${criteriaCell.criteriaId}`);
-        revalidatePath(`/training/lessons/${result.data.lessonId}/edit`);
-        revalidatePath(`/training/lessons/${result.data.lessonId}`);
+        revalidatePath(`/training/lessons/`, "layout");
 
         return {criteriaCell};
     }
@@ -108,9 +105,7 @@ export const deleteLessonCriteriaCell = async (cellId: string) => {
 
     await log("DELETE", "LESSON_RUBRIC", `Deleted criteria cell (${cell.points}) for ${cell.criteria.criteria}`);
 
-    revalidatePath(`/training/lessons/${cell.criteria.rubric.Lesson?.id}/edit/${cell.criteriaId}`);
-    revalidatePath(`/training/lessons/${cell.criteria.rubric.Lesson?.id}/edit`);
-    revalidatePath(`/training/lessons/${cell.criteria.rubric.Lesson?.id}`);
+    revalidatePath(`/training/lessons/`, "layout");
 
     return {cell};
 }
