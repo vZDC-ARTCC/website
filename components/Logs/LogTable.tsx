@@ -88,7 +88,7 @@ export default function LogTable({onlyModels}: { onlyModels?: LogModel[], }) {
         } catch (error) {
             toast('Error fetching logs', {type: 'error'});
         }
-    }, [filter, pagination, sortModel]);
+    }, [filter, onlyModels, pagination, sortModel]);
 
     useEffect(() => {
         fetchData();
