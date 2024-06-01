@@ -53,7 +53,9 @@ export default async function LessonRubricGrid({lessonId, scores}: {
                                 {Array.from({length: criterion.maxPoints + 1}, (_, i) => i).map((point) => (
                                     <TableCell key={point} align="center" sx={{
                                         border: 1,
-                                        backgroundColor: criterion.cells.find((cell) => cell.points === point)?.id === scoreCellId ? 'rgba(0, 100, 200, 0.2)' : 'inherit'
+                                        backgroundColor: criterion.cells.find((cell) => cell.points === point)?.id === scoreCellId ? (
+                                            point >= criterion.passing ? 'rgba(0, 200, 0, 0.2)' : 'rgba(200, 0, 0, 0.2)'
+                                        ) : 'inherit',
                                     }}>
                                         {criterion.cells.find((cell) => cell.points === point)?.description}
                                     </TableCell>

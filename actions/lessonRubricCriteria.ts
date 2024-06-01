@@ -12,6 +12,7 @@ export const createOrUpdateLessonRubricCriteria = async (formData: FormData) => 
         rubricId: z.string().optional(),
         criteria: z.string().min(1, "Name is required").max(255, "Name is too long"),
         maxPoints: z.number().min(1, "Maximum points must be greater than or equal to 1"),
+        passing: z.number().min(0, "Passing points must be greater than or equal to 0"),
         description: z.string().min(1, "Description is required"),
     });
 
@@ -21,6 +22,7 @@ export const createOrUpdateLessonRubricCriteria = async (formData: FormData) => 
         rubricId: formData.get('rubricId') as string,
         criteria: formData.get('criteria') as string,
         maxPoints: Number(formData.get('maxPoints')),
+        passing: Number(formData.get('passing')),
         description: formData.get('description') as string,
     });
 
@@ -36,6 +38,7 @@ export const createOrUpdateLessonRubricCriteria = async (formData: FormData) => 
             data: {
                 criteria: result.data.criteria,
                 maxPoints: result.data.maxPoints,
+                passing: result.data.passing,
                 description: result.data.description,
             },
             include: {
@@ -57,6 +60,7 @@ export const createOrUpdateLessonRubricCriteria = async (formData: FormData) => 
             data: {
                 criteria: result.data.criteria,
                 maxPoints: result.data.maxPoints,
+                passing: result.data.passing,
                 description: result.data.description,
                 rubric: {
                     connectOrCreate: {

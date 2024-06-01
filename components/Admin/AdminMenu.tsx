@@ -33,10 +33,30 @@ export default async function AdminMenu() {
 
     const staffingRequests = await prisma.staffingRequest.findMany();
 
+    const atm = await prisma.user.findFirst({
+        where: {
+            staffPositions: {
+                has: "ATM",
+            },
+        },
+    });
+
+    const datm = await prisma.user.findFirst({
+        where: {
+            staffPositions: {
+                has: "DATM",
+            },
+        },
+    });
+
     return (
         <Card>
             <CardContent>
                 <Typography variant="h6" textAlign="center">Facility Administration</Typography>
+                <Typography variant="subtitle2"
+                            textAlign="center">ATM: {atm?.firstName} {atm?.lastName || 'N/A'}</Typography>
+                <Typography variant="subtitle2"
+                            textAlign="center">DATM: {datm?.firstName} {datm?.lastName || 'N/A'}</Typography>
                 <List>
                     <Link href="/admin/overview" style={{textDecoration: 'none', color: 'inherit',}}>
                         <ListItemButton>

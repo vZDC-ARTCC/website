@@ -7,6 +7,7 @@ import CertificationsCard from "@/components/Profile/CertificationsCard";
 import FeedbackCard from "@/components/Profile/FeedbackCard";
 import TrainingCard from "@/components/Profile/TrainingCard";
 import LinksCard from "@/components/Profile/LinksCard";
+import EventSignupCard from "@/components/Profile/EventSignupCard";
 
 export default async function Page() {
 
@@ -30,10 +31,12 @@ export default async function Page() {
             <Grid item xs={6} md={2}>
                 <LinksCard/>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={6} md={4}>
                 <TrainingCard user={user}/>
             </Grid>
-
+            <Grid item xs={6} md={2}>
+                <EventSignupCard user={user}/>
+            </Grid>
         </Grid>
     );
 }

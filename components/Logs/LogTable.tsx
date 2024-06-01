@@ -1,12 +1,15 @@
 'use client';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
-    DataGrid, getGridSingleSelectOperators, getGridStringOperators,
+    DataGrid,
+    getGridSingleSelectOperators,
+    getGridStringOperators,
     GridColDef,
     GridFilterItem,
     GridFilterModel,
     GridPaginationModel,
-    GridSortModel, GridToolbar
+    GridSortModel,
+    GridToolbar
 } from "@mui/x-data-grid";
 import {fetchLogs} from "@/actions/log";
 import {toast} from "react-toastify";
@@ -15,49 +18,8 @@ import {LogModel, LogType} from "@prisma/client";
 const equalsOnlyFilterOperator = getGridStringOperators().filter((operator) => operator.value === 'equals');
 const containsOnlyFilterOperator = getGridStringOperators().filter((operator) => operator.value === 'contains');
 
-const columns: GridColDef[] = [
-    {
-        field: 'timestamp',
-        headerName: 'Timestamp',
-        width: 200,
-        type: 'dateTime',
-        filterable: false,
-    },
-    {
-        field: 'user',
-        headerName: 'User',
-        renderCell: (params) => `${params.row.user?.cid} (${params.row.user?.fullName})` || 'Unknown',
-        sortable: false,
-        filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
-    },
-    {
-        field: 'type',
-        type: 'singleSelect',
-        valueOptions: Object.keys(LogType).map((model) => ({value: model, label: model})),
-        headerName: 'Type',
-        sortable: false,
-        filterOperators: getGridSingleSelectOperators().filter((operator) => operator.value === 'is'),
-    },
-    {
-        field: 'model',
-        type: 'singleSelect',
-        valueOptions: Object.keys(LogModel).map((model) => ({value: model, label: model})),
-        headerName: 'Model',
-        width: 200,
-        sortable: false,
-        filterOperators: getGridSingleSelectOperators().filter((operator) => operator.value === 'is'),
-    },
-    {
-        field: 'message',
-        headerName: 'Message',
-        width: 400,
-        sortable: false,
-        filterable: false,
-        filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
-    },
-];
 
-function LogTable() {
+export default function LogTable({onlyModels}: { onlyModels?: LogModel[], }) {
     const [logs, setLogs] = useState<any[]>([]);
     const [pagination, setPagination] = useState({page: 0, pageSize: 10, rowCount: 0});
     const [filter, setFilter] = useState<GridFilterItem>();
@@ -68,9 +30,54 @@ function LogTable() {
         }
     ]);
 
+    const columns: GridColDef[] = [
+        {
+            field: 'timestamp',
+            headerName: 'Timestamp',
+            width: 200,
+            type: 'dateTime',
+            filterable: false,
+        },
+        {
+            field: 'user',
+            headerName: 'User',
+            renderCell: (params) => `${params.row.user?.cid} (${params.row.user?.fullName})` || 'Unknown',
+            sortable: false,
+            filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
+        },
+        {
+            field: 'type',
+            type: 'singleSelect',
+            valueOptions: Object.keys(LogType).map((model) => ({value: model, label: model})),
+            headerName: 'Type',
+            sortable: false,
+            filterOperators: getGridSingleSelectOperators().filter((operator) => operator.value === 'is'),
+        },
+        {
+            field: 'model',
+            type: 'singleSelect',
+            valueOptions: onlyModels?.map((model) => ({
+                value: model,
+                label: model
+            })) || Object.keys(LogModel).map((model) => ({value: model, label: model})),
+            headerName: 'Model',
+            width: 200,
+            sortable: false,
+            filterOperators: getGridSingleSelectOperators().filter((operator) => operator.value === 'is'),
+        },
+        {
+            field: 'message',
+            headerName: 'Message',
+            width: 400,
+            sortable: false,
+            filterable: false,
+            filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
+        },
+    ];
+
     const fetchData = useCallback(async () => {
         try {
-            const fetchedLogs = await fetchLogs(pagination, sortModel, filter); // Assuming you're only sorting by one column
+            const fetchedLogs = await fetchLogs(pagination, sortModel, filter, onlyModels); // Assuming you're only sorting by one column
             setLogs(fetchedLogs[1]);
             if (fetchedLogs[0] !== pagination.rowCount) {
                 setPagination((prevPagination) => ({
@@ -125,5 +132,3 @@ function LogTable() {
 
     );
 }
-
-export default LogTable;

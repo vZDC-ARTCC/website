@@ -19,6 +19,8 @@ export const createOrUpdateLessonDetails = async (formData: FormData) => {
         name: z.string(),
         facility: z.string(),
         description: z.string(),
+        instructorOnly: z.boolean(),
+        notifyInstructorOnPass: z.boolean(),
         lessonId: z.string().optional(),
     });
 
@@ -27,6 +29,8 @@ export const createOrUpdateLessonDetails = async (formData: FormData) => {
         name: formData.get("name") as string,
         facility: formData.get("facility") as string,
         description: formData.get("description") as string,
+        instructorOnly: formData.get("instructorOnly") === "on",
+        notifyInstructorOnPass: formData.get("notifyInstructorOnPass") === "on",
         lessonId: formData.get("lessonId") as string,
     });
 
@@ -42,14 +46,9 @@ export const createOrUpdateLessonDetails = async (formData: FormData) => {
                 name: result.data.name,
                 facility: result.data.facility,
                 description: result.data.description,
+                instructorOnly: result.data.instructorOnly,
+                notifyInstructorOnPass: result.data.notifyInstructorOnPass,
                 updatedAt: new Date(),
-                rubric: {
-                    create: {
-                        items: {
-                            create: [],
-                        },
-                    },
-                },
             },
         });
 
@@ -61,6 +60,8 @@ export const createOrUpdateLessonDetails = async (formData: FormData) => {
                 name: result.data.name,
                 facility: result.data.facility,
                 description: result.data.description,
+                instructorOnly: result.data.instructorOnly,
+                notifyInstructorOnPass: result.data.notifyInstructorOnPass,
                 updatedAt: new Date(),
             },
         });

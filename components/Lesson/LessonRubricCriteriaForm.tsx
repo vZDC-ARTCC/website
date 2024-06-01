@@ -25,7 +25,7 @@ export default function LessonRubricCriteriaForm({lesson, criteria}: {
         }
 
         if (!criteria?.id) {
-            router.replace(`/training/lessons/${lesson.id}/edit/${rubricCriteria?.id}`);
+            router.push(`/training/lessons/${lesson.id}/edit/${rubricCriteria?.id}`);
         }
         toast("Criteria saved successfully!", {type: 'success'});
     }
@@ -37,13 +37,18 @@ export default function LessonRubricCriteriaForm({lesson, criteria}: {
             <input type="hidden" name="rubricId" value={lesson?.rubricId || ''}/>
             <input type="hidden" name="description" value={description}/>
             <Grid container columns={2} spacing={2}>
-                <Grid item xs={2} md={1}>
+                <Grid item xs={2}>
                     <TextField fullWidth required variant="filled" name="criteria" label="Name"
                                defaultValue={criteria?.criteria || ''}/>
                 </Grid>
                 <Grid item xs={2} md={1}>
                     <TextField fullWidth required variant="filled" type="number" name="maxPoints" label="Maximum Points"
                                defaultValue={criteria?.maxPoints || 0}/>
+                </Grid>
+                <Grid item xs={2} md={1}>
+                    <TextField fullWidth required variant="filled" type="number" name="passing" label="Passing Points"
+                               defaultValue={criteria?.passing || 0}
+                               helperText="The smallest number of points required to pass this criteria."/>
                 </Grid>
                 <Grid item xs={2}>
                     <Box sx={{maxWidth: '700px',}} data-color-mode={theme.palette.mode}>

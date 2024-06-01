@@ -1,17 +1,27 @@
 import React from 'react';
 import {Badge, Card, CardContent, List, ListItemButton, ListItemIcon, ListItemText, Typography} from "@mui/material";
 import Link from "next/link";
-import {Class, FmdBad, Home, LocalActivity, MilitaryTech, WorkspacePremium,} from "@mui/icons-material";
+import {Class, FmdBad, Home, ListAlt, LocalActivity, MilitaryTech, WorkspacePremium,} from "@mui/icons-material";
 import prisma from "@/lib/db";
 
 export default async function TrainingMenu() {
 
     const soloCertifications = await prisma.soloCertification.count();
 
+    const ta = await prisma.user.findFirst({
+        where: {
+            staffPositions: {
+                has: "TA",
+            },
+        },
+    });
+
     return (
         <Card>
             <CardContent>
                 <Typography variant="h6" textAlign="center">Training Administration</Typography>
+                <Typography variant="subtitle2"
+                            textAlign="center">TA: {ta?.firstName} {ta?.lastName || 'N/A'}</Typography>
                 <List>
                     <Link href="/training/overview" style={{textDecoration: 'none', color: 'inherit',}}>
                         <ListItemButton>
@@ -61,6 +71,14 @@ export default async function TrainingMenu() {
                                 <FmdBad/>
                             </ListItemIcon>
                             <ListItemText primary="Mistakes"/>
+                        </ListItemButton>
+                    </Link>
+                    <Link href="/training/logs" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <ListAlt/>
+                            </ListItemIcon>
+                            <ListItemText primary="Logs"/>
                         </ListItemButton>
                     </Link>
                 </List>

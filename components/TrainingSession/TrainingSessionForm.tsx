@@ -19,7 +19,7 @@ import {
     Typography,
     useTheme
 } from "@mui/material";
-import {useSearchParams} from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 import {User} from "next-auth";
 import {DateTimePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import dayjs from "dayjs";
@@ -29,16 +29,18 @@ import {Delete, ExpandMore} from "@mui/icons-material";
 import {toast} from "react-toastify";
 import MarkdownEditor from "@uiw/react-markdown-editor";
 import FormSaveButton from "@/components/Form/FormSaveButton";
+import {createOrUpdateTrainingSession} from "@/actions/trainingSession";
 
 export default function TrainingSessionForm({trainingSession,}: { trainingSession?: TrainingSession, }) {
 
+    const router = useRouter();
     const theme = useTheme();
     const searchParams = useSearchParams();
     const [allLessons, setAllLessons] = useState<Lesson[]>([]);
     const [allCommonMistakes, setAllCommonMistakes] = useState<CommonMistake[]>([]);
     const [allUsers, setAllUsers] = useState<User[]>([]);
     const [allLoading, setAllLoading] = useState<boolean>(true);
-    const [student, setStudent] = useState<string>(searchParams.get('student') || '');
+    const [student, setStudent] = useState<string>(trainingSession?.studentId || searchParams.get('student') || '');
     const [start, setStart] = useState<Date | null>(trainingSession?.start || new Date());
     const [end, setEnd] = useState<Date | null>(trainingSession?.end || new Date());
     const [trainingTickets, setTrainingTickets] = useState<{
@@ -61,22 +63,31 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
             const tickets = await getTicketsForSession(trainingSession.id);
             setTrainingTickets(tickets.map((ticket) => {
                 return {
-                    passed: ticket.passed,
+                    passed: ticket.scores.every((score) => score.passed),
                     lesson: ticket.lesson,
                     mistakes: ticket.mistakes,
                     scores: ticket.scores,
                 }
             }));
         }
-    }, []);
+    }, [trainingSession]);
 
     const handleSubmit = async () => {
-        console.log(student);
-        console.log(start);
-        console.log(end);
-        console.log(trainingTickets);
-        console.log(additionalNotes);
-        console.log(trainerNotes);
+
+        const {
+            session,
+            errors
+        } = await createOrUpdateTrainingSession(student, start, end, trainingTickets, additionalNotes, trainerNotes, trainingSession?.id);
+
+        if (errors) {
+            toast(errors.map((e) => e.message).join(".  "), {type: 'error'});
+            return;
+        }
+
+        if (!trainingSession?.id) {
+            router.replace(`/training/sessions/${session.id}`);
+        }
+        toast("Training session saved successfully!", {type: 'success'});
     }
 
     useEffect(() => {
@@ -93,8 +104,10 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
                 <Grid container columns={2} spacing={2}>
                     <Grid item xs={2}>
                         <Autocomplete
+                            disabled={!!trainingSession}
                             options={allUsers}
                             getOptionLabel={(option) => `${option.firstName} ${option.lastName} (${option.cid})`}
+                            value={allUsers.find((u) => u.id === student) || null}
                             onChange={(event, newValue) => {
                                 setStudent(newValue ? newValue.id : '');
                             }}
@@ -102,70 +115,73 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
                         />
                     </Grid>
                     <Grid item xs={2} md={1}>
-                        <DateTimePicker label="Start (Zulu)" value={dayjs(start)}
+                        <DateTimePicker label="Start" value={dayjs(start)}
                                         onChange={(d) => setStart(d?.toDate() || null)}/>
                     </Grid>
                     <Grid item xs={2} md={1}>
-                        <DateTimePicker label="End (Zulu)" value={dayjs(end)}
+                        <DateTimePicker label="End" value={dayjs(end)}
                                         onChange={(d) => setEnd(d?.toDate() || null)}/>
                     </Grid>
                     <Grid item xs={2}>
-                        {trainingTickets.length > 0 &&
-                            <Typography variant="h6" sx={{mb: 2,}}>Training Tickets</Typography>}
-                        {trainingTickets.map((ticket, index) => (
-                            <Accordion key={index}>
-                                <AccordionSummary expandIcon={<ExpandMore/>}>
-                                    <Stack direction="row" spacing={1} alignItems="center">
-                                        <Typography>{ticket.lesson.identifier} - {ticket.lesson.name}</Typography>
-                                        <IconButton
-                                            onClick={() => setTrainingTickets(trainingTickets.filter((tt, i) => i !== index))}>
-                                            <Delete/>
-                                        </IconButton>
-                                        <Chip label={ticket.passed ? 'PASS' : 'FAIL'}
-                                              color={ticket.passed ? 'success' : 'error'}/>
-                                    </Stack>
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    <TrainingTicketForm allLessons={allLessons} allCommonMistakes={allCommonMistakes}
-                                                        lesson={ticket.lesson} mistakes={ticket.mistakes}
-                                                        scores={ticket.scores} hasPassed={ticket.passed}
-                                                        onSubmit={(lesson, mistakes, scores, passed) => {
-                                                            if (lesson.id !== ticket.lesson.id && trainingTickets.map((t) => t.lesson.id).flat().includes(lesson.id)) {
-                                                                toast('Lesson already added', {type: 'error'});
-                                                                return;
-                                                            }
-                                                            setTrainingTickets((prev) => {
-                                                                return prev.map((t, i) => {
-                                                                    if (i === index) {
-                                                                        return {
-                                                                            passed,
-                                                                            lesson,
-                                                                            mistakes,
-                                                                            scores,
-                                                                        }
-                                                                    }
-                                                                    return t;
-                                                                });
-                                                            });
-                                                            toast('Ticket saved', {type: 'success'});
-                                                        }}/>
-                                </AccordionDetails>
-                            </Accordion>
-                        ))}
+                        {trainingTickets.length > 0 && <Card variant="outlined">
+                            <CardContent>
+                                <Typography variant="h6" sx={{mb: 2,}}>Training Ticket(s)</Typography>
+                                {trainingTickets.map((ticket, index) => (
+                                    <Accordion key={index}>
+                                        <AccordionSummary expandIcon={<ExpandMore/>}>
+                                            <Stack direction="row" spacing={1} alignItems="center">
+                                                <Typography>{ticket.lesson.identifier} - {ticket.lesson.name}</Typography>
+                                                <IconButton
+                                                    onClick={() => setTrainingTickets(trainingTickets.filter((tt, i) => i !== index))}>
+                                                    <Delete/>
+                                                </IconButton>
+                                                <Chip label={ticket.passed ? 'PASS' : 'FAIL'}
+                                                      color={ticket.passed ? 'success' : 'error'}/>
+                                            </Stack>
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            <TrainingTicketForm allLessons={allLessons}
+                                                                allCommonMistakes={allCommonMistakes}
+                                                                lesson={ticket.lesson} mistakes={ticket.mistakes}
+                                                                scores={ticket.scores}
+                                                                onSubmit={(lesson, mistakes, scores) => {
+                                                                    setTrainingTickets((prev) => {
+                                                                        return prev.map((t, i) => {
+                                                                            if (i === index) {
+                                                                                return {
+                                                                                    passed: scores.every((score) => score.passed),
+                                                                                    lesson,
+                                                                                    mistakes,
+                                                                                    scores,
+                                                                                }
+                                                                            }
+                                                                            return t;
+                                                                        });
+                                                                    });
+                                                                    toast('Ticket saved', {type: 'success'});
+                                                                    return true;
+                                                                }}/>
+                                        </AccordionDetails>
+                                    </Accordion>
+                                ))}
+                            </CardContent>
+                        </Card>}
+                    </Grid>
+                    <Grid item xs={2}>
                         <Card variant="outlined">
                             <CardContent>
                                 <Typography variant="h6" sx={{mb: 2,}}>New Training Ticket</Typography>
                                 <TrainingTicketForm allLessons={allLessons} allCommonMistakes={allCommonMistakes}
-                                                    onSubmit={(lesson, mistakes, scores, passed) => {
+                                                    onSubmit={(lesson, mistakes, scores) => {
                                                         if (trainingTickets.map((t) => t.lesson.id).flat().includes(lesson.id)) {
                                                             toast('Lesson already added', {type: 'error'});
-                                                            return;
+                                                            return false;
                                                         }
                                                         setTrainingTickets((prev) => {
                                                             return [
                                                                 ...prev,
                                                                 {
-                                                                    passed,
+                                                                    passed: scores.every((score) => score.passed),
                                                                     lesson,
                                                                     mistakes,
                                                                     scores,
@@ -173,6 +189,7 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
                                                             ];
                                                         });
                                                         toast('Ticket saved', {type: 'success'});
+                                                        return true;
                                                     }}/>
                             </CardContent>
                         </Card>

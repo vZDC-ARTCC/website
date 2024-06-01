@@ -4,7 +4,7 @@ import {LogModel, LogType, Prisma} from "@prisma/client";
 import prisma from "@/lib/db";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/auth/auth";
-import {GridFilterItem, GridFilterModel, GridPaginationModel, GridSortModel} from "@mui/x-data-grid";
+import {GridFilterItem, GridPaginationModel, GridSortModel} from "@mui/x-data-grid";
 
 export const log = async (type: LogType, model: LogModel, message: string) => {
 
@@ -27,7 +27,7 @@ export const log = async (type: LogType, model: LogModel, message: string) => {
     }
 }
 
-export const fetchLogs = async (pagination: GridPaginationModel, sort: GridSortModel, filter?: GridFilterItem) => {
+export const fetchLogs = async (pagination: GridPaginationModel, sort: GridSortModel, filter?: GridFilterItem, onlyModels?: LogModel[]) => {
 
     const orderBy: Prisma.LogOrderByWithRelationInput = {};
     if (sort.length > 0) {
@@ -36,58 +36,40 @@ export const fetchLogs = async (pagination: GridPaginationModel, sort: GridSortM
 
     return prisma.$transaction([
         prisma.log.count({
-            where: filter ? (filter.field === 'user' ? {
-                user: {
-                    OR: [
-                        {
-                            fullName: {
-                                [filter.operator]: filter.value,
-                                mode: 'insensitive',
-                            },
-                        },
-                        {
-                            cid: {
-                                [filter.operator]: filter.value,
-                                mode: 'insensitive',
-                            },
-                        },
-                    ],
+            where: filter ? filter?.field === 'model' ? {
+                model: {
+                    in: [...(onlyModels || []), filter.field === 'model' && filter.value].filter((v) => !!v),
                 },
             } : {
-
+                model: {
+                    in: onlyModels || Object.values(LogModel),
+                },
                 [filter.field]: {
                     equals: filter.value,
                 },
-            }) : undefined,
+            } : undefined,
         }),
         prisma.log.findMany({
             orderBy,
             include: {
                 user: true,
             },
-            where: filter ? (filter.field === 'user' ? {
-                user: {
-                    OR: [
-                        {
-                            fullName: {
-                                [filter.operator]: filter.value,
-                                mode: 'insensitive',
-                            },
-                        },
-                        {
-                            cid: {
-                                [filter.operator]: filter.value,
-                                mode: 'insensitive',
-                            },
-                        },
-                    ],
+            where: filter ? filter?.field === 'model' ? {
+                model: {
+                    in: [...(onlyModels || []), filter.field === 'model' && filter.value].filter((v) => !!v),
                 },
             } : {
-
+                model: {
+                    in: onlyModels || Object.values(LogModel),
+                },
                 [filter.field]: {
                     equals: filter.value,
                 },
-            }) : undefined,
+            } : {
+                model: {
+                    in: onlyModels || Object.values(LogModel),
+                },
+            },
             take: pagination.pageSize,
             skip: pagination.page * pagination.pageSize,
         })

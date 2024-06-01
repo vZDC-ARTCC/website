@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-    Box,
     Card,
     CardContent,
     IconButton,
@@ -54,53 +53,53 @@ export default async function Page({params}: { params: { id: string, }, }) {
             <CardContent>
                 <Typography variant="h5" sx={{mb: 2,}}>{lesson.identifier} - {lesson.name}</Typography>
                 <Stack direction="column" spacing={2}>
-                    <Box>
-                        <Typography variant="h6" sx={{mb: 1,}}>Lesson Details</Typography>
-                        <LessonForm lesson={lesson}/>
-                    </Box>
-                    <Stack direction="column" spacing={2}>
-                        <Card variant="outlined">
-                            <CardContent>
-                                <Typography variant="h6" sx={{mb: 1,}}>Lesson Rubric Criteria</Typography>
-                                <TableContainer>
-                                    <Table>
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell>Criteria</TableCell>
-                                                <TableCell>Cells</TableCell>
-                                                <TableCell>Max Points</TableCell>
-                                                <TableCell>Actions</TableCell>
+                    <Card variant="outlined">
+                        <CardContent>
+                            <Typography variant="h6" sx={{mb: 1,}}>Lesson Details</Typography>
+                            <LessonForm lesson={lesson}/>
+                        </CardContent>
+                    </Card>
+                    <Card variant="outlined">
+                        <CardContent>
+                            <Typography variant="h6" sx={{mb: 1,}}>Lesson Rubric Criteria</Typography>
+                            <TableContainer>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Criteria</TableCell>
+                                            <TableCell>Cells</TableCell>
+                                            <TableCell>Max Points</TableCell>
+                                            <TableCell>Actions</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {lesson.rubric?.items.map((criteria) => (
+                                            <TableRow key={criteria.id}>
+                                                <TableCell>{criteria.criteria}</TableCell>
+                                                <TableCell>{criteria.cells.length}</TableCell>
+                                                <TableCell>{criteria.maxPoints}</TableCell>
+                                                <TableCell>
+                                                    <Link
+                                                        href={`/training/lessons/${lesson.id}/edit/${criteria.id}`}>
+                                                        <IconButton size="small">
+                                                            <Edit/>
+                                                        </IconButton>
+                                                    </Link>
+                                                    <LessonRubricCriteriaDeleteButton rubricCriteria={criteria}/>
+                                                </TableCell>
                                             </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {lesson.rubric?.items.map((criteria) => (
-                                                <TableRow key={criteria.id}>
-                                                    <TableCell>{criteria.criteria}</TableCell>
-                                                    <TableCell>{criteria.cells.length}</TableCell>
-                                                    <TableCell>{criteria.maxPoints}</TableCell>
-                                                    <TableCell>
-                                                        <Link
-                                                            href={`/training/lessons/${lesson.id}/edit/${criteria.id}`}>
-                                                            <IconButton size="small">
-                                                                <Edit/>
-                                                            </IconButton>
-                                                        </Link>
-                                                        <LessonRubricCriteriaDeleteButton rubricCriteria={criteria}/>
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                            </CardContent>
-                        </Card>
-                        <Card variant="outlined">
-                            <CardContent>
-                                <Typography variant="h6" sx={{mb: 2,}}>New Lesson Rubric Criteria</Typography>
-                                <LessonRubricCriteriaForm lesson={lesson}/>
-                            </CardContent>
-                        </Card>
-                    </Stack>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </CardContent>
+                    </Card>
+                    <Card variant="outlined">
+                        <CardContent>
+                            <Typography variant="h6" sx={{mb: 2,}}>New Lesson Rubric Criteria</Typography>
+                            <LessonRubricCriteriaForm lesson={lesson}/>
+                        </CardContent>
+                    </Card>
                 </Stack>
             </CardContent>
         </Card>

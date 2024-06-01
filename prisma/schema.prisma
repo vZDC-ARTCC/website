@@ -356,15 +356,17 @@ model File {
 }
 
 model Lesson {
-  id              String           @id @default(cuid())
-  identifier      String
-  name            String
-  description     String
-  facility        String
-  rubric          LessonRubric?    @relation(fields: [rubricId], references: [id])
-  rubricId        String?          @unique
-  updatedAt       DateTime
-  trainingTickets TrainingTicket[]
+  id                     String           @id @default(cuid())
+  identifier             String
+  name                   String
+  description            String
+  facility               String
+  rubric                 LessonRubric?    @relation(fields: [rubricId], references: [id])
+  rubricId               String?          @unique
+  updatedAt              DateTime
+  instructorOnly         Boolean
+  notifyInstructorOnPass Boolean
+  trainingTickets        TrainingTicket[]
 }
 
 model LessonRubric {
@@ -380,6 +382,7 @@ model LessonRubricCriteria {
   criteria    String
   description String
   cells       LessonRubricCell[]
+  passing     Int
   maxPoints   Int
   scores      RubricCriteraScore[]
 }
@@ -418,9 +421,9 @@ model TrainingSession {
 
 model TrainingTicket {
   id        String               @id @default(cuid())
-  session   TrainingSession      @relation(fields: [sessionId], references: [id])
+  session   TrainingSession      @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   sessionId String
-  lesson    Lesson               @relation(fields: [lessonId], references: [id])
+  lesson    Lesson               @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   lessonId  String
   passed    Boolean
   mistakes  CommonMistake[]
@@ -429,10 +432,11 @@ model TrainingTicket {
 
 model RubricCriteraScore {
   id               String               @id @default(cuid())
-  criteria         LessonRubricCriteria @relation(fields: [criteriaId], references: [id])
+  criteria         LessonRubricCriteria @relation(fields: [criteriaId], references: [id], onDelete: Cascade)
   criteriaId       String
-  cell             LessonRubricCell     @relation(fields: [cellId], references: [id])
+  cell             LessonRubricCell     @relation(fields: [cellId], references: [id], onDelete: Cascade)
   cellId           String
-  trainingTicket   TrainingTicket?      @relation(fields: [trainingTicketId], references: [id])
+  trainingTicket   TrainingTicket?      @relation(fields: [trainingTicketId], references: [id], onDelete: Cascade)
   trainingTicketId String?
+  passed           Boolean
 }

@@ -33,12 +33,14 @@ export default function LinksCard() {
                         </ListItemIcon>
                         <ListItemText primary="New Incident Report"/>
                     </ListItemButton>
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <Badge/>
-                        </ListItemIcon>
-                        <ListItemText primary="ARTCC Staff"/>
-                    </ListItemButton>
+                    <Link href="/controllers/staff" style={{color: 'inherit', textDecoration: 'none',}}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <Badge/>
+                            </ListItemIcon>
+                            <ListItemText primary="ARTCC Staff"/>
+                        </ListItemButton>
+                    </Link>
                     <ListItemButton>
                         <ListItemIcon>
                             <BugReport/>

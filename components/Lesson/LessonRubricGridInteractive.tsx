@@ -20,12 +20,12 @@ export default function LessonRubricGridInteractive({criteria, cells, scores, up
     const maxPoints = Math.max(...criteria.map(criterion => criterion.maxPoints));
 
     const handleCellClick = (criterionId: string, points: number) => {
-        setSelectedScores({
+        const newScores = {
             ...selectedScores,
-            [criterionId]: points
-        });
-
-        updateScores(selectedScores);
+            [criterionId]: points,
+        };
+        setSelectedScores(newScores);
+        updateScores(newScores);
     }
 
     return (
@@ -50,7 +50,9 @@ export default function LessonRubricGridInteractive({criteria, cells, scores, up
                                     <TableCell key={point} align="center"
                                                onClick={() => handleCellClick(criterion.id, point)} sx={{
                                         border: 1,
-                                        backgroundColor: selectedScores[criterion.id] === point ? 'rgba(0, 100, 200, 0.2)' : 'inherit',
+                                        backgroundColor: selectedScores[criterion.id] === point ? (
+                                            point >= criterion.passing ? 'rgba(0, 200, 0, 0.2)' : 'rgba(200, 0, 0, 0.2)'
+                                        ) : 'inherit',
                                         cursor: 'pointer',
                                     }}>
                                         {cells.filter((c) => c.criteriaId === criterion.id).find((cell) => cell.points === point)?.description}
