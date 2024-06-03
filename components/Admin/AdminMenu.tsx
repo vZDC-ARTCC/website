@@ -2,6 +2,7 @@ import React from 'react';
 import {Badge, Card, CardContent, List, ListItemButton, ListItemIcon, ListItemText, Typography} from "@mui/material";
 import Link from "next/link";
 import {
+    AccessTime,
     AddModerator,
     AirplanemodeActive,
     Badge as BadgeIcon,
@@ -19,19 +20,25 @@ import prisma from "@/lib/db";
 
 export default async function AdminMenu() {
 
-    const pendingVisitorApplications = await prisma.visitorApplication.findMany({
+    const pendingVisitorApplications = await prisma.visitorApplication.count({
         where: {
             status: "PENDING",
         },
     });
 
-    const pendingFeedback = await prisma.feedback.findMany({
+    const pendingFeedback = await prisma.feedback.count({
         where: {
             status: "PENDING",
         },
     });
 
-    const staffingRequests = await prisma.staffingRequest.findMany();
+    const staffingRequests = await prisma.staffingRequest.count();
+
+    const pendingLoas = await prisma.lOA.count({
+        where: {
+            status: "PENDING",
+        },
+    });
 
     const atm = await prisma.user.findFirst({
         where: {
@@ -85,7 +92,7 @@ export default async function AdminMenu() {
                     <Link href="/admin/staffing-requests" style={{textDecoration: 'none', color: 'inherit',}}>
                         <ListItemButton>
                             <ListItemIcon>
-                                <Badge color="primary" badgeContent={staffingRequests.length}>
+                                <Badge color="primary" badgeContent={staffingRequests}>
                                     <QuestionAnswer/>
                                 </Badge>
                             </ListItemIcon>
@@ -124,10 +131,20 @@ export default async function AdminMenu() {
                             <ListItemText primary="Staff Management"/>
                         </ListItemButton>
                     </Link>
+                    <Link href="/admin/loas" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <Badge color="primary" badgeContent={pendingLoas}>
+                                    <AccessTime/>
+                                </Badge>
+                            </ListItemIcon>
+                            <ListItemText primary="LOA Center"/>
+                        </ListItemButton>
+                    </Link>
                     <Link href="/admin/visitor-applications" style={{textDecoration: 'none', color: 'inherit',}}>
                         <ListItemButton>
                             <ListItemIcon>
-                                <Badge color="primary" badgeContent={pendingVisitorApplications.length}>
+                                <Badge color="primary" badgeContent={pendingVisitorApplications}>
                                     <Task/>
                                 </Badge>
                             </ListItemIcon>
@@ -137,7 +154,7 @@ export default async function AdminMenu() {
                     <Link href="/admin/feedback" style={{textDecoration: 'none', color: 'inherit',}}>
                         <ListItemButton>
                             <ListItemIcon>
-                                <Badge color="primary" badgeContent={pendingFeedback.length}>
+                                <Badge color="primary" badgeContent={pendingFeedback}>
                                     <Feedback/>
                                 </Badge>
                             </ListItemIcon>

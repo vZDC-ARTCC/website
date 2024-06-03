@@ -7,6 +7,12 @@ import {z} from "zod";
 import {CommonMistake, Lesson, RubricCriteraScore} from "@prisma/client";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/auth/auth";
+import {
+    editVatusaTrainingSession,
+    createVatusaTrainingSession,
+    deleteVatusaTrainingSession
+} from "@/actions/vatusa/training";
+import {getDuration} from "@/lib/date";
 
 
 export async function deleteTrainingSession(id: string) {
@@ -19,6 +25,7 @@ export async function deleteTrainingSession(id: string) {
 
     await log("DELETE", "TRAINING_SESSION", `Deleted training session with student ${trainingSession.student.cid} - ${trainingSession.student.firstName} ${trainingSession.student.lastName}`);
 
+    await deleteVatusaTrainingSession(trainingSession.vatusaId || '');
     revalidatePath('/training/sessions', "layout");
 
     return trainingSession;
@@ -63,7 +70,7 @@ export async function createOrUpdateTrainingSession(
                 passed: z.boolean(),
             })),
             passed: z.boolean(),
-        })),
+        })).nonempty("You must add at least one training ticket."),
     });
 
     const result = trainingSessionZ.safeParse({
@@ -140,6 +147,15 @@ export async function createOrUpdateTrainingSession(
 
             await log("UPDATE", "TRAINING_SESSION", `Updated training session with student ${trainingSession.student.cid} - ${trainingSession.student.firstName} ${trainingSession.student.lastName}`);
 
+            const vatusaId = await editVatusaTrainingSession(trainingSession.student.cid, session.user.cid, start, trainingSession.tickets[0].lesson.position || 'N/A', getDuration(trainingSession.start, trainingSession.end), result.data.additionalComments || '', trainingSession.vatusaId || '');
+
+            await prisma.trainingSession.update({
+                where: {id: trainingSession.id},
+                data: {
+                    vatusaId,
+                }
+            });
+
             revalidatePath('/training/sessions', "layout");
 
             for (const newTicket of trainingSession.tickets) {
@@ -154,6 +170,7 @@ export async function createOrUpdateTrainingSession(
             return {session: trainingSession};
 
         } else if (session) {
+
             const trainingSession = await prisma.trainingSession.create({
                 data: {
                     student: {connect: {id: result.data.student}},
@@ -194,6 +211,15 @@ export async function createOrUpdateTrainingSession(
 
             await log("CREATE", "TRAINING_SESSION", `Created training session with student ${trainingSession.student.cid} - ${trainingSession.student.firstName} ${trainingSession.student.lastName}`);
 
+            const vatusaId = await createVatusaTrainingSession(trainingSession.student.cid, session.user.cid, start, trainingSession.tickets[0].lesson.position || 'N/A', getDuration(trainingSession.start, trainingSession.end), result.data.additionalComments || '');
+
+            await prisma.trainingSession.update({
+                where: {id: trainingSession.id},
+                data: {
+                    vatusaId,
+                }
+            });
+
             revalidatePath('/training/sessions', "layout");
 
             for (const newTicket of trainingSession.tickets) {
@@ -211,6 +237,8 @@ export async function createOrUpdateTrainingSession(
                 }]
             };
         }
+
+        // TODO send email to student with new ticket
     } catch (e) {
         console.log(e);
         return {errors: [{message: "An error occurred when trying to save training ticket. Try refreshing the page."}]};

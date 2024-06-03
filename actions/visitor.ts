@@ -6,9 +6,7 @@ import {z} from "zod";
 import {revalidatePath} from "next/cache";
 import {log} from "@/actions/log";
 import {User} from "next-auth";
-
-const VATUSA_FACILITY = process.env.VATUSA_FACILITY || 'ZDC';
-const VATUSA_API_KEY = process.env.VATUSA_API_KEY || '';
+import {addVatusaVisitor} from "@/actions/vatusa/roster";
 
 export const addVisitingApplication = async (data: VisitorApplication, user: User) => {
 
@@ -47,11 +45,7 @@ export const addVisitingApplication = async (data: VisitorApplication, user: Use
 
 export const addVisitor = async (application: VisitorApplication, user: User) => {
     if (application.status !== "PENDING") return;
-    const res = await fetch(`https://api.vatusa.net/v2/facility/${VATUSA_FACILITY}/roster/manageVisitor/${user.cid}?apiKey=${VATUSA_API_KEY}`, {
-        method: 'POST',
-    });
-    const json = await res.json();
-    console.log(json);
+
     await prisma.user.update({
         where: {
             id: user.id,
@@ -72,7 +66,12 @@ export const addVisitor = async (application: VisitorApplication, user: User) =>
             user: true,
         },
     });
+
     await log("UPDATE", "VISITOR_APPLICATION", `Approved visitor application for ${user.fullName} (${user.cid})`);
+
+    // TODO send email
+    await addVatusaVisitor(user.cid);
+
     revalidatePath('/controllers/roster');
     revalidatePath('/admin/visitor-applications');
     revalidatePath(`/admin/visitor-applications/${application.id}`);
@@ -94,6 +93,9 @@ export const rejectVisitor = async (application: VisitorApplication, user: User)
             user: true,
         },
     });
+
+    // TODO send rejection email
+
     await log("UPDATE", "VISITOR_APPLICATION", `Rejected visitor application for ${user.fullName} (${user.cid})`);
     revalidatePath('/admin/visitor-applications');
     revalidatePath(`/admin/visitor-applications/${application.id}`);

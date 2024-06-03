@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import {usePathname, useRouter} from "next/navigation";
-import {Box, Button, MenuItem, Stack, TextField} from "@mui/material";
+import {Box, Button, FormControlLabel, MenuItem, Stack, Switch, TextField} from "@mui/material";
 import {Search} from "@mui/icons-material";
 import {z} from "zod";
 import {toast} from "react-toastify";
@@ -57,11 +57,20 @@ const months = [
     },
 ]
 
-export default function RosterPurgeSelectionForm({startMonth, endMonth, maxHours, year}: {
+export default function RosterPurgeSelectionForm({
+                                                     startMonth,
+                                                     endMonth,
+                                                     maxHours,
+                                                     maxTrainingHours,
+                                                     year,
+                                                     includeLoas,
+                                                 }: {
     startMonth: number,
     endMonth: number,
     maxHours: number,
-    year: number
+    maxTrainingHours: number,
+    year: number,
+    includeLoas: boolean,
 }) {
 
     const router = useRouter();
@@ -73,6 +82,8 @@ export default function RosterPurgeSelectionForm({startMonth, endMonth, maxHours
             startMonth: z.number().min(0, "Start month has to be bigger than 0").max(11, "Start month has to be smaller than 11"),
             endMonth: z.number().min(0, "End month has to be bigger than 0").max(11, "End month has to be smaller than 11"),
             maxHours: z.number(),
+            maxTrainingHours: z.number(),
+            includeLoas: z.boolean(),
         });
 
         const result = selectionZ.safeParse({
@@ -80,6 +91,8 @@ export default function RosterPurgeSelectionForm({startMonth, endMonth, maxHours
             startMonth: parseInt(formData.get("startMonth") as string),
             endMonth: parseInt(formData.get("endMonth") as string),
             maxHours: parseInt(formData.get("maxHours") as string),
+            maxTrainingHours: parseInt(formData.get("maxTrainingHours") as string),
+            includeLoas: formData.get("includeLoas") === "on",
         });
 
         if (!result.success) {
@@ -92,12 +105,14 @@ export default function RosterPurgeSelectionForm({startMonth, endMonth, maxHours
             return;
         }
 
-        const {year, startMonth, endMonth, maxHours} = result.data;
+        const {year, startMonth, endMonth, maxHours, maxTrainingHours, includeLoas} = result.data;
         const search = new URLSearchParams();
         search.set("year", year.toString());
         search.set("startMonth", startMonth.toString());
         search.set("endMonth", endMonth.toString());
         search.set("maxHours", maxHours.toString());
+        search.set("maxTrainingHours", maxTrainingHours.toString());
+        search.set("includeLoas", includeLoas + '');
         router.push(`${pathname}?${search.toString()}`);
     }
 
@@ -152,7 +167,7 @@ export default function RosterPurgeSelectionForm({startMonth, endMonth, maxHours
 
                 </Stack>
                 <TextField
-                    sx={{mt: 2,}}
+                    sx={{mt: 1,}}
                     id="maxHours"
                     required
                     fullWidth
@@ -163,7 +178,21 @@ export default function RosterPurgeSelectionForm({startMonth, endMonth, maxHours
                     name="maxHours"
                     helperText="This will show all controllers that have less than this amount of hours"
                 />
-                <Box>
+                <TextField
+                    sx={{mt: 1,}}
+                    id="maxTrainingHours"
+                    required
+                    fullWidth
+                    type="number"
+                    label="Max Training Hours"
+                    variant="filled"
+                    defaultValue={maxTrainingHours}
+                    name="maxTrainingHours"
+                    helperText="This will show all controllers that have less than this amount of training hours"
+                />
+                <FormControlLabel control={<Switch defaultChecked={includeLoas} name="includeLoas"/>}
+                                  label="Include LOAs?"/>
+                <Box sx={{mt: 1,}}>
                     <Button type="submit" variant="contained" startIcon={<Search/>} size="large">Search</Button>
                 </Box>
             </form>

@@ -8,13 +8,20 @@ import RosterPurgeSelectionForm from "@/components/PurgeAssistant/RosterPurgeSel
 import {permanentRedirect} from "next/navigation";
 
 export default async function Page({searchParams,}: {
-    searchParams: { startMonth: string, endMonth: string, maxHours: string, year: string, },
+    searchParams: {
+        startMonth: string,
+        endMonth: string,
+        maxHours: string,
+        maxTrainingHours: string,
+        year: string,
+        includeLoas: string,
+    },
 }) {
 
-    const {startMonth, endMonth, maxHours, year,} = searchParams;
+    const {startMonth, endMonth, maxHours, maxTrainingHours, year, includeLoas,} = searchParams;
 
-    if (!startMonth || !endMonth || !maxHours || !year) {
-        permanentRedirect(`/admin/purge-assistant?startMonth=0&endMonth=11&maxHours=3&year=${new Date().getFullYear()}`);
+    if (!startMonth || !endMonth || !maxHours || !year || !maxTrainingHours) {
+        permanentRedirect(`/admin/purge-assistant?startMonth=0&endMonth=11&maxHours=3&maxTrainingHours=1&year=${new Date().getFullYear()}&includeLoas=false`);
     }
     if (parseInt(startMonth) < 0 || parseInt(endMonth) > 12 || parseInt(startMonth) > parseInt(endMonth)) {
         throw new Error("Invalid month bounds");
@@ -25,6 +32,22 @@ export default async function Page({searchParams,}: {
             controllerStatus: {
                 not: "NONE",
             },
+            ...(includeLoas === 'false' && {
+                OR: [
+                    {
+                        loa: {
+                            is: null,
+                        },
+                    },
+                    {
+                        loa: {
+                            status: {
+                                not: "APPROVED",
+                            },
+                        },
+                    },
+                ],
+            }),
         },
         include: {
             log: {
@@ -32,18 +55,32 @@ export default async function Page({searchParams,}: {
                     months: true,
                 },
             },
+            trainingSessionsGiven: true,
         },
     });
 
-    let condensedControllers = controllers.map(controller => {
+    let condensedControllers = controllers.map((controller) => {
         const filteredMonths = controller.log?.months.filter(month => {
             const monthInBounds = month.month >= parseInt(startMonth) && month.month <= parseInt(endMonth);
             return monthInBounds && month.year === parseInt(year);
         });
-        const totalHours = filteredMonths?.reduce((sum, month) => sum + month.deliveryHours + month.groundHours + month.towerHours + month.approachHours + month.centerHours, 0);
+        const totalHours = filteredMonths?.reduce((sum, month) => sum + month.deliveryHours + month.groundHours + month.towerHours + month.approachHours + month.centerHours, 0) || 0;
+
+        // Filter the training sessions where the person has been a trainer
+        const trainerSessions = controller.trainingSessionsGiven?.filter(session => session.instructorId === controller.id);
+
+        // Sum up the durations of the training sessions
+        const totalTrainingHours = trainerSessions?.reduce((sum, session) => {
+            const startDate = new Date(session.start);
+            const endDate = new Date(session.end);
+            const duration = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60); // Convert milliseconds to hours
+            return sum + duration;
+        }, 0).toPrecision(3) || 'N/A';
+
         return {
             controller: controller as User,
-            totalHours: totalHours || 0,
+            totalHours,
+            totalTrainingHours,
         };
     });
 
@@ -63,7 +100,8 @@ export default async function Page({searchParams,}: {
                     borderRadius: '8px',
                 }}>Roster Purge Assistant</Typography>
                 <RosterPurgeSelectionForm startMonth={parseInt(startMonth)} endMonth={parseInt(endMonth)}
-                                          maxHours={parseInt(maxHours)} year={parseInt(year)}/>
+                                          maxHours={parseInt(maxHours)} year={parseInt(year)}
+                                          maxTrainingHours={parseInt(maxTrainingHours)} includeLoas={!!includeLoas}/>
                 <PurgeAssistantTable controllers={condensedControllers} user={session.user}/>
             </CardContent>
         </Card>

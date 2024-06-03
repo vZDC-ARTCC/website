@@ -63,7 +63,6 @@ export default async function VisitorApplicationTable({status}: { status: Visito
                                         </IconButton>
                                     </Link>
                                 </Tooltip>
-
                             </TableCell>
                         </TableRow>
                     ))}

@@ -72,6 +72,7 @@ model User {
   updatedAt          DateTime
   eventSignups       EventPosition[]
   staffingRequests   StaffingRequest[]
+  loa                LOA?
 
   accounts              Account[]
   sessions              Session[]
@@ -195,6 +196,7 @@ enum LogType {
 enum LogModel {
   USER
   STAFF_POSITION
+  LOA
   ROLE
   EVENT
   EVENT_POSITION
@@ -360,6 +362,7 @@ model Lesson {
   identifier             String
   name                   String
   description            String
+  position               String
   facility               String
   rubric                 LessonRubric?    @relation(fields: [rubricId], references: [id])
   rubricId               String?          @unique
@@ -416,6 +419,7 @@ model TrainingSession {
   end                DateTime
   additionalComments String?
   trainerComments    String?
+  vatusaId           String?
   tickets            TrainingTicket[]
 }
 
@@ -439,4 +443,20 @@ model RubricCriteraScore {
   trainingTicket   TrainingTicket?      @relation(fields: [trainingTicketId], references: [id], onDelete: Cascade)
   trainingTicketId String?
   passed           Boolean
+}
+
+enum LOAStatus {
+  PENDING
+  APPROVED
+  DENIED
+}
+
+model LOA {
+  id     String    @id @default(cuid())
+  user   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String    @unique
+  start  DateTime
+  end    DateTime
+  reason String
+  status LOAStatus
 }

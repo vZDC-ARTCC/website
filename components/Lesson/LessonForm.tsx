@@ -45,6 +45,10 @@ export default function LessonForm({lesson}: { lesson?: Lesson, }) {
                     <TextField fullWidth variant="filled" name="facility" label="Facility"
                                defaultValue={lesson?.facility || ''} required/>
                 </Grid>
+                <Grid item xs={2} md={1}>
+                    <TextField fullWidth variant="filled" name="position" label="Position"
+                               defaultValue={lesson?.position || ''} required/>
+                </Grid>
                 <Grid item xs={2}>
                     <FormGroup>
                         <FormControlLabel control={<Switch defaultChecked={lesson?.instructorOnly}/>}

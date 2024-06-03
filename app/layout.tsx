@@ -28,9 +28,6 @@ export default async function RootLayout({
     children: ReactNode;
 }>) {
 
-    await lockUpcomingEvents();
-    await deleteStaleEvents();
-
   return (
     <html lang="en">
     <body>

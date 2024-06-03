@@ -102,6 +102,8 @@ export const assignEventPosition = async (event: Event, eventPosition: EventPosi
         },
     });
 
+    // TODO send email with position confirmation
+
     revalidatePath(`/admin/events/edit/${eventPosition.eventId}/positions`);
     revalidatePath(`/events/${eventPosition.eventId}`);
     return data;
@@ -125,6 +127,8 @@ export const unassignEventPosition = async (event: Event, eventPosition: EventPo
             },
         },
     });
+
+    // TODO send email with position unassignment
 
     revalidatePath(`/admin/events/edit/${event.id}/positions`);
     revalidatePath(`/events/${event.id}`);
@@ -152,6 +156,8 @@ export const forceAssignPosition = async (eventPositionId: string, userId: strin
             id: userId,
         }
     });
+
+    // TODO send email with position confirmation
     await log('UPDATE', 'EVENT_POSITION', `Forced assigned ${eventPosition.position} to ${controller.firstName} ${controller.lastName} (${controller.cid}) in ${eventPosition.event.name}`);
     revalidatePath(`/admin/events/edit/${eventPosition.eventId}/positions`);
     revalidatePath(`/events/${eventPosition.eventId}`);

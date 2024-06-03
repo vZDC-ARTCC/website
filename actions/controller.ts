@@ -3,6 +3,7 @@
 import prisma from "@/lib/db";
 import {revalidatePath} from "next/cache";
 import {log} from "@/actions/log";
+import {removeVatusaController} from "@/actions/vatusa/roster";
 
 const VATUSA_FACILITY = process.env.VATUSA_FACILITY;
 const VATUSA_API_KEY = process.env.VATUSA_API_KEY;
@@ -36,11 +37,8 @@ export const purgeControllers = async (ids: string[]) => {
 
     for (const user of users) {
         await log("DELETE", "USER", `Purged user ${user.firstName} ${user.lastName} (${user.cid}) from roster.`);
-        const res = await fetch(`https://api.vatusa.net/v2/facility/${VATUSA_FACILITY}/roster/${user.cid}?apiKey=${VATUSA_API_KEY}`, {
-            method: "DELETE",
-        });
-        const data = await res.json();
-        console.log(data);
+        await removeVatusaController(user.cid, user.controllerStatus === "VISITOR");
+        // TODO send emails to controllers
     }
 
     revalidatePath("/controllers/roster", "layout");

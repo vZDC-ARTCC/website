@@ -56,6 +56,9 @@ export const releaseFeedback = async (feedback: Feedback) => {
             controller: true,
         },
     });
+
+    // TODO send email to controller
+
     await log("UPDATE", "FEEDBACK", `Released feedback for ${releasedFeedback.controller.firstName} ${releasedFeedback.controller.lastName} (${releasedFeedback.controller.cid})`);
     revalidatePath('/admin/feedback');
     revalidatePath(`/admin/feedback/${feedback.id}`);

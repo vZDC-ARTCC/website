@@ -72,6 +72,7 @@ export default async function TrainingSessionInformation({id, trainerView}: { id
                                         <Stack direction="column" spacing={2}>
                                             <Box>
                                                 <Typography variant="h6">Scoring</Typography>
+                                                <Typography variant="subtitle2">{ticket.lesson.position}</Typography>
                                                 <LessonRubricGrid lessonId={ticket.lesson.id} scores={ticket.scores}/>
                                             </Box>
                                             <Box>

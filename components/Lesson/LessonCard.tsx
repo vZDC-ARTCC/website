@@ -31,8 +31,9 @@ export default async function LessonCard({lessonId}: { lessonId: string }) {
     return (
         <Card>
             <CardContent>
-                <Typography variant="h5">{lesson.name}</Typography>
-                <Typography variant="subtitle2" sx={{mb: 2,}}>{lesson.identifier}</Typography>
+                <Typography variant="h5">{lesson.facility} {lesson.name}</Typography>
+                <Typography variant="subtitle1">{lesson.identifier}</Typography>
+                <Typography variant="subtitle2" sx={{mb: 2,}}>{lesson.position}</Typography>
                 <Markdown>
                     {lesson.description}
                 </Markdown>

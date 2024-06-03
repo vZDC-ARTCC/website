@@ -4,6 +4,7 @@ import {z} from "zod";
 import prisma from "@/lib/db";
 import {log} from "@/actions/log";
 import {revalidatePath} from "next/cache";
+import {addVatusaSolo, deleteVatusaSolo} from "@/actions/vatusa/controller";
 
 export const addSolo = async (formData: FormData) => {
 
@@ -62,21 +63,11 @@ export const addSolo = async (formData: FormData) => {
         },
     });
 
-    const res = await fetch(`https://api.vatusa.net/v2/solo?apikey=${process.env.VATUSA_API_KEY}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            cid: data.controller.cid,
-            position: data.position,
-            expires: data.expires,
-        }),
-    });
+    // TODO send email to notify of created solo
 
-    if (res.status !== 200) {
-        console.error('Failed to update VATUSA API');
-    }
+    await log('CREATE', 'SOLO_CERTIFICATION', `Created solo certification ${data.position} for ${data.controller.firstName} ${data.controller.lastName}`);
+
+    await addVatusaSolo(data.controller.cid, data.position, data.expires);
 
     revalidatePath('/training/solos');
     revalidatePath('/controllers/roster');
@@ -93,23 +84,42 @@ export const deleteSolo = async (id: string) => {
         }
     });
 
+    // TODO send email to notify of deleted solo
+
     await log('DELETE', 'SOLO_CERTIFICATION', `Deleted solo certification ${ss.position} for ${ss.controller.firstName} ${ss.controller.lastName}`);
 
-    const res = await fetch(`https://api.vatusa.net/v2/solo?apikey=${process.env.VATUSA_API_KEY}`, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            cid: ss.controller.cid,
-            position: ss.position,
-        }),
-    });
-
-    if (res.status !== 200) {
-        console.error('Failed to update VATUSA API');
-    }
+    await deleteVatusaSolo(ss.controller.cid, ss.position);
 
     revalidatePath('/training/solos')
+    revalidatePath('/controllers/roster');
+}
+
+export const deleteExpiredSolos = async () => {
+    const solos = await prisma.soloCertification.findMany({
+        where: {
+            expires: {
+                lte: new Date(),
+            }
+        },
+        include: {
+            controller: true,
+        }
+    });
+
+    for (const solo of solos) {
+        await prisma.soloCertification.delete({
+            where: {
+                id: solo.id,
+            }
+        });
+
+        // TODO send email to notify of expired solo
+
+        await log('DELETE', 'SOLO_CERTIFICATION', `Deleted expired solo certification ${solo.position} for ${solo.controller.firstName} ${solo.controller.lastName}`);
+
+        await deleteVatusaSolo(solo.controller.cid, solo.position);
+    }
+
+    revalidatePath('/training/solos');
     revalidatePath('/controllers/roster');
 }

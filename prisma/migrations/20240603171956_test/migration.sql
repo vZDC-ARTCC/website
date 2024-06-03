@@ -25,6 +25,9 @@ CREATE TYPE "FeedbackStatus" AS ENUM ('PENDING', 'RELEASED', 'STASHED');
 -- CreateEnum
 CREATE TYPE "EventType" AS ENUM ('HOME', 'SUPPORT', 'GROUP_FLIGHT', 'TRAINING');
 
+-- CreateEnum
+CREATE TYPE "LOAStatus" AS ENUM ('PENDING', 'APPROVED', 'DENIED');
+
 -- CreateTable
 CREATE TABLE "Account"
 (
@@ -323,13 +326,16 @@ CREATE TABLE "File"
 -- CreateTable
 CREATE TABLE "Lesson"
 (
-    "id"          TEXT         NOT NULL,
-    "identifier"  TEXT         NOT NULL,
-    "name"        TEXT         NOT NULL,
-    "description" TEXT         NOT NULL,
-    "facility"    TEXT         NOT NULL,
-    "rubricId"    TEXT,
-    "updatedAt"   TIMESTAMP(3) NOT NULL,
+    "id"                     TEXT         NOT NULL,
+    "identifier"             TEXT         NOT NULL,
+    "name"                   TEXT         NOT NULL,
+    "description"            TEXT         NOT NULL,
+    "position"               TEXT         NOT NULL,
+    "facility"               TEXT         NOT NULL,
+    "rubricId"               TEXT,
+    "updatedAt"              TIMESTAMP(3) NOT NULL,
+    "instructorOnly"         BOOLEAN      NOT NULL,
+    "notifyInstructorOnPass" BOOLEAN      NOT NULL,
 
     CONSTRAINT "Lesson_pkey" PRIMARY KEY ("id")
 );
@@ -349,6 +355,7 @@ CREATE TABLE "LessonRubricCriteria"
     "rubricId"    TEXT    NOT NULL,
     "criteria"    TEXT    NOT NULL,
     "description" TEXT    NOT NULL,
+    "passing"     INTEGER NOT NULL,
     "maxPoints"   INTEGER NOT NULL,
 
     CONSTRAINT "LessonRubricCriteria_pkey" PRIMARY KEY ("id")
@@ -387,6 +394,7 @@ CREATE TABLE "TrainingSession"
     "end"                TIMESTAMP(3) NOT NULL,
     "additionalComments" TEXT,
     "trainerComments"    TEXT,
+    "vatusaId"           TEXT,
 
     CONSTRAINT "TrainingSession_pkey" PRIMARY KEY ("id")
 );
@@ -405,12 +413,26 @@ CREATE TABLE "TrainingTicket"
 -- CreateTable
 CREATE TABLE "RubricCriteraScore"
 (
-    "id"               TEXT NOT NULL,
-    "criteriaId"       TEXT NOT NULL,
-    "cellId"           TEXT NOT NULL,
+    "id"               TEXT    NOT NULL,
+    "criteriaId"       TEXT    NOT NULL,
+    "cellId"           TEXT    NOT NULL,
     "trainingTicketId" TEXT,
+    "passed"           BOOLEAN NOT NULL,
 
     CONSTRAINT "RubricCriteraScore_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "LOA"
+(
+    "id"     TEXT         NOT NULL,
+    "userId" TEXT         NOT NULL,
+    "start"  TIMESTAMP(3) NOT NULL,
+    "end"    TIMESTAMP(3) NOT NULL,
+    "reason" TEXT         NOT NULL,
+    "status" "LOAStatus"  NOT NULL,
+
+    CONSTRAINT "LOA_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -452,6 +474,9 @@ CREATE UNIQUE INDEX "Airport_icao_key" ON "Airport" ("icao");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Lesson_rubricId_key" ON "Lesson" ("rubricId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "LOA_userId_key" ON "LOA" ("userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_EventPositionToUser_AB_unique" ON "_EventPositionToUser" ("A", "B");
@@ -565,23 +590,27 @@ ALTER TABLE "TrainingSession"
 
 -- AddForeignKey
 ALTER TABLE "TrainingTicket"
-    ADD CONSTRAINT "TrainingTicket_sessionId_fkey" FOREIGN KEY ("sessionId") REFERENCES "TrainingSession" ("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+    ADD CONSTRAINT "TrainingTicket_sessionId_fkey" FOREIGN KEY ("sessionId") REFERENCES "TrainingSession" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "TrainingTicket"
-    ADD CONSTRAINT "TrainingTicket_lessonId_fkey" FOREIGN KEY ("lessonId") REFERENCES "Lesson" ("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+    ADD CONSTRAINT "TrainingTicket_lessonId_fkey" FOREIGN KEY ("lessonId") REFERENCES "Lesson" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "RubricCriteraScore"
-    ADD CONSTRAINT "RubricCriteraScore_criteriaId_fkey" FOREIGN KEY ("criteriaId") REFERENCES "LessonRubricCriteria" ("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+    ADD CONSTRAINT "RubricCriteraScore_criteriaId_fkey" FOREIGN KEY ("criteriaId") REFERENCES "LessonRubricCriteria" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "RubricCriteraScore"
-    ADD CONSTRAINT "RubricCriteraScore_cellId_fkey" FOREIGN KEY ("cellId") REFERENCES "LessonRubricCell" ("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+    ADD CONSTRAINT "RubricCriteraScore_cellId_fkey" FOREIGN KEY ("cellId") REFERENCES "LessonRubricCell" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "RubricCriteraScore"
-    ADD CONSTRAINT "RubricCriteraScore_trainingTicketId_fkey" FOREIGN KEY ("trainingTicketId") REFERENCES "TrainingTicket" ("id") ON DELETE SET NULL ON UPDATE CASCADE;
+    ADD CONSTRAINT "RubricCriteraScore_trainingTicketId_fkey" FOREIGN KEY ("trainingTicketId") REFERENCES "TrainingTicket" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LOA"
+    ADD CONSTRAINT "LOA_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_EventPositionToUser"

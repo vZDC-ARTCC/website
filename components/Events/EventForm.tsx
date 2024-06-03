@@ -111,10 +111,11 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
                         </TextField>
                     </Grid>
                     <Grid item xs={2} md={1}>
-                        <DateTimePicker name="start" defaultValue={dayjs(event?.start)} label="Start (Zulu)"/>
+                        <DateTimePicker disablePast name="start" defaultValue={dayjs(event?.start)}
+                                        label="Start (Zulu)"/>
                     </Grid>
                     <Grid item xs={2} md={1}>
-                        <DateTimePicker name="end" defaultValue={dayjs(event?.end)} label="End (Zulu)"/>
+                        <DateTimePicker disablePast name="end" defaultValue={dayjs(event?.end)} label="End (Zulu)"/>
                     </Grid>
                     <Grid item xs={2}>
                         <Box sx={{maxWidth: '700px',}} data-color-mode={theme.palette.mode}>

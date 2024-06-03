@@ -19,7 +19,7 @@ import {toast} from "react-toastify";
 import {purgeControllers} from "@/actions/controller";
 
 export default function PurgeAssistantTable({controllers, user}: {
-    controllers: { controller: User, totalHours: number }[],
+    controllers: { controller: User, totalHours: number, totalTrainingHours: string, }[],
     user: User,
 }) {
 
@@ -71,10 +71,11 @@ export default function PurgeAssistantTable({controllers, user}: {
                             <TableCell>Controller</TableCell>
                             <TableCell>Rating</TableCell>
                             <TableCell>Total Hours</TableCell>
+                            <TableCell>Total Training Hours</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {controllers.map(({controller, totalHours}) => (
+                        {controllers.map(({controller, totalHours, totalTrainingHours}) => (
                             <TableRow key={controller.id} role="">
                                 <TableCell>
                                     <Checkbox
@@ -89,6 +90,7 @@ export default function PurgeAssistantTable({controllers, user}: {
                                 <TableCell>{controller.firstName} {controller.lastName}</TableCell>
                                 <TableCell>{getRating(controller.rating)}</TableCell>
                                 <TableCell sx={{border: 1,}}>{totalHours.toPrecision(3)}</TableCell>
+                                <TableCell sx={{border: 1,}}>{totalTrainingHours}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

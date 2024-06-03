@@ -1,6 +1,6 @@
 import React from 'react';
 import {Card, CardContent, List, ListItemButton, ListItemIcon, ListItemText, Typography} from "@mui/material";
-import {Badge, BugReport, Route, School, Shield} from "@mui/icons-material";
+import {AccessTime, Badge, BugReport, Route, School, Shield} from "@mui/icons-material";
 import Link from "next/link";
 
 export default function LinksCard() {
@@ -25,6 +25,14 @@ export default function LinksCard() {
                                 <Route/>
                             </ListItemIcon>
                             <ListItemText primary="Preferred Routes Database"/>
+                        </ListItemButton>
+                    </Link>
+                    <Link href="/profile/loa/request" style={{color: 'inherit', textDecoration: 'none',}}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <AccessTime/>
+                            </ListItemIcon>
+                            <ListItemText primary="Request an LOA"/>
                         </ListItemButton>
                     </Link>
                     <ListItemButton>
