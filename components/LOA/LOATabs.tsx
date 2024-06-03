@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
-import {LOAStatus, VisitorApplicationStatus} from "@prisma/client";
+import {LOAStatus} from "@prisma/client";
 import {Tab, Tabs} from "@mui/material";
 
 export default function LoaTabs() {

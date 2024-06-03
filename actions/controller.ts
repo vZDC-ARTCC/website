@@ -5,9 +5,6 @@ import {revalidatePath} from "next/cache";
 import {log} from "@/actions/log";
 import {removeVatusaController} from "@/actions/vatusa/roster";
 
-const VATUSA_FACILITY = process.env.VATUSA_FACILITY;
-const VATUSA_API_KEY = process.env.VATUSA_API_KEY;
-
 export const purgeControllers = async (ids: string[]) => {
 
     const users = await prisma.user.findMany({

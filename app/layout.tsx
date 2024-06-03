@@ -13,7 +13,6 @@ import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import {ToastContainer} from "react-toastify";
 import {GoogleTagManager} from "@next/third-parties/google";
-import {deleteStaleEvents, lockUpcomingEvents} from "@/actions/event";
 
 export const metadata: Metadata = {
     title: "Virtual Washington ARTCC",

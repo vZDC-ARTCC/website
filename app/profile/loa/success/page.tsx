@@ -1,6 +1,6 @@
 import React from 'react';
 import {Box, Button, Card, CardContent, Container, Stack, Typography} from "@mui/material";
-import {Check, CheckCircle, Settings} from "@mui/icons-material";
+import {CheckCircle, Settings} from "@mui/icons-material";
 import Link from "next/link";
 
 export default function Page() {

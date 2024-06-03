@@ -1,11 +1,8 @@
 import React from 'react';
 import prisma from "@/lib/db";
 import {notFound} from "next/navigation";
-import {Box, Card, CardContent, Chip, Grid, Stack, Typography} from "@mui/material";
-import VisitorApplicationDecisionForm from "@/components/VisitorApplication/VisitorApplicationDecisionForm";
-import {LOAStatus, VisitorApplicationStatus} from "@prisma/client";
-import {getRating} from "@/lib/vatsim";
-import {User} from "next-auth";
+import {Card, CardContent, Chip, Grid, Stack, Typography} from "@mui/material";
+import {LOAStatus} from "@prisma/client";
 import LoaDecisionForm from "@/components/LOA/LOADecisionForm";
 
 export default async function Page({params}: { params: { id: string } }) {

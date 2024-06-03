@@ -1,19 +1,18 @@
 import React from 'react';
 import prisma from "@/lib/db";
 import {
-    Box,
     IconButton,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
-    TableRow, Tooltip,
+    TableRow,
+    Tooltip,
     Typography
 } from "@mui/material";
-import {VisitorApplication, VisitorApplicationStatus} from "@prisma/client";
+import {VisitorApplicationStatus} from "@prisma/client";
 import Link from "next/link";
-import {redirect} from "next/navigation";
 import {Grading, Info} from "@mui/icons-material";
 
 export default async function VisitorApplicationTable({status}: { status: VisitorApplicationStatus, }) {
