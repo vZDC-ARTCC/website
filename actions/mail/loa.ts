@@ -22,7 +22,7 @@ export const sendLoaApprovedEmail = async (controller: User, loa: LOA) => {
     });
 }
 
-export const sendLoaDeniedEmail = async (controller: User, loa: LOA) => {
+export const sendLoaDeniedEmail = async (controller: User) => {
     await mailTransport.sendMail({
         from: FROM_EMAIL,
         to: controller.email,
@@ -36,7 +36,7 @@ export const sendLoaDeniedEmail = async (controller: User, loa: LOA) => {
     });
 }
 
-export const sendLoaDeletedEmail = async (controller: User, loa: LOA) => {
+export const sendLoaDeletedEmail = async (controller: User) => {
     await mailTransport.sendMail({
         from: FROM_EMAIL,
         to: controller.email,
@@ -50,7 +50,7 @@ export const sendLoaDeletedEmail = async (controller: User, loa: LOA) => {
     });
 }
 
-export const sendLoaRequestedEmail = async (controller: User, loa: LOA) => {
+export const sendLoaRequestedEmail = async (controller: User) => {
     await mailTransport.sendMail({
         from: FROM_EMAIL,
         to: controller.email,
@@ -67,7 +67,7 @@ export const sendLoaRequestedEmail = async (controller: User, loa: LOA) => {
     });
 }
 
-export const sendLoaExpiredEmail = async (controller: User, loa: LOA) => {
+export const sendLoaExpiredEmail = async (controller: User) => {
     await mailTransport.sendMail({
         from: FROM_EMAIL,
         to: controller.email,

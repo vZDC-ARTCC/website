@@ -68,7 +68,7 @@ export const createOrUpdateLoa = async (formData: FormData) => {
             },
         });
 
-        await sendLoaRequestedEmail(session.user, loa);
+        await sendLoaRequestedEmail(session.user);
 
         await log("CREATE", "LOA", `User ${session.user.firstName} ${session.user.lastName} requested LOA`);
         revalidatePath("/profile", "layout");
@@ -88,7 +88,7 @@ export const deleteLoa = async (loaId: string) => {
         },
     });
 
-    await sendLoaDeletedEmail(loa.user as User, loa);
+    await sendLoaDeletedEmail(loa.user as User);
 
     await log("DELETE", "LOA", `LOA request for ${loa.user.firstName} ${loa.user.lastName} (${loa.user.cid}) deleted`);
     revalidatePath("/profile", "layout");
@@ -130,7 +130,7 @@ export const denyLoa = async (loaId: string) => {
         }
     });
 
-    await sendLoaDeniedEmail(loa.user as User, loa);
+    await sendLoaDeniedEmail(loa.user as User);
     await log("UPDATE", "LOA", `LOA request for ${loa.user.firstName} ${loa.user.lastName} (${loa.user.cid}) denied`);
     revalidatePath("/admin/loas", "layout");
     revalidatePath("/profile", "layout");
@@ -160,7 +160,7 @@ export const deleteExpiredLoas = async () => {
         });
 
         // Send the LOA deleted email to the user
-        await sendLoaExpiredEmail(loa.user as User, loa);
+        await sendLoaExpiredEmail(loa.user as User);
     }
 
     const loas = await prisma.lOA.deleteMany({
