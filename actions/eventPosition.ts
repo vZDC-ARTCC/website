@@ -6,6 +6,7 @@ import {Event, EventPosition} from "@prisma/client";
 import {z} from "zod";
 import {revalidatePath} from "next/cache";
 import {User} from "next-auth";
+import {sendEventPositionEmail, sendEventPositionRemovalEmail} from "@/actions/mail/event";
 
 export const deleteEventPosition = async (id: string) => {
     const data = await prisma.eventPosition.delete({
@@ -14,9 +15,14 @@ export const deleteEventPosition = async (id: string) => {
         },
         include: {
             event: true,
+            controllers: true,
         },
     });
     await log('DELETE', 'EVENT_POSITION', `Deleted event position ${data.position} for ${data.event.name}`);
+
+    for (const controller of data.controllers) {
+        await sendEventPositionRemovalEmail(controller as User, data, data.event);
+    }
 
     revalidatePath(`/admin/events/edit/${data.event.id}/positions`);
     revalidatePath(`/admin/events`);
@@ -102,7 +108,7 @@ export const assignEventPosition = async (event: Event, eventPosition: EventPosi
         },
     });
 
-    // TODO send email with position confirmation
+    await sendEventPositionEmail(user, eventPosition, event);
 
     revalidatePath(`/admin/events/edit/${eventPosition.eventId}/positions`);
     revalidatePath(`/events/${eventPosition.eventId}`);
@@ -128,7 +134,7 @@ export const unassignEventPosition = async (event: Event, eventPosition: EventPo
         },
     });
 
-    // TODO send email with position unassignment
+    await sendEventPositionRemovalEmail(user, eventPosition, event);
 
     revalidatePath(`/admin/events/edit/${event.id}/positions`);
     revalidatePath(`/events/${event.id}`);
@@ -157,7 +163,7 @@ export const forceAssignPosition = async (eventPositionId: string, userId: strin
         }
     });
 
-    // TODO send email with position confirmation
+    await sendEventPositionEmail(controller as User, eventPosition, eventPosition.event);
     await log('UPDATE', 'EVENT_POSITION', `Forced assigned ${eventPosition.position} to ${controller.firstName} ${controller.lastName} (${controller.cid}) in ${eventPosition.event.name}`);
     revalidatePath(`/admin/events/edit/${eventPosition.eventId}/positions`);
     revalidatePath(`/events/${eventPosition.eventId}`);

@@ -7,6 +7,11 @@ import {revalidatePath} from "next/cache";
 import {log} from "@/actions/log";
 import {User} from "next-auth";
 import {addVatusaVisitor} from "@/actions/vatusa/roster";
+import {
+    sendVisitorApplicationAcceptedEmail,
+    sendVisitorApplicationCreatedEmail,
+    sendVisitorApplicationRejectedEmail
+} from "@/actions/mail/visitor";
 
 export const addVisitingApplication = async (data: VisitorApplication, user: User) => {
 
@@ -39,6 +44,9 @@ export const addVisitingApplication = async (data: VisitorApplication, user: Use
             submittedAt: new Date(),
         },
     });
+
+    await sendVisitorApplicationCreatedEmail(user);
+
     revalidatePath('/admin/visitor-applications');
     revalidatePath('/visitor/new');
 }
@@ -69,8 +77,9 @@ export const addVisitor = async (application: VisitorApplication, user: User) =>
 
     await log("UPDATE", "VISITOR_APPLICATION", `Approved visitor application for ${user.fullName} (${user.cid})`);
 
-    // TODO send email
     await addVatusaVisitor(user.cid);
+
+    await sendVisitorApplicationAcceptedEmail(user);
 
     revalidatePath('/controllers/roster');
     revalidatePath('/admin/visitor-applications');
@@ -94,7 +103,7 @@ export const rejectVisitor = async (application: VisitorApplication, user: User)
         },
     });
 
-    // TODO send rejection email
+    await sendVisitorApplicationRejectedEmail(user);
 
     await log("UPDATE", "VISITOR_APPLICATION", `Rejected visitor application for ${user.fullName} (${user.cid})`);
     revalidatePath('/admin/visitor-applications');

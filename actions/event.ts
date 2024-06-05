@@ -14,7 +14,6 @@ export const lockUpcomingEvents = async () => {
     const in48Hours = new Date();
     in48Hours.setHours(in48Hours.getHours() + 48);
 
-    // TODO send email with positions.
     await prisma.event.updateMany({
         where: {
             start: {
@@ -26,6 +25,7 @@ export const lockUpcomingEvents = async () => {
             positionsLocked: true,
         },
     });
+
 }
 
 export const deleteStaleEvents = async () => {

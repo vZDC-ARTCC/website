@@ -5,6 +5,8 @@ import {Feedback} from "@prisma/client";
 import prisma from "@/lib/db";
 import {revalidatePath} from "next/cache";
 import {log} from "@/actions/log";
+import {sendNewFeedbackEmail} from "@/actions/mail/feedback";
+import {User} from "next-auth";
 
 export const submitFeedback = async (data: Feedback) => {
 
@@ -57,7 +59,7 @@ export const releaseFeedback = async (feedback: Feedback) => {
         },
     });
 
-    // TODO send email to controller
+    await sendNewFeedbackEmail(releasedFeedback.controller as User, releasedFeedback);
 
     await log("UPDATE", "FEEDBACK", `Released feedback for ${releasedFeedback.controller.firstName} ${releasedFeedback.controller.lastName} (${releasedFeedback.controller.cid})`);
     revalidatePath('/admin/feedback');

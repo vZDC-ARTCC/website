@@ -5,6 +5,8 @@ import prisma from "@/lib/db";
 import {log} from "@/actions/log";
 import {revalidatePath} from "next/cache";
 import {addVatusaSolo, deleteVatusaSolo} from "@/actions/vatusa/controller";
+import {sendSoloAddedEmail, sendSoloDeletedEmail, sendSoloExpiredEmail} from "@/actions/mail/solo";
+import {User} from "next-auth";
 
 export const addSolo = async (formData: FormData) => {
 
@@ -63,7 +65,7 @@ export const addSolo = async (formData: FormData) => {
         },
     });
 
-    // TODO send email to notify of created solo
+    await sendSoloAddedEmail(data.controller as User, data);
 
     await log('CREATE', 'SOLO_CERTIFICATION', `Created solo certification ${data.position} for ${data.controller.firstName} ${data.controller.lastName}`);
 
@@ -84,7 +86,7 @@ export const deleteSolo = async (id: string) => {
         }
     });
 
-    // TODO send email to notify of deleted solo
+    await sendSoloDeletedEmail(ss.controller as User, ss);
 
     await log('DELETE', 'SOLO_CERTIFICATION', `Deleted solo certification ${ss.position} for ${ss.controller.firstName} ${ss.controller.lastName}`);
 
@@ -113,7 +115,7 @@ export const deleteExpiredSolos = async () => {
             }
         });
 
-        // TODO send email to notify of expired solo
+        await sendSoloExpiredEmail(solo.controller as User, solo);
 
         await log('DELETE', 'SOLO_CERTIFICATION', `Deleted expired solo certification ${solo.position} for ${solo.controller.firstName} ${solo.controller.lastName}`);
 

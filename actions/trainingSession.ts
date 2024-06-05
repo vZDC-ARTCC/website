@@ -5,14 +5,15 @@ import {log} from "@/actions/log";
 import {revalidatePath} from "next/cache";
 import {z} from "zod";
 import {CommonMistake, Lesson, RubricCriteraScore} from "@prisma/client";
-import {getServerSession} from "next-auth";
+import {getServerSession, User} from "next-auth";
 import {authOptions} from "@/auth/auth";
 import {
-    editVatusaTrainingSession,
     createVatusaTrainingSession,
-    deleteVatusaTrainingSession
+    deleteVatusaTrainingSession,
+    editVatusaTrainingSession
 } from "@/actions/vatusa/training";
 import {getDuration} from "@/lib/date";
+import {sendInstructorsTrainingSessionCreatedEmail, sendTrainingSessionCreatedEmail} from "@/actions/mail/training";
 
 
 export async function deleteTrainingSession(id: string) {
@@ -162,8 +163,7 @@ export async function createOrUpdateTrainingSession(
                 const oldTicket = oldTickets.find((ticket) => ticket.id === newTicket.id);
 
                 if (oldTicket && !oldTicket.passed && newTicket.passed && newTicket.lesson.notifyInstructorOnPass) {
-                    // TODO: Send email to instructor
-                    console.log('sending instructor email')
+                    await sendInstructorsTrainingSessionCreatedEmail(trainingSession.student as User, session.user, trainingSession, newTicket.lesson);
                 }
             }
 
@@ -220,12 +220,13 @@ export async function createOrUpdateTrainingSession(
                 }
             });
 
+            await sendTrainingSessionCreatedEmail(trainingSession.student as User, session.user, trainingSession);
+
             revalidatePath('/training/sessions', "layout");
 
             for (const newTicket of trainingSession.tickets) {
                 if (newTicket.passed && newTicket.lesson.notifyInstructorOnPass) {
-                    // TODO: Send email to instructor
-                    console.log('sending instructor email')
+                    await sendInstructorsTrainingSessionCreatedEmail(trainingSession.student as User, session.user, trainingSession, newTicket.lesson);
                 }
             }
 
@@ -238,7 +239,6 @@ export async function createOrUpdateTrainingSession(
             };
         }
 
-        // TODO send email to student with new ticket
     } catch (e) {
         console.log(e);
         return {errors: [{message: "An error occurred when trying to save training ticket. Try refreshing the page."}]};

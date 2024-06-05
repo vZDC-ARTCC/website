@@ -2,10 +2,17 @@
 
 import {z} from "zod";
 import prisma from "@/lib/db";
-import {getServerSession} from "next-auth";
+import {getServerSession, User} from "next-auth";
 import {authOptions} from "@/auth/auth";
 import {log} from "@/actions/log";
 import {revalidatePath} from "next/cache";
+import {
+    sendLoaApprovedEmail,
+    sendLoaDeletedEmail,
+    sendLoaDeniedEmail,
+    sendLoaExpiredEmail,
+    sendLoaRequestedEmail
+} from "@/actions/mail/loa";
 
 export const createOrUpdateLoa = async (formData: FormData) => {
     const loaZ = z.object({
@@ -61,6 +68,8 @@ export const createOrUpdateLoa = async (formData: FormData) => {
             },
         });
 
+        await sendLoaRequestedEmail(session.user, loa);
+
         await log("CREATE", "LOA", `User ${session.user.firstName} ${session.user.lastName} requested LOA`);
         revalidatePath("/profile", "layout");
         return {loa};
@@ -79,7 +88,7 @@ export const deleteLoa = async (loaId: string) => {
         },
     });
 
-    // TODO send email
+    await sendLoaDeletedEmail(loa.user as User, loa);
 
     await log("DELETE", "LOA", `LOA request for ${loa.user.firstName} ${loa.user.lastName} (${loa.user.cid}) deleted`);
     revalidatePath("/profile", "layout");
@@ -87,6 +96,7 @@ export const deleteLoa = async (loaId: string) => {
 }
 
 export const approveLoa = async (loaId: string) => {
+
     const loa = await prisma.lOA.update({
         where: {
             id: loaId,
@@ -99,7 +109,7 @@ export const approveLoa = async (loaId: string) => {
         }
     });
 
-    // TODO send email
+    await sendLoaApprovedEmail(loa.user as User, loa);
     await log("UPDATE", "LOA", `LOA request for ${loa.user.firstName} ${loa.user.lastName} (${loa.user.cid}) approved`);
     revalidatePath("/admin/loas", "layout");
     revalidatePath("/profile", "layout");
@@ -107,6 +117,7 @@ export const approveLoa = async (loaId: string) => {
 }
 
 export const denyLoa = async (loaId: string) => {
+
     const loa = await prisma.lOA.update({
         where: {
             id: loaId,
@@ -119,7 +130,7 @@ export const denyLoa = async (loaId: string) => {
         }
     });
 
-    // TODO send email
+    await sendLoaDeniedEmail(loa.user as User, loa);
     await log("UPDATE", "LOA", `LOA request for ${loa.user.firstName} ${loa.user.lastName} (${loa.user.cid}) denied`);
     revalidatePath("/admin/loas", "layout");
     revalidatePath("/profile", "layout");
@@ -127,6 +138,31 @@ export const denyLoa = async (loaId: string) => {
 }
 
 export const deleteExpiredLoas = async () => {
+
+    const expiredLoas = await prisma.lOA.findMany({
+        where: {
+            end: {
+                lt: new Date(),
+            },
+        },
+        include: {
+            user: true,
+        },
+    });
+
+    // For each expired LOA
+    for (const loa of expiredLoas) {
+        // Delete the LOA
+        await prisma.lOA.delete({
+            where: {
+                id: loa.id,
+            },
+        });
+
+        // Send the LOA deleted email to the user
+        await sendLoaExpiredEmail(loa.user as User, loa);
+    }
+
     const loas = await prisma.lOA.deleteMany({
         where: {
             end: {
@@ -134,8 +170,6 @@ export const deleteExpiredLoas = async () => {
             },
         },
     });
-
-    // TODO send emails to all users with expired LOAs
 
     revalidatePath("/profile", "layout");
     return {loas};
