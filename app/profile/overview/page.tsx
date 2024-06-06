@@ -20,10 +20,13 @@ export default async function Page() {
 
     const user = session?.user;
 
-    const loa = await prisma.lOA.findUnique({
+    const loa = await prisma.lOA.findFirst({
         where: {
             userId: user?.id,
-        }
+            status: {
+                not: "INACTIVE",
+            },
+        },
     });
 
     const getLoaColor = (status: LOAStatus) => {

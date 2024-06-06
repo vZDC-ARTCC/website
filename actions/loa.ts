@@ -79,7 +79,10 @@ export const createOrUpdateLoa = async (formData: FormData) => {
 }
 
 export const deleteLoa = async (loaId: string) => {
-    const loa = await prisma.lOA.delete({
+    const loa = await prisma.lOA.update({
+        data: {
+            status: "INACTIVE",
+        },
         where: {
             id: loaId,
         },
@@ -90,7 +93,7 @@ export const deleteLoa = async (loaId: string) => {
 
     await sendLoaDeletedEmail(loa.user as User);
 
-    await log("DELETE", "LOA", `LOA request for ${loa.user.firstName} ${loa.user.lastName} (${loa.user.cid}) deleted`);
+    await log("DELETE", "LOA", `LOA request for ${loa.user.firstName} ${loa.user.lastName} (${loa.user.cid}) deleted (inactive).`);
     revalidatePath("/profile", "layout");
     return {loa};
 }

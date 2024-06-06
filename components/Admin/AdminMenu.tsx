@@ -14,6 +14,7 @@ import {
     ListAlt,
     MilitaryTech,
     QuestionAnswer,
+    Report,
     Task
 } from "@mui/icons-material";
 import prisma from "@/lib/db";
@@ -33,6 +34,12 @@ export default async function AdminMenu() {
     });
 
     const staffingRequests = await prisma.staffingRequest.count();
+
+    const activeIncidentReports = await prisma.incidentReport.count({
+        where: {
+            closed: false,
+        },
+    });
 
     const pendingLoas = await prisma.lOA.count({
         where: {
@@ -159,6 +166,16 @@ export default async function AdminMenu() {
                                 </Badge>
                             </ListItemIcon>
                             <ListItemText primary="Feedback"/>
+                        </ListItemButton>
+                    </Link>
+                    <Link href="/admin/incidents" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <Badge color="primary" badgeContent={activeIncidentReports}>
+                                    <Report/>
+                                </Badge>
+                            </ListItemIcon>
+                            <ListItemText primary="Incident Reports"/>
                         </ListItemButton>
                     </Link>
                     <Link href="/admin/files" style={{textDecoration: 'none', color: 'inherit',}}>

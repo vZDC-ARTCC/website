@@ -35,12 +35,14 @@ export default function LinksCard() {
                             <ListItemText primary="Request an LOA"/>
                         </ListItemButton>
                     </Link>
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <Shield/>
-                        </ListItemIcon>
-                        <ListItemText primary="New Incident Report"/>
-                    </ListItemButton>
+                    <Link href="/incident/new" style={{color: 'inherit', textDecoration: 'none',}}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <Shield/>
+                            </ListItemIcon>
+                            <ListItemText primary="New Incident Report"/>
+                        </ListItemButton>
+                    </Link>
                     <Link href="/controllers/staff" style={{color: 'inherit', textDecoration: 'none',}}>
                         <ListItemButton>
                             <ListItemIcon>

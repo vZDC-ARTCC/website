@@ -9,9 +9,12 @@ export default async function Page() {
 
     const session = await getServerSession(authOptions);
 
-    const loa = await prisma.lOA.findUnique({
+    const loa = await prisma.lOA.findFirst({
         where: {
             userId: session?.user.id,
+            status: {
+                not: "INACTIVE",
+            },
         },
     });
 

@@ -2,8 +2,8 @@
 import React, {useState} from 'react';
 import {LOA} from "@prisma/client";
 import {toast} from "react-toastify";
-import {Button, IconButton} from "@mui/material";
-import {Delete} from "@mui/icons-material";
+import {Button, IconButton, Tooltip} from "@mui/material";
+import {Delete, Storage} from "@mui/icons-material";
 import {deleteLoa} from "@/actions/loa";
 
 export default function LoaDeleteButton({loa, icon}: { loa: LOA, icon?: boolean, }) {
@@ -14,7 +14,7 @@ export default function LoaDeleteButton({loa, icon}: { loa: LOA, icon?: boolean,
             await deleteLoa(loa.id);
             toast(`LOA deleted successfully!`, {type: 'success'});
         } else {
-            toast(`Are you sure you want to delete this LOA? Click again to confirm.`, {type: 'warning'});
+            toast(`Are you sure you want to mark this LOA as inactive? This action is irreversible! Click again to confirm.`, {type: 'warning'});
             setClicked(true);
         }
 
@@ -22,16 +22,18 @@ export default function LoaDeleteButton({loa, icon}: { loa: LOA, icon?: boolean,
 
     if (icon) {
         return (
-            <IconButton color="inherit" onClick={handleClick}>
-                {clicked ? <Delete color="warning"/> : <Delete/>}
-            </IconButton>
+            <Tooltip title="Mark as inactive">
+                <IconButton color="inherit" onClick={handleClick}>
+                    {clicked ? <Storage color="warning"/> : <Storage/>}
+                </IconButton>
+            </Tooltip>
         );
     }
 
     return (
         <Button variant="outlined" color="inherit" onClick={handleClick}
                 startIcon={clicked ? <Delete color="warning"/> : <Delete/>}>
-            Delete
+            Mark as Inactive
         </Button>
     );
 }

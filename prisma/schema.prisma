@@ -72,7 +72,7 @@ model User {
   updatedAt          DateTime
   eventSignups       EventPosition[]
   staffingRequests   StaffingRequest[]
-  loa                LOA?
+  loas               LOA[]
 
   accounts              Account[]
   sessions              Session[]
@@ -84,6 +84,8 @@ model User {
   givenFeedback         Feedback[]          @relation("FeedbackController")
   trainingSessionsGiven TrainingSession[]   @relation("TrainingsInstructor")
   trainingSessions      TrainingSession[]   @relation("TrainingsStudent")
+  incidentsReported     IncidentReport[]    @relation("IncidentReportReporter")
+  incidentReports       IncidentReport[]    @relation("IncidentReportReportee")
 }
 
 model VatsimUpdateMetadata {
@@ -216,6 +218,7 @@ enum LogModel {
   COMMON_MISTAKE
   LESSON_RUBRIC
   TRAINING_SESSION
+  INCIDENT_REPORT
 }
 
 model Log {
@@ -449,14 +452,28 @@ enum LOAStatus {
   PENDING
   APPROVED
   DENIED
+  INACTIVE
 }
 
 model LOA {
   id     String    @id @default(cuid())
   user   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String    @unique
+  userId String
   start  DateTime
   end    DateTime
   reason String
   status LOAStatus
+}
+
+model IncidentReport {
+  id               String   @id @default(cuid())
+  reporter         User     @relation(fields: [reporterId], references: [id], onDelete: Cascade, name: "IncidentReportReporter")
+  reporterId       String
+  reportee         User     @relation(fields: [reporteeId], references: [id], onDelete: Cascade, name: "IncidentReportReportee")
+  reporteeId       String
+  timestamp        DateTime
+  reason           String
+  closed           Boolean
+  reporterCallsign String?
+  reporteeCallsign String?
 }

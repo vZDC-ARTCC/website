@@ -24,6 +24,7 @@ export default function LoaTabs() {
             <Tab label="Pending" value="PENDING"/>
             <Tab label="Approved" value="APPROVED"/>
             <Tab label="Denied" value="DENIED"/>
+            <Tab label="Inactive" value="INACTIVE"/>
         </Tabs>
     );
 }

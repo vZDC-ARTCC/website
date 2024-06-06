@@ -1,13 +1,15 @@
 import React from 'react';
 import {
     Card,
-    CardContent, IconButton,
+    CardContent,
+    IconButton,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
-    TableRow, Tooltip,
+    TableRow,
+    Tooltip,
     Typography
 } from "@mui/material";
 import LoaTabs from "@/components/LOA/LOATabs";
@@ -29,7 +31,7 @@ export default async function Page({searchParams}: { searchParams: { status?: st
             user: true,
         },
         orderBy: {
-            start: "asc",
+            start: "desc",
         },
     })
 
@@ -63,7 +65,7 @@ export default async function Page({searchParams}: { searchParams: { status?: st
                                                 </IconButton>
                                             </Link>
                                         </Tooltip>
-                                        <LoaDeleteButton loa={loa} icon/>
+                                        {loa.status !== "INACTIVE" && <LoaDeleteButton loa={loa} icon/>}
                                     </TableCell>
                                 </TableRow>
                             ))}
