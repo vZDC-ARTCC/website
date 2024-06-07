@@ -27,6 +27,7 @@ export default function StatisticsTable({heading, logs,}: {
                         <TableCell>Tower</TableCell>
                         <TableCell>TRACON</TableCell>
                         <TableCell>Center</TableCell>
+                        <TableCell>Total</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -38,6 +39,8 @@ export default function StatisticsTable({heading, logs,}: {
                             <TableCell>{log.towerHours.toPrecision(3)}</TableCell>
                             <TableCell>{log.approachHours.toPrecision(3)}</TableCell>
                             <TableCell>{log.centerHours.toPrecision(3)}</TableCell>
+                            <TableCell
+                                sx={{border: 1,}}>{(log.deliveryHours + log.groundHours + log.towerHours + log.approachHours + log.centerHours).toPrecision(3)}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

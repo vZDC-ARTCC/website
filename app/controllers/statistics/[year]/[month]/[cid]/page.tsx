@@ -6,6 +6,7 @@ import {getRating} from "@/lib/vatsim";
 import StatisticsTable from "@/components/Statistics/StatisticsTable";
 import {getMonthLog, getTotalHours} from "@/lib/hours";
 import {notFound} from "next/navigation";
+import ControllingSessionsTable from "@/components/Statistics/ControllingSessionsTable";
 
 export default async function Page({params}: { params: { year: string, month: string, cid: string, } }) {
 
@@ -39,7 +40,7 @@ export default async function Page({params}: { params: { year: string, month: st
     const logs = await prisma.controllerLogMonth.findMany({
         where: {
             year: parseInt(year),
-            month: {equals: parseInt(month) < 0 ? undefined : parseInt(month),},
+            month: !isNaN(parseInt(month)) ? parseInt(month) : undefined,
             log: {
                 user: {
                     cid,
@@ -53,6 +54,23 @@ export default async function Page({params}: { params: { year: string, month: st
                 }
             }
         }
+    });
+
+    const positionsWorked = await prisma.controllerPosition.findMany({
+        where: {
+            log: {
+                user: {
+                    cid,
+                },
+            },
+            start: {
+                gte: new Date(parseInt(year), isNaN(parseInt(month)) ? 0 : parseInt(month), 1),
+                lt: new Date(parseInt(year), isNaN(parseInt(month)) ? 11 : parseInt(month) + 1, 1),
+            },
+        },
+        orderBy: {
+            start: 'desc',
+        },
     });
 
     const totalHours = getTotalHours(logs);
@@ -122,7 +140,15 @@ export default async function Page({params}: { params: { year: string, month: st
                     </CardContent>
                 </Card>
             </Grid>
-            {parseInt(month) < 0 && <Grid item xs={30}>
+            <Grid item xs={30}>
+                <Card>
+                    <CardContent>
+                        <Typography variant="h6">Controlling Sessions</Typography>
+                        <ControllingSessionsTable positions={positionsWorked}/>
+                    </CardContent>
+                </Card>
+            </Grid>
+            {isNaN(parseInt(month)) && <Grid item xs={30}>
                 <Card>
                     <CardContent>
                         <Typography variant="h6">Monthly Totals</Typography>

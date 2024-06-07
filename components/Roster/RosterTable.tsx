@@ -16,9 +16,11 @@ import {
     Tooltip,
     Typography
 } from "@mui/material";
-import {getRating, getSubtitle} from "@/lib/vatsim";
+import {getRating} from "@/lib/vatsim";
 import {getIconForCertificationOption} from "@/lib/certification";
 import {getDaysLeft} from "@/lib/date";
+import {getChips} from "@/lib/staffPositions";
+import Link from "next/link";
 
 const VATUSA_FACILITY = process.env.VATUSA_FACILITY || 'ZDC';
 const DEV_MODE = process.env.DEV_MODE === 'true';
@@ -142,7 +144,7 @@ export default async function RosterTable({membership, search}: {
     });
 
     return (
-        <Card elevation={0}>
+        <Card variant="outlined">
             <CardContent>
                 <TableContainer sx={{maxHeight: 600,}}>
                     <Table stickyHeader size="small">
@@ -160,13 +162,16 @@ export default async function RosterTable({membership, search}: {
                             {DEV_MODE && users.map((user) => (
                                 <TableRow key={user.cid}>
                                     <TableCell>
-                                        <Typography
-                                            variant="h6">{user.preferredName || `${user.firstName} ${user.lastName}`}
-                                            <Chip label="DEV MODE"/></Typography>
+                                        <Link href={`/controllers/${user.cid}`}
+                                              style={{color: 'inherit', textDecoration: 'none',}}>
+                                            <Typography
+                                                variant="h6">{user.preferredName || `${user.firstName} ${user.lastName}`}
+                                                <Chip label="DEV MODE"/></Typography>
+                                        </Link>
                                         <Typography
                                             variant="body2">{user.preferredName && `${user.firstName} ${user.lastName}`}</Typography>
                                         <Typography variant="body1">{getRating(user.rating)} • {user.cid}</Typography>
-                                        <Typography variant="subtitle2">{getSubtitle(user as User, true)}</Typography>
+                                        {getChips(user as User)}
                                     </TableCell>
                                     {certificationTypes.map((certificationType) => (
                                         <TableCell key={certificationType.id}>
@@ -192,12 +197,18 @@ export default async function RosterTable({membership, search}: {
                                     return (
                                         <TableRow key={user.user.cid}>
                                             <TableCell>
+                                                <Link href={`/controllers/${user.user.cid}`}
+                                                      style={{color: 'inherit', textDecoration: 'none',}}>
+                                                    <Typography
+                                                        variant="h6">{user.user.preferredName || `${user.user.firstName} ${user.user.lastName}`}</Typography>
+                                                </Link>
                                                 <Typography
-                                                    variant="h6">{user.user.preferredName || `${user.user.firstName} ${user.user.lastName}`}</Typography>
+                                                    variant="body2">{user.user.preferredName && `${user.user.firstName} ${user.user.lastName}`}</Typography>
                                                 <Typography
                                                     variant="body1">{getRating(user.user.rating)} • {user.user.cid}</Typography>
-                                                <Typography
-                                                    variant="subtitle2">{getSubtitle(user.user as User, true)}</Typography>
+                                                {user.user.controllerStatus === "HOME" && getChips(user.user as User)}
+                                                {user.user.controllerStatus === "VISITOR" &&
+                                                    <Typography>{user.user.artcc}</Typography>}
                                             </TableCell>
                                             {certificationTypes.map((certificationType) => (
                                                 <TableCell key={certificationType.id}>

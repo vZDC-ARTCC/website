@@ -1,11 +1,16 @@
 import React from 'react';
 import {Avatar, Box, Card, CardContent, Grid, IconButton, Stack, Tooltip, Typography} from "@mui/material";
-import {getRating, getSubtitle} from "@/lib/vatsim";
+import {getRating} from "@/lib/vatsim";
 import {User} from "next-auth";
 import {Edit} from "@mui/icons-material";
 import Link from "next/link";
+import {getChips} from "@/lib/staffPositions";
 
-export default async function ProfileCard({user, admin}: { user: User, admin?: boolean }) {
+export default async function ProfileCard({user, admin, viewOnly}: {
+    user: User,
+    admin?: boolean,
+    viewOnly?: boolean,
+}) {
 
     return (
         <Card sx={{height: '100%',}}>
@@ -15,10 +20,10 @@ export default async function ProfileCard({user, admin}: { user: User, admin?: b
                         <Avatar src={user.avatarUrl}/>
                         <Box>
                             <Typography variant="h6">{user.fullName}</Typography>
-                            <Typography variant="body2">{getSubtitle(user)}</Typography>
+                            {getChips(user)}
                         </Box>
                     </Stack>
-                    <Box>
+                    {!viewOnly && <Box>
                         <Link href={admin ? `/admin/controller/${user.cid}/edit` : '/profile/edit'}
                               style={{color: 'inherit',}}>
                             <Tooltip title="Edit Profile">
@@ -27,7 +32,7 @@ export default async function ProfileCard({user, admin}: { user: User, admin?: b
                                 </IconButton>
                             </Tooltip>
                         </Link>
-                    </Box>
+                    </Box>}
                 </Stack>
 
                 <Grid container columns={2} spacing={2} sx={{mt: 1,}}>
@@ -35,10 +40,10 @@ export default async function ProfileCard({user, admin}: { user: User, admin?: b
                         <Typography variant="subtitle2">VATSIM CID</Typography>
                         <Typography variant="body2">{user.cid}</Typography>
                     </Grid>
-                    <Grid item xs={2} sm={1}>
+                    {!viewOnly && <Grid item xs={2} sm={1}>
                         <Typography variant="subtitle2">Email</Typography>
                         <Typography variant="body2">{user.email}</Typography>
-                    </Grid>
+                    </Grid>}
                     <Grid item xs={2} sm={1}>
                         <Typography variant="subtitle2">Preferred Name</Typography>
                         <Typography variant="body2">{user.preferredName || 'None'}</Typography>

@@ -15,6 +15,7 @@ import {
     MilitaryTech,
     QuestionAnswer,
     Report,
+    Send,
     Task
 } from "@mui/icons-material";
 import prisma from "@/lib/db";
@@ -146,6 +147,14 @@ export default async function AdminMenu() {
                                 </Badge>
                             </ListItemIcon>
                             <ListItemText primary="LOA Center"/>
+                        </ListItemButton>
+                    </Link>
+                    <Link href="/admin/mail" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <Send/>
+                            </ListItemIcon>
+                            <ListItemText primary="Send Email"/>
                         </ListItemButton>
                     </Link>
                     <Link href="/admin/visitor-applications" style={{textDecoration: 'none', color: 'inherit',}}>

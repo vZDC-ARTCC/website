@@ -42,9 +42,68 @@ export async function GET() {
 
     for (const controller of allControllers) {
         const vatsimUser = vatsimData.find((user) => user.cid + '' === controller.cid);
+
+        const activePosition = await prisma.controllerPosition.findFirst({
+            where: {
+                logId: controller.log?.id,
+                active: true,
+            },
+        });
+
         if (!vatsimUser) {
+            // The controller is offline
+            if (activePosition) {
+                // The controller was active on a position, mark it as inactive
+                await prisma.controllerPosition.updateMany({
+                    where: {
+                        log: {
+                            userId: controller.id,
+                        },
+                        active: true,
+                    },
+                    data: {
+                        active: false,
+                        end: now,
+                    },
+                });
+            }
             continue;
         }
+
+        if (activePosition) {
+            if (vatsimUser.callsign !== activePosition.position) {
+                // The controller is no longer active on this position
+                await prisma.controllerPosition.update({
+                    where: {
+                        id: activePosition.id,
+                    },
+                    data: {
+                        active: false,
+                        end: now,
+                    },
+                });
+            }
+        } else {
+            // The controller just got on a new position
+            await prisma.controllerPosition.create({
+                data: {
+                    log: {
+                        connectOrCreate: {
+                            create: {
+                                userId: controller.id,
+                            },
+                            where: {
+                                userId: controller.id,
+                            },
+                        },
+                    },
+                    position: getFacilityType(vatsimUser.facility),
+                    start: vatsimUser.logon_time,
+                    active: true,
+                },
+            });
+        }
+
         const month = now.getMonth();
         const year = now.getFullYear();
         const log = controller.log?.months.find((controllerMonth) => controllerMonth.month === month && controllerMonth.year === year);
@@ -109,6 +168,8 @@ export async function GET() {
 const devUpdate = async () => {
 
     const now = new Date();
+    const end = new Date(); // Create a new Date object for the end time
+    end.setMinutes(now.getMinutes() + 30); // Add 30 minutes to the end time
     const vatsimUpdate = await prisma.vatsimUpdateMetadata.findFirst();
 
     const allControllers = await prisma.user.findMany({
@@ -135,6 +196,49 @@ const devUpdate = async () => {
     });
 
     for (const controller of allControllers) {
+
+        const activePosition = await prisma.controllerPosition.findFirst({
+            where: {
+                log: {
+                    userId: controller.id,
+                },
+                position: 'PCT_APP',
+                active: true,
+            },
+        });
+
+        if (activePosition) {
+            // The controller is currently active on PCT_APP, mark it as inactive
+            await prisma.controllerPosition.update({
+                where: {
+                    id: activePosition.id,
+                },
+                data: {
+                    active: false,
+                    end: now,
+                },
+            });
+        } else {
+            // The controller is not currently active on PCT_APP, mark it as active
+            await prisma.controllerPosition.create({
+                data: {
+                    log: {
+                        connectOrCreate: {
+                            create: {
+                                userId: controller.id,
+                            },
+                            where: {
+                                userId: controller.id,
+                            },
+                        },
+                    },
+                    position: 'PCT_APP',
+                    start: now,
+                    active: true,
+                },
+            });
+        }
+
         const month = now.getMonth();
         const year = now.getFullYear();
         const log = controller.log?.months.find((controllerMonth) => controllerMonth.month === month && controllerMonth.year === year);

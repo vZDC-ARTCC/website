@@ -94,10 +94,11 @@ model VatsimUpdateMetadata {
 }
 
 model ControllerLog {
-  id     String               @id @default(cuid())
-  user   User                 @relation(fields: [userId], references: [id])
-  userId String               @unique
-  months ControllerLogMonth[]
+  id        String               @id @default(cuid())
+  user      User                 @relation(fields: [userId], references: [id])
+  userId    String               @unique
+  months    ControllerLogMonth[]
+  positions ControllerPosition[]
 }
 
 model ControllerLogMonth {
@@ -111,6 +112,16 @@ model ControllerLogMonth {
   towerHours    Float
   approachHours Float
   centerHours   Float
+}
+
+model ControllerPosition {
+  id       String        @id @default(cuid())
+  log      ControllerLog @relation(fields: [logId], references: [id])
+  logId    String
+  position String
+  start    DateTime
+  end      DateTime?
+  active   Boolean
 }
 
 enum ControllerStatus {
@@ -219,6 +230,7 @@ enum LogModel {
   LESSON_RUBRIC
   TRAINING_SESSION
   INCIDENT_REPORT
+  EMAIL
 }
 
 model Log {
