@@ -8,7 +8,9 @@ import {formatZuluDate} from "@/lib/date";
 
 export default function UpcomingEventsCarousel({events, imageUrls}: {
     events: Event[],
-    imageUrls: { [key: string]: string },
+    imageUrls: { // noinspection JSUnusedLocalSymbols
+        [key: string]: string
+    },
 }) {
     return (
         <Carousel

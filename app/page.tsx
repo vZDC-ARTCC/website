@@ -122,7 +122,7 @@ export default async function Home() {
                         <Typography {...headingFont.style} variant="h4" sx={{mb: 1,}}>Online A.T.C.</Typography>
                         <Stack direction="column" spacing={1}>
                             {onlineAtc.length > 0 ? onlineAtc.map(position => (
-                                <Card elevation={0}>
+                                <Card elevation={0} key={position.position + position.log.userId}>
                                     <CardContent>
                                         <Stack direction="row" spacing={1} justifyContent="space-between">
                                             <Typography>{position.position}</Typography>
