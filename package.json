@@ -1,6 +1,7 @@
 {
   "name": "vzdc_website",
   "version": "1.0.0",
+  "author": "Aneesh Reddy & vZDC",
   "private": true,
   "scripts": {
     "db:reset": "dotenv -e .env.local -- npx prisma migrate reset",
@@ -39,6 +40,7 @@
     "react-dom": "^18",
     "react-google-recaptcha-v3": "^1.10.1",
     "react-markdown": "^9.0.1",
+    "react-material-ui-carousel": "^3.4.2",
     "react-toastify": "^10.0.4",
     "uploadthing": "^6.10.4",
     "zod": "^3.22.4"

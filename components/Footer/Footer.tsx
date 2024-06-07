@@ -1,5 +1,5 @@
 import React from 'react';
-import {AppBar, Container, Stack, Toolbar, Typography} from "@mui/material";
+import {AppBar, Container, Stack, Toolbar, Tooltip, Typography} from "@mui/material";
 import Logo from "@/components/Logo/Logo";
 import vatusa from "@/public/img/vatusa.png";
 import vatsim from "@/public/img/vatsim.png";
@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function Footer() {
+
     return (
         <AppBar position="static" sx={{marginTop: 20}}>
             <Toolbar>
@@ -27,6 +28,9 @@ export default function Footer() {
                             <Image src={vatsim} alt="VATSIM" height={50}/>
                         </Link>
                     </Stack>
+                    <Tooltip title={`Developed by Aneesh Reddy & vZDC Web Team`}>
+                        <Typography textAlign="center" sx={{mt: 2,}}>v{process.env.npm_package_version}</Typography>
+                    </Tooltip>
                 </Container>
             </Toolbar>
         </AppBar>

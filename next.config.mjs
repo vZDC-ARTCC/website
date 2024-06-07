@@ -14,7 +14,7 @@ const nextConfig = {
         serverActions: {
             bodySizeLimit: '5MB',
         }
-    }
+    },
 };
 
 export default nextConfig;
