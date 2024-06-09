@@ -4,13 +4,14 @@ import {authOptions} from "@/auth/auth";
 import prisma from "@/lib/db";
 import {Card, CardContent, Typography} from "@mui/material";
 import LoaForm from "@/components/LOA/LOAForm";
+import ErrorCard from "@/components/Error/ErrorCard";
 
 export default async function Page() {
 
     const session = await getServerSession(authOptions);
 
     if (session?.user.noRequestLoas) {
-        throw new Error("You are not allowed to request LOAs.");
+        return <ErrorCard heading="Leave of Absence Request" message="You are not allowed to request LOAs."/>
     }
 
     const loa = await prisma.lOA.findFirst({
@@ -23,7 +24,7 @@ export default async function Page() {
     });
 
     if (loa) {
-        throw new Error("You already have a LOA request.");
+        return <ErrorCard heading="Leave of Absence Request" message="You already have an active LOA."/>
     }
 
     return (

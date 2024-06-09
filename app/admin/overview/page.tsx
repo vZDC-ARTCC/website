@@ -43,8 +43,8 @@ export default async function Page() {
     const syncTimes = await prisma.syncTimes.findFirst();
 
     return (
-        <Grid container columns={4} spacing={2}>
-            <Grid item xs={4} md={2} lg={1}>
+        <Grid container columns={20} spacing={2}>
+            <Grid item xs={20} md={10} lg={5}>
                 <Card>
                     <CardContent>
                         <Typography>Membership</Typography>
@@ -52,7 +52,7 @@ export default async function Page() {
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid item xs={4} md={2} lg={1}>
+            <Grid item xs={20} md={10} lg={5}>
                 <Card>
                     <CardContent>
                         <Typography>Visitors</Typography>
@@ -60,7 +60,7 @@ export default async function Page() {
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid item xs={4} md={2} lg={1}>
+            <Grid item xs={20} md={10} lg={5}>
                 <Card>
                     <CardContent>
                         <Typography>Training Staff</Typography>
@@ -68,7 +68,7 @@ export default async function Page() {
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid item xs={4} md={2} lg={1}>
+            <Grid item xs={20} md={10} lg={5}>
                 <Card>
                     <CardContent>
                         <Typography>{getMonth(now.getMonth())} Hours</Typography>
@@ -76,7 +76,7 @@ export default async function Page() {
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid item xs={4} md={2} lg={1}>
+            <Grid item xs={20} md={10} lg={4}>
                 <Card>
                     <CardContent>
                         <Typography sx={{mb: 1,}}>Roster Sync</Typography>
@@ -85,7 +85,7 @@ export default async function Page() {
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid item xs={4} md={2} lg={1}>
+            <Grid item xs={20} md={10} lg={4}>
                 <Card>
                     <CardContent>
                         <Typography sx={{mb: 1,}}>Statistics Sync</Typography>
@@ -94,7 +94,7 @@ export default async function Page() {
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid item xs={4} md={2} lg={1}>
+            <Grid item xs={20} md={10} lg={4}>
                 <Card>
                     <CardContent>
                         <Typography sx={{mb: 1,}}>Solo Certification Sync</Typography>
@@ -103,7 +103,7 @@ export default async function Page() {
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid item xs={4} md={2} lg={1}>
+            <Grid item xs={20} md={10} lg={4}>
                 <Card>
                     <CardContent>
                         <Typography sx={{mb: 1,}}>Events Sync</Typography>
@@ -112,7 +112,16 @@ export default async function Page() {
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={20} md={10} lg={4}>
+                <Card>
+                    <CardContent>
+                        <Typography sx={{mb: 1,}}>LOA Sync</Typography>
+                        <Chip label={syncTimes?.loas ? `${getMinutesAgo(syncTimes?.loas)}m ago` : 'NEVER'}
+                              color={getChipColor(syncTimes?.loas)}/>
+                    </CardContent>
+                </Card>
+            </Grid>
+            <Grid item xs={20}>
                 <Card>
                     <CardContent>
                         <Typography variant="h5">Recent Activity</Typography>

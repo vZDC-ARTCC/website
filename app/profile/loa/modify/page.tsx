@@ -4,6 +4,7 @@ import {authOptions} from "@/auth/auth";
 import prisma from "@/lib/db";
 import {Card, CardContent, Typography} from "@mui/material";
 import LoaForm from "@/components/LOA/LOAForm";
+import ErrorCard from "@/components/Error/ErrorCard";
 
 export default async function Page() {
 
@@ -19,7 +20,8 @@ export default async function Page() {
     });
 
     if (!loa) {
-        throw new Error("You do not have an LOA.  Try requesting one in your profile.");
+        return <ErrorCard heading="Leave of Absence"
+                          message="You do not have an LOA. Try requesting one in your profile"/>
     }
 
     return (
