@@ -23,7 +23,7 @@ export default async function ProfileCard({user, admin, viewOnly}: {
                             {getChips(user)}
                         </Box>
                     </Stack>
-                    {!viewOnly && <Box>
+                    {!viewOnly && (admin || !user.noEditProfile) && <Box>
                         <Link href={admin ? `/admin/controller/${user.cid}/edit` : '/profile/edit'}
                               style={{color: 'inherit',}}>
                             <Tooltip title="Edit Profile">

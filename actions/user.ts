@@ -5,6 +5,7 @@ import {authOptions} from "@/auth/auth";
 import prisma from "@/lib/db";
 import {getRolesAndStaffPositions} from "@/auth/vatsimProvider";
 import {revalidatePath} from "next/cache";
+import {z} from "zod";
 
 const DEV_MODE = process.env.NODE_ENV === "development";
 export const refreshData = async () => {
@@ -84,4 +85,42 @@ export const refreshData = async () => {
 
     revalidatePath('/', "layout");
 
+}
+
+export const updateSettings = async (formData: FormData) => {
+
+    const session = await getServerSession(authOptions);
+
+    if (!session || !session.user) return;
+
+
+    const settingsZ = z.object({
+        id: z.string().min(1, "Invalid ID"),
+        noRequestLoas: z.boolean(),
+        noEventSignup: z.boolean(),
+        noEditProfile: z.boolean(),
+        excludedFromVatusaRosterUpdate: z.boolean(),
+    });
+
+    const result = settingsZ.parse({
+        id: formData.get("id") as string,
+        noRequestLoas: formData.get("allowedLoas") !== "on",
+        noEventSignup: formData.get("allowedEventSignup") !== "on",
+        noEditProfile: formData.get("allowedEditProfile") !== "on",
+        excludedFromVatusaRosterUpdate: formData.get("excludedRosterUpdate") === "on",
+    });
+
+    // if (session.user.roles.includes("STAFF") && formData.get("id") === session.user.id) {
+    //     return "You cannot change your own settings as a staff member.";
+    // }
+
+    await prisma.user.update({
+        data: result,
+        where: {
+            id: result.id,
+        }
+    });
+
+    revalidatePath('/', "layout");
+    return null;
 }

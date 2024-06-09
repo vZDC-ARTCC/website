@@ -156,9 +156,12 @@ export const deleteExpiredLoas = async () => {
     // For each expired LOA
     for (const loa of expiredLoas) {
         // Delete the LOA
-        await prisma.lOA.delete({
+        await prisma.lOA.update({
             where: {
                 id: loa.id,
+            },
+            data: {
+                status: "INACTIVE",
             },
         });
 
@@ -166,14 +169,6 @@ export const deleteExpiredLoas = async () => {
         await sendLoaExpiredEmail(loa.user as User);
     }
 
-    const loas = await prisma.lOA.deleteMany({
-        where: {
-            end: {
-                lt: new Date(),
-            },
-        },
-    });
-
     revalidatePath("/profile", "layout");
-    return {loas};
+    return {expiredLoas};
 }

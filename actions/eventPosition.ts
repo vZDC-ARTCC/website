@@ -171,6 +171,9 @@ export const forceAssignPosition = async (eventPositionId: string, userId: strin
 }
 
 const isAbleToSignup = (eventPosition: EventPosition, controllersSignedUp: User[], controller: User) => {
+    if (controller.noEventSignup) {
+        return false;
+    }
     if (controller.controllerStatus === "NONE") {
         return false;
     }

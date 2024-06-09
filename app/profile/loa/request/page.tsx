@@ -9,6 +9,10 @@ export default async function Page() {
 
     const session = await getServerSession(authOptions);
 
+    if (session?.user.noRequestLoas) {
+        throw new Error("You are not allowed to request LOAs.");
+    }
+
     const loa = await prisma.lOA.findFirst({
         where: {
             userId: session?.user.id,

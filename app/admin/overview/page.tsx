@@ -2,6 +2,7 @@ import React from 'react';
 import {
     Card,
     CardContent,
+    Chip,
     Grid,
     Table,
     TableBody,
@@ -39,6 +40,8 @@ export default async function Page() {
     const now = new Date();
     const monthHours = await getMonthHours(now.getMonth(), now.getFullYear());
 
+    const syncTimes = await prisma.syncTimes.findFirst();
+
     return (
         <Grid container columns={4} spacing={2}>
             <Grid item xs={4} md={2} lg={1}>
@@ -70,6 +73,42 @@ export default async function Page() {
                     <CardContent>
                         <Typography>{getMonth(now.getMonth())} Hours</Typography>
                         <Typography variant="h4">{monthHours}</Typography>
+                    </CardContent>
+                </Card>
+            </Grid>
+            <Grid item xs={4} md={2} lg={1}>
+                <Card>
+                    <CardContent>
+                        <Typography sx={{mb: 1,}}>Roster Sync</Typography>
+                        <Chip label={syncTimes?.roster ? `${getMinutesAgo(syncTimes?.roster)}m ago` : 'NEVER'}
+                              color={getChipColor(syncTimes?.roster)}/>
+                    </CardContent>
+                </Card>
+            </Grid>
+            <Grid item xs={4} md={2} lg={1}>
+                <Card>
+                    <CardContent>
+                        <Typography sx={{mb: 1,}}>Statistics Sync</Typography>
+                        <Chip label={syncTimes?.stats ? `${getMinutesAgo(syncTimes?.stats)}m ago` : 'NEVER'}
+                              color={getChipColor(syncTimes?.stats)}/>
+                    </CardContent>
+                </Card>
+            </Grid>
+            <Grid item xs={4} md={2} lg={1}>
+                <Card>
+                    <CardContent>
+                        <Typography sx={{mb: 1,}}>Solo Certification Sync</Typography>
+                        <Chip label={syncTimes?.soloCert ? `${getMinutesAgo(syncTimes?.soloCert)}m ago` : 'NEVER'}
+                              color={getChipColor(syncTimes?.soloCert)}/>
+                    </CardContent>
+                </Card>
+            </Grid>
+            <Grid item xs={4} md={2} lg={1}>
+                <Card>
+                    <CardContent>
+                        <Typography sx={{mb: 1,}}>Events Sync</Typography>
+                        <Chip label={syncTimes?.events ? `${getMinutesAgo(syncTimes?.events)}m ago` : 'NEVER'}
+                              color={getChipColor(syncTimes?.events)}/>
                     </CardContent>
                 </Card>
             </Grid>
@@ -108,4 +147,22 @@ export default async function Page() {
             </Grid>
         </Grid>
     );
+}
+
+const getMinutesAgo = (date: Date): number => {
+    const now = new Date();
+    const diffInMilliseconds = now.getTime() - date.getTime();
+    return Math.floor(diffInMilliseconds / 1000 / 60);
+}
+
+const getChipColor = (date?: Date | null): 'success' | 'warning' | 'error' => {
+    if (!date) return 'error';
+    const minutesAgo = getMinutesAgo(date);
+    if (minutesAgo <= 15) {
+        return 'success'; // green
+    } else if (minutesAgo <= 45) {
+        return 'warning'; // yellow
+    } else {
+        return 'error'; // red
+    }
 }

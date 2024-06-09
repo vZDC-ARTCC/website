@@ -74,6 +74,11 @@ model User {
   staffingRequests   StaffingRequest[]
   loas               LOA[]
 
+  noRequestLoas                  Boolean?
+  noEventSignup                  Boolean?
+  noEditProfile                  Boolean?
+  excludedFromVatusaRosterUpdate Boolean?
+
   accounts              Account[]
   sessions              Session[]
   soloCertifications    SoloCertification[]
@@ -488,4 +493,13 @@ model IncidentReport {
   closed           Boolean
   reporterCallsign String?
   reporteeCallsign String?
+}
+
+model SyncTimes {
+  id       String    @id @default(cuid())
+  roster   DateTime?
+  stats    DateTime?
+  loas     DateTime?
+  events   DateTime?
+  soloCert DateTime?
 }

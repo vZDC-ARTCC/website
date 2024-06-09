@@ -8,6 +8,7 @@ import ProfileCard from "@/components/Profile/ProfileCard";
 import DossierForm from "@/components/Dossier/DossierForm";
 import DossierTable from "@/components/Dossier/DossierTable";
 import CertificationForm from "@/components/Certifications/CertificationForm";
+import UserSettingsForm from "@/components/ControllerSettings/UserSettingsForm";
 
 export default async function AdminControllerInformation({cid}: { cid: string, }) {
     const controller = await prisma.user.findUnique({
@@ -49,28 +50,32 @@ export default async function AdminControllerInformation({cid}: { cid: string, }
     const session = await getServerSession(authOptions);
 
     return session?.user && (
-        <Grid container columns={2} spacing={2}>
-            <Grid item xs={2}>
+        <Grid container columns={4} spacing={2}>
+            <Grid item xs={3}>
                 <ProfileCard user={controller as User} admin={session.user.roles.includes("STAFF")}/>
             </Grid>
-            <Grid item xs={2} lg={1}>
-                <Grid container columns={1} spacing={2}>
-                    <Grid item xs={1}>
-                        <Card>
-                            <CardContent>
-                                <Typography variant="h6" sx={{mb: 1,}}>Add Dossier Entry</Typography>
-                                <DossierForm cid={controller.cid}/>
-                                <Typography variant="h6" sx={{my: 2,}}>Member Dossier</Typography>
-                                <DossierTable dossier={controller.dossier}
-                                              ableToViewConfidential={session.user.staffPositions.some((sp) => {
-                                                  return sp === 'ATM' || sp === 'DATM' || sp === 'TA';
-                                              })}/>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                </Grid>
+            <Grid item xs={3} lg={1}>
+                <Card>
+                    <CardContent>
+                        <Typography variant="h6" sx={{mb: 2,}}>User Settings</Typography>
+                        <UserSettingsForm user={controller as User}/>
+                    </CardContent>
+                </Card>
             </Grid>
-            <Grid item xs={2} lg={1}>
+            <Grid item xs={4} lg={2}>
+                <Card>
+                    <CardContent>
+                        <Typography variant="h6" sx={{mb: 1,}}>Add Dossier Entry</Typography>
+                        <DossierForm cid={controller.cid}/>
+                        <Typography variant="h6" sx={{my: 2,}}>Member Dossier</Typography>
+                        <DossierTable dossier={controller.dossier}
+                                      ableToViewConfidential={session.user.staffPositions.some((sp) => {
+                                          return sp === 'ATM' || sp === 'DATM' || sp === 'TA';
+                                      })}/>
+                    </CardContent>
+                </Card>
+            </Grid>
+            <Grid item xs={4} lg={2}>
                 <Card>
                     <CardContent>
                         <Typography variant="h6">Certifications</Typography>

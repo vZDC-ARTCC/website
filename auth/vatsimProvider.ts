@@ -55,7 +55,7 @@ export default function VatsimProvider(clientId?: string, clientSecret?: string)
     } satisfies OAuthConfig<any>;
 }
 
-export const getVatusaData = async (data: Profile): Promise<{
+export const getVatusaData = async (data: Profile | User): Promise<{
     controllerStatus: ControllerStatus,
     roles: Role[],
     staffPositions: StaffPosition[],

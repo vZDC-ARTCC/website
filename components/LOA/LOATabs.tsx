@@ -22,9 +22,9 @@ export default function LoaTabs() {
     return (
         <Tabs variant="fullWidth" value={status as LOAStatus} onChange={handleChange}>
             <Tab label="Pending" value="PENDING"/>
-            <Tab label="Approved" value="APPROVED"/>
+            <Tab label="Approved/Active" value="APPROVED"/>
             <Tab label="Denied" value="DENIED"/>
-            <Tab label="Inactive" value="INACTIVE"/>
+            <Tab label="Inactive/Expired" value="INACTIVE"/>
         </Tabs>
     );
 }

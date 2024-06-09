@@ -1,13 +1,18 @@
 'use client';
 import React from 'react';
 import {User} from "next-auth";
-import {EventPosition, Event} from "@prisma/client";
+import {Event, EventPosition} from "@prisma/client";
 import {assignEventPosition, unassignEventPosition} from "@/actions/eventPosition";
 import EventPositionSignupButton from "@/components/EventPosition/EventPositionSignupButton";
 import ControllerSignupDeleteButton from "@/components/EventPosition/ControllerSignupDeleteButton";
 import {toast} from "react-toastify";
+import {Block} from "@mui/icons-material";
 
 function EventPositionSignupForm({ user, event, position, controllers }: { user: User, event: Event, position: EventPosition, controllers: User[] }) {
+
+    if (user.noEventSignup) {
+        return <Block/>;
+    }
 
     const isSignedUp = (controllers: User[]) => controllers.map((controller) => controller.id).includes(user.id || '');
 

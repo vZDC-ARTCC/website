@@ -2,15 +2,19 @@ import React from 'react';
 import prisma from "@/lib/db";
 import {notFound} from "next/navigation";
 import {
-    Box, Button,
+    Box,
     Card,
     CardContent,
     Container,
     Grid,
     Stack,
-    Table, TableBody, TableCell,
+    Table,
+    TableBody,
+    TableCell,
     TableContainer,
-    TableHead, TableRow, Tooltip,
+    TableHead,
+    TableRow,
+    Tooltip,
     Typography
 } from "@mui/material";
 import Image from "next/image";
@@ -21,10 +25,7 @@ import {getServerSession, User} from "next-auth";
 import {authOptions} from "@/auth/auth";
 import {getRating} from "@/lib/vatsim";
 import {EventPosition} from "@prisma/client";
-import {Add, Delete, Lock} from "@mui/icons-material";
-import {is} from "effect/Match";
-import {assignEventPosition} from "@/actions/eventPosition";
-import EventPositionSignupButton from "@/components/EventPosition/EventPositionSignupButton";
+import {Lock} from "@mui/icons-material";
 import EventPositionSignupForm from "@/components/EventPosition/EventPositionSignupForm";
 
 const ut = new UTApi();
@@ -99,7 +100,7 @@ export default async function Page({params}: { params: { id: string } }) {
                                         <TableBody>
                                             {event.positions.map((position) => (
                                                 <TableRow key={position.id}>
-                                                    <TableCell>{position.position} {position.minRating && `(${getRating(position.minRating)}+)`}</TableCell>
+                                                    <TableCell>{position.position} {position.minRating && `(${getRating(position.minRating) || getRating(2)}+)`}</TableCell>
                                                     <TableCell>
                                                         {position.controllers.length === 0 && "N/A"}
                                                         {position.controllers.map((controller) => (

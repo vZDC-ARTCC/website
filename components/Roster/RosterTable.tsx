@@ -21,6 +21,7 @@ import {getIconForCertificationOption} from "@/lib/certification";
 import {getDaysLeft} from "@/lib/date";
 import {getChips} from "@/lib/staffPositions";
 import Link from "next/link";
+import {LOA} from "@prisma/client";
 
 const VATUSA_FACILITY = process.env.VATUSA_FACILITY || 'ZDC';
 const DEV_MODE = process.env.DEV_MODE === 'true';
@@ -60,6 +61,7 @@ export default async function RosterTable({membership, search}: {
                     certificationType: true,
                 },
             },
+            loas: true,
         },
         where: {
             controllerStatus: {
@@ -166,6 +168,8 @@ export default async function RosterTable({membership, search}: {
                                               style={{color: 'inherit', textDecoration: 'none',}}>
                                             <Typography
                                                 variant="h6">{user.preferredName || `${user.firstName} ${user.lastName}`}
+                                                {user.loas.filter((loa: LOA) => loa.status === "APPROVED")[0] &&
+                                                    <Chip label="LOA" color="primary" size="small" sx={{ml: 1,}}/>}
                                                 <Chip label="DEV MODE"/></Typography>
                                         </Link>
                                         <Typography
@@ -194,6 +198,9 @@ export default async function RosterTable({membership, search}: {
                             ))}
                             {controllers.map((user) => {
                                 if (user.user) {
+
+                                    const approvedLoas = user.user.loas.filter((loa: LOA) => loa.status === "APPROVED");
+
                                     return (
                                         <TableRow key={user.user.cid}>
                                             <TableCell>
@@ -201,6 +208,8 @@ export default async function RosterTable({membership, search}: {
                                                       style={{color: 'inherit', textDecoration: 'none',}}>
                                                     <Typography
                                                         variant="h6">{user.user.preferredName || `${user.user.firstName} ${user.user.lastName}`}</Typography>
+                                                    {approvedLoas.length > 0 &&
+                                                        <Chip label="LOA" color="primary" size="small" sx={{ml: 1,}}/>}
                                                 </Link>
                                                 <Typography
                                                     variant="body2">{user.user.preferredName && `${user.user.firstName} ${user.user.lastName}`}</Typography>
