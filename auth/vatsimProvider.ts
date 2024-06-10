@@ -71,7 +71,11 @@ export const getVatusaData = async (data: Profile | User): Promise<{
             ],
         };
     }
-    const res = await fetch(`https://api.vatusa.net/v2/facility/${VATUSA_FACILITY}/roster/both`);
+    const res = await fetch(`https://api.vatusa.net/v2/facility/${VATUSA_FACILITY}/roster/both`, {
+        next: {
+            revalidate: 900,
+        }
+    });
     const rosterData = await res.json();
     const controllers = rosterData.data as {
         cid: number,

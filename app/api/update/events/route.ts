@@ -1,5 +1,6 @@
 import {deleteStaleEvents, lockUpcomingEvents} from "@/actions/event";
 import prisma from "@/lib/db";
+import {revalidatePath} from "next/cache";
 
 export async function GET() {
     await lockUpcomingEvents();
@@ -21,6 +22,8 @@ export async function GET() {
             data: {events: now},
         });
     }
+
+    revalidatePath('/', 'layout');
 
     return Response.json({ok: true,});
 }

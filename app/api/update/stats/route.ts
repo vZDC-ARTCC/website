@@ -1,4 +1,5 @@
 import prisma from "@/lib/db";
+import {revalidatePath} from "next/cache";
 
 const DEV_MODE = process.env.DEV_MODE === 'true';
 
@@ -313,6 +314,8 @@ const devUpdate = async () => {
             data: {stats: now},
         });
     }
+
+    revalidatePath('/', 'layout');
 
     return Response.json({ ok: true, });
 }

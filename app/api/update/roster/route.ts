@@ -1,6 +1,7 @@
 import prisma from "@/lib/db";
 import {getVatusaData} from "@/auth/vatsimProvider";
 import {User} from "next-auth";
+import {revalidatePath} from "next/cache";
 
 export async function GET() {
 
@@ -42,6 +43,8 @@ export async function GET() {
             data: {roster: now},
         });
     }
+
+    revalidatePath('/', 'layout');
 
     return Response.json({ok: true,});
 }

@@ -1,5 +1,6 @@
 import {deleteExpiredSolos} from "@/actions/solo";
 import prisma from "@/lib/db";
+import {revalidatePath} from "next/cache";
 
 export async function GET() {
 
@@ -21,6 +22,8 @@ export async function GET() {
             data: {soloCert: now},
         });
     }
+
+    revalidatePath('/', 'layout');
 
     return Response.json({ok: true,});
 }
