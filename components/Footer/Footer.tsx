@@ -35,7 +35,7 @@ export default function Footer() {
                         </Link>
                     </Stack>
                     <Tooltip title={`Developed by Aneesh Reddy & vZDC Web Team`}>
-                        <Box sx={{mt: 2,}}>
+                        <Box sx={{mt: 2, textAlign: 'center',}}>
                             {DEV_MODE &&
                                 <Typography variant="subtitle2" color="limegreen">Development Build</Typography>}
                             {!DEV_MODE && <Typography>v{publicRuntimeConfig?.version}</Typography>}

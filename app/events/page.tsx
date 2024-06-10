@@ -6,9 +6,14 @@ import {formatZuluDate} from "@/lib/date";
 import Image from "next/image";
 import {UTApi} from "uploadthing/server";
 import Link from "next/link";
+import {Metadata} from "next";
 
 const ut = new UTApi();
 const VATUSA_FACILITY = process.env.VATUSA_FACILITY;
+export const metadata: Metadata = {
+    title: 'Events | vZDC',
+    description: 'vZDC charts page',
+};
 
 export default async function Page() {
 

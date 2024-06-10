@@ -2,6 +2,12 @@ import React from 'react';
 import {Card, CardContent, Container, Grid, Stack, Typography} from "@mui/material";
 import {getAllTimeHours} from "@/lib/hours";
 import StatisticsTimeSelector from "@/components/Statistics/StatisticsTimeSelector";
+import {Metadata} from "next";
+
+export const metadata: Metadata = {
+    title: 'Statistics | vZDC',
+    description: 'vZDC stats page',
+};
 
 export default async function Layout({children}: { children: React.ReactNode }) {
 

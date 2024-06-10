@@ -2,6 +2,11 @@ import React from 'react';
 import prisma from "@/lib/db";
 import {Card, CardContent, Container, Stack, Typography} from "@mui/material";
 import FileTable from "@/components/Files/FileTable";
+import {Metadata} from "next";
+export const metadata: Metadata = {
+    title: 'Downloads | vZDC',
+    description: 'vZDC downloads page',
+};
 
 export default async function Page() {
 

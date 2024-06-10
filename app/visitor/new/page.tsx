@@ -6,6 +6,11 @@ import {authOptions} from "@/auth/auth";
 import prisma from "@/lib/db";
 import {getRating} from "@/lib/vatsim";
 import ErrorCard from "@/components/Error/ErrorCard";
+import {Metadata} from "next";
+export const metadata: Metadata = {
+    title: 'Visitor Request | vZDC',
+    description: 'vZDC visitor request page',
+};
 
 const DEV_MODE = process.env.NODE_ENV === "development";
 

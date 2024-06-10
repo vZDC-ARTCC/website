@@ -6,6 +6,12 @@ import {
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/auth/auth";
 import AdminMenu from "@/components/Admin/AdminMenu";
+import {Metadata} from "next";
+
+export const metadata: Metadata = {
+    title: 'Admin | vZDC',
+    description: 'vZDC admin page',
+};
 
 export default async function Layout({children}: { children: React.ReactNode }) {
 

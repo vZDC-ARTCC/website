@@ -1,5 +1,11 @@
 import React from 'react';
 import {Card, CardContent, Container, Typography} from "@mui/material";
+import {Metadata} from "next";
+
+export const metadata: Metadata = {
+    title: 'Privacy | vZDC',
+    description: 'vZDC privacy page',
+};
 
 export default async function Page() {
     return (

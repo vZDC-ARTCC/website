@@ -3,6 +3,11 @@ import {getServerSession} from "next-auth";
 import {authOptions} from "@/auth/auth";
 import {Grid, Typography} from "@mui/material";
 import TrainingMenu from "@/components/Admin/TrainingMenu";
+import {Metadata} from "next";
+export const metadata: Metadata = {
+    title: 'Training | vZDC',
+    description: 'vZDC training page',
+};
 
 export default async function Layout({children}: { children: React.ReactNode }) {
     const session = await getServerSession(authOptions);

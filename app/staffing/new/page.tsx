@@ -4,6 +4,11 @@ import {authOptions} from "@/auth/auth";
 import {Card, CardContent, Container, Typography} from "@mui/material";
 import StaffingRequestFormWrapper from "@/components/StaffingRequest/StaffingRequestFormWrapper";
 import ErrorCard from "@/components/Error/ErrorCard";
+import {Metadata} from "next";
+export const metadata: Metadata = {
+    title: 'Request Staffing | vZDC',
+    description: 'vZDC staffing request page',
+};
 
 export default async function Page() {
 

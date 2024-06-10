@@ -14,6 +14,11 @@ import {
 import {getPrdRoutes} from "@/actions/prd";
 import PrdForm from "@/components/Prd/PrdForm";
 import {PreferredRoute} from "@/types";
+import {Metadata} from "next";
+export const metadata: Metadata = {
+    title: 'PRD | vZDC',
+    description: 'vZDC preferred route page',
+};
 
 export default async function Page({searchParams}: { searchParams: { origin?: string, destination?: string } }) {
 

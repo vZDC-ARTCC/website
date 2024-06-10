@@ -13,6 +13,12 @@ import {
     Typography
 } from "@mui/material";
 import {getRating} from "@/lib/vatsim";
+import {Metadata} from "next";
+
+export const metadata: Metadata = {
+    title: 'Staff | vZDC',
+    description: 'vZDC staff page, get to know vZDC Staff!',
+};
 
 const VATUSA_FACILITY = process.env.VATUSA_FACILITY;
 

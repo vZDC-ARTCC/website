@@ -6,6 +6,7 @@ import {authOptions} from "@/auth/auth";
 import {ArrowBack} from "@mui/icons-material";
 import Link from "next/link";
 
+
 export default async function Page() {
 
     const session = await getServerSession(authOptions);

@@ -1,6 +1,12 @@
 import React from 'react';
 import {Card, CardContent, Container, Stack, Typography} from "@mui/material";
 import IcaoForm from "@/components/Form/IcaoForm";
+import {Metadata} from "next";
+
+export const metadata: Metadata = {
+    title: 'Airports | vZDC',
+    description: 'vZDC airports page',
+};
 
 export default function Layout({children}: { children: React.ReactNode }) {
     return (
