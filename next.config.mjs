@@ -1,4 +1,4 @@
-const {version} = require('./package.json');
+import config from './package.json' with {type: 'json'};
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -19,7 +19,7 @@ const nextConfig = {
     },
     output: 'standalone',
     publicRuntimeConfig: {
-        version,
+        version: config.version,
     },
 };
 
