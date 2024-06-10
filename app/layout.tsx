@@ -29,6 +29,9 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
+    <head>
+        <link rel="icon" href="/img/icon.ico" sizes="any"/>
+    </head>
     <body>
     <AppRouterCacheProvider>
         <CssVarsProvider theme={theme}>
