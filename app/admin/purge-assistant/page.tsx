@@ -6,6 +6,7 @@ import {getServerSession, User} from "next-auth";
 import {authOptions} from "@/auth/auth";
 import RosterPurgeSelectionForm from "@/components/PurgeAssistant/RosterPurgeSelectionForm";
 import {permanentRedirect} from "next/navigation";
+import ErrorCard from "@/components/Error/ErrorCard";
 
 export default async function Page({searchParams,}: {
     searchParams: {
@@ -24,7 +25,7 @@ export default async function Page({searchParams,}: {
         permanentRedirect(`/admin/purge-assistant?startMonth=0&endMonth=11&maxHours=3&maxTrainingHours=1&year=${new Date().getFullYear()}&includeLoas=false`);
     }
     if (parseInt(startMonth) < 0 || parseInt(endMonth) > 12 || parseInt(startMonth) > parseInt(endMonth)) {
-        throw new Error("Invalid month bounds");
+        return <ErrorCard heading="Roster Purge Assistant" message="Invalid bounds."/>
     }
 
     const controllers = await prisma.user.findMany({
@@ -35,14 +36,11 @@ export default async function Page({searchParams,}: {
             ...(includeLoas === 'false' && {
                 OR: [
                     {
-                        loa: {
-                            is: null,
-                        },
-                    },
-                    {
-                        loa: {
-                            status: {
-                                not: "APPROVED",
+                        loas: {
+                            every: {
+                                status: {
+                                    not: "APPROVED",
+                                },
                             },
                         },
                     },

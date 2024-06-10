@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import {User} from "next-auth";
-import {Box, FormControlLabel, FormGroup, Switch} from '@mui/material';
+import {Box, FormControlLabel, FormGroup, Switch, TextField} from '@mui/material';
 import {updateSettings} from "@/actions/user";
 import {toast} from "react-toastify";
 import FormSaveButton from "@/components/Form/FormSaveButton";
@@ -30,9 +30,10 @@ export default function UserSettingsForm({user}: { user: User, }) {
                 <FormControlLabel control={<Switch defaultChecked={user.excludedFromVatusaRosterUpdate}/>}
                                   label="Excluded from VATUSA Roster Update?" name="excludedRosterUpdate"/>
             </FormGroup>
-            <Box sx={{mt: 1,}}>
-                <FormSaveButton/>
+            <Box sx={{my: 2}}>
+                <TextField required variant="filled" fullWidth label="Dossier Entry*" name="dossier"/>
             </Box>
+            <FormSaveButton/>
         </form>
     );
 

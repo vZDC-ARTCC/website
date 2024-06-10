@@ -236,6 +236,7 @@ enum LogModel {
   TRAINING_SESSION
   INCIDENT_REPORT
   EMAIL
+  USER_SETTINGS
 }
 
 model Log {

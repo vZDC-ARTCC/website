@@ -5,6 +5,7 @@ import {getServerSession} from "next-auth";
 import {authOptions} from "@/auth/auth";
 import prisma from "@/lib/db";
 import {getRating} from "@/lib/vatsim";
+import ErrorCard from "@/components/Error/ErrorCard";
 
 const DEV_MODE = process.env.NODE_ENV === "development";
 
@@ -13,15 +14,18 @@ export default async function Page() {
     const session = await getServerSession(authOptions);
 
     if (!session || !session.user) {
-        throw new Error("You must be logged in to submit a visitor application.");
+        return <ErrorCard heading="Visitor Application"
+                          message="You must be logged in to submit a visitor application."/>
     }
 
     if (session.user.controllerStatus !== "NONE") {
-        throw new Error("You are already a rostered controller.");
+        return <ErrorCard heading="Visitor Application" message="You are already a rostered controller."/>
+
     }
 
     if (!DEV_MODE && session.user.rating < 4) {
-        throw new Error(`You must be a(n) ${getRating(4)} or higher to submit a visitor application.`);
+        return <ErrorCard heading="Visitor Application"
+                          message={`You must be a(n) ${getRating(4)} or higher to submit a visitor application.`}/>
     }
 
     const visitorApplication = await prisma.visitorApplication.findFirst({
@@ -32,7 +36,7 @@ export default async function Page() {
     });
 
     if (visitorApplication) {
-        throw new Error("You already have a pending visitor application.");
+        return <ErrorCard heading="Visitor Application" message="You already have a pending visiting application."/>
     }
 
     return (

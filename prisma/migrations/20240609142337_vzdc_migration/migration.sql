@@ -14,7 +14,7 @@ CREATE TYPE "CertificationOption" AS ENUM ('NONE', 'MINOR', 'MAJOR', 'SOLO');
 CREATE TYPE "LogType" AS ENUM ('CREATE', 'UPDATE', 'DELETE');
 
 -- CreateEnum
-CREATE TYPE "LogModel" AS ENUM ('USER', 'STAFF_POSITION', 'ROLE', 'EVENT', 'EVENT_POSITION', 'FILE_CATEGORY', 'FILE', 'STAFFING_REQUEST', 'AIRPORT_TRACON_GROUP', 'AIRPORT_RUNWAY', 'AIRPORT_PROCEDURE', 'AIRPORT', 'FEEDBACK', 'VISITOR_APPLICATION', 'SOLO_CERTIFICATION', 'CERTIFICATION', 'CERTIFICATION_TYPE', 'LESSON', 'COMMON_MISTAKE', 'LESSON_RUBRIC', 'TRAINING_SESSION');
+CREATE TYPE "LogModel" AS ENUM ('USER', 'STAFF_POSITION', 'LOA', 'ROLE', 'EVENT', 'EVENT_POSITION', 'FILE_CATEGORY', 'FILE', 'STAFFING_REQUEST', 'AIRPORT_TRACON_GROUP', 'AIRPORT_RUNWAY', 'AIRPORT_PROCEDURE', 'AIRPORT', 'FEEDBACK', 'VISITOR_APPLICATION', 'SOLO_CERTIFICATION', 'CERTIFICATION', 'CERTIFICATION_TYPE', 'LESSON', 'COMMON_MISTAKE', 'LESSON_RUBRIC', 'TRAINING_SESSION', 'INCIDENT_REPORT', 'EMAIL', 'USER_SETTINGS');
 
 -- CreateEnum
 CREATE TYPE "VisitorApplicationStatus" AS ENUM ('PENDING', 'APPROVED', 'DENIED');
@@ -26,7 +26,7 @@ CREATE TYPE "FeedbackStatus" AS ENUM ('PENDING', 'RELEASED', 'STASHED');
 CREATE TYPE "EventType" AS ENUM ('HOME', 'SUPPORT', 'GROUP_FLIGHT', 'TRAINING');
 
 -- CreateEnum
-CREATE TYPE "LOAStatus" AS ENUM ('PENDING', 'APPROVED', 'DENIED');
+CREATE TYPE "LOAStatus" AS ENUM ('PENDING', 'APPROVED', 'DENIED', 'INACTIVE');
 
 -- CreateTable
 CREATE TABLE "Account"
@@ -69,23 +69,27 @@ CREATE TABLE "Session"
 -- CreateTable
 CREATE TABLE "User"
 (
-    "id"               TEXT               NOT NULL,
-    "cid"              TEXT               NOT NULL,
-    "firstName"        TEXT,
-    "lastName"         TEXT,
-    "fullName"         TEXT,
-    "email"            TEXT,
-    "emailVerified"    TIMESTAMP(3),
-    "artcc"            TEXT               NOT NULL,
-    "rating"           INTEGER            NOT NULL,
-    "division"         TEXT               NOT NULL,
-    "roles"            "Role"[],
-    "staffPositions"   "StaffPosition"[],
-    "preferredName"    TEXT,
-    "bio"              TEXT,
-    "avatarUrl"        TEXT,
-    "controllerStatus" "ControllerStatus" NOT NULL,
-    "updatedAt"        TIMESTAMP(3)       NOT NULL,
+    "id"                             TEXT               NOT NULL,
+    "cid"                            TEXT               NOT NULL,
+    "firstName"                      TEXT,
+    "lastName"                       TEXT,
+    "fullName"                       TEXT,
+    "email"                          TEXT,
+    "emailVerified"                  TIMESTAMP(3),
+    "artcc"                          TEXT               NOT NULL,
+    "rating"                         INTEGER            NOT NULL,
+    "division"                       TEXT               NOT NULL,
+    "roles"                          "Role"[],
+    "staffPositions"                 "StaffPosition"[],
+    "preferredName"                  TEXT,
+    "bio"                            TEXT,
+    "avatarUrl"                      TEXT,
+    "controllerStatus"               "ControllerStatus" NOT NULL,
+    "updatedAt"                      TIMESTAMP(3)       NOT NULL,
+    "noRequestLoas"                  BOOLEAN,
+    "noEventSignup"                  BOOLEAN,
+    "noEditProfile"                  BOOLEAN,
+    "excludedFromVatusaRosterUpdate" BOOLEAN,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -122,6 +126,19 @@ CREATE TABLE "ControllerLogMonth"
     "centerHours"   DOUBLE PRECISION NOT NULL,
 
     CONSTRAINT "ControllerLogMonth_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ControllerPosition"
+(
+    "id"       TEXT         NOT NULL,
+    "logId"    TEXT         NOT NULL,
+    "position" TEXT         NOT NULL,
+    "start"    TIMESTAMP(3) NOT NULL,
+    "end"      TIMESTAMP(3),
+    "active"   BOOLEAN      NOT NULL,
+
+    CONSTRAINT "ControllerPosition_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -436,6 +453,34 @@ CREATE TABLE "LOA"
 );
 
 -- CreateTable
+CREATE TABLE "IncidentReport"
+(
+    "id"               TEXT         NOT NULL,
+    "reporterId"       TEXT         NOT NULL,
+    "reporteeId"       TEXT         NOT NULL,
+    "timestamp"        TIMESTAMP(3) NOT NULL,
+    "reason"           TEXT         NOT NULL,
+    "closed"           BOOLEAN      NOT NULL,
+    "reporterCallsign" TEXT,
+    "reporteeCallsign" TEXT,
+
+    CONSTRAINT "IncidentReport_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "SyncTimes"
+(
+    "id"       TEXT NOT NULL,
+    "roster"   TIMESTAMP(3),
+    "stats"    TIMESTAMP(3),
+    "loas"     TIMESTAMP(3),
+    "events"   TIMESTAMP(3),
+    "soloCert" TIMESTAMP(3),
+
+    CONSTRAINT "SyncTimes_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "_EventPositionToUser"
 (
     "A" TEXT NOT NULL,
@@ -476,9 +521,6 @@ CREATE UNIQUE INDEX "Airport_icao_key" ON "Airport" ("icao");
 CREATE UNIQUE INDEX "Lesson_rubricId_key" ON "Lesson" ("rubricId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "LOA_userId_key" ON "LOA" ("userId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "_EventPositionToUser_AB_unique" ON "_EventPositionToUser" ("A", "B");
 
 -- CreateIndex
@@ -499,6 +541,10 @@ ALTER TABLE "ControllerLog"
 -- AddForeignKey
 ALTER TABLE "ControllerLogMonth"
     ADD CONSTRAINT "ControllerLogMonth_logId_fkey" FOREIGN KEY ("logId") REFERENCES "ControllerLog" ("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ControllerPosition"
+    ADD CONSTRAINT "ControllerPosition_logId_fkey" FOREIGN KEY ("logId") REFERENCES "ControllerLog" ("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "DossierEntry"
@@ -611,6 +657,14 @@ ALTER TABLE "RubricCriteraScore"
 -- AddForeignKey
 ALTER TABLE "LOA"
     ADD CONSTRAINT "LOA_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "IncidentReport"
+    ADD CONSTRAINT "IncidentReport_reporterId_fkey" FOREIGN KEY ("reporterId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "IncidentReport"
+    ADD CONSTRAINT "IncidentReport_reporteeId_fkey" FOREIGN KEY ("reporteeId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_EventPositionToUser"

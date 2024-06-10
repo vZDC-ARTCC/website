@@ -1,2 +1,0 @@
--- AlterEnum
-ALTER TYPE "LOAStatus" ADD VALUE 'INACTIVE';

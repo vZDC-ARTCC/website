@@ -1,16 +1,18 @@
 'use client';
 import React from 'react';
 import {EventPosition} from "@prisma/client";
-import {Box, Button, MenuItem, Stack, TextField} from "@mui/material";
+import {Box, MenuItem, Stack, TextField} from "@mui/material";
 import {User} from "next-auth";
 import {getRating} from "@/lib/vatsim";
-import {Add} from "@mui/icons-material";
 import {z} from "zod";
 import {toast} from "react-toastify";
 import {forceAssignPosition} from "@/actions/eventPosition";
 import FormSaveButton from "@/components/Form/FormSaveButton";
 
-export default async function ControllerManualAddForm({ eventPositions, users }: { eventPositions: EventPosition[], users: User[] }) {
+export default function ControllerManualAddForm({eventPositions, users}: {
+    eventPositions: EventPosition[],
+    users: User[]
+}) {
 
     const handleSubmit = async (formData: FormData) => {
         const assignZ = z.object({

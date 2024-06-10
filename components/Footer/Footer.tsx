@@ -31,9 +31,16 @@ export default function Footer() {
                     <Tooltip title={`Developed by Aneesh Reddy & vZDC Web Team`}>
                         <Typography textAlign="center" sx={{mt: 2,}}>v{process.env.npm_package_version}</Typography>
                     </Tooltip>
-                    <Link href="/privacy" style={{color: 'inherit',}}>
-                        <Typography textAlign="center" sx={{mt: 2,}}>Privacy</Typography>
-                    </Link>
+                    <Stack direction="row" spacing={1} sx={{mt: 2,}} justifyContent="center">
+                        <Link href="/privacy" style={{color: 'inherit',}}>
+                            <Typography textAlign="center">Privacy</Typography>
+                        </Link>
+                        <Typography>|</Typography>
+                        <Link href="https://github.com/vZDC-ARTCC/website" style={{color: 'inherit',}}>
+                            <Typography textAlign="center">GitHub</Typography>
+                        </Link>
+                    </Stack>
+
                 </Container>
             </Toolbar>
         </AppBar>

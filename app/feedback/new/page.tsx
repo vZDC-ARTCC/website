@@ -4,6 +4,7 @@ import prisma from "@/lib/db";
 import {getServerSession, User} from "next-auth";
 import FeedbackFormWrapper from "@/components/Feedback/FeedbackFormWrapper";
 import {authOptions} from "@/auth/auth";
+import ErrorCard from "@/components/Error/ErrorCard";
 
 export default async function Page() {
 
@@ -21,7 +22,7 @@ export default async function Page() {
     const session = await getServerSession(authOptions);
 
     if (!session || !session.user) {
-        throw new Error('You must be signed in to view this page.');
+        return <ErrorCard heading="Feedback" message="You must be logged in to submit feedback."/>
     }
 
     return (

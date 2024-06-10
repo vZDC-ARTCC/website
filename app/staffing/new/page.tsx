@@ -3,13 +3,14 @@ import {getServerSession} from "next-auth";
 import {authOptions} from "@/auth/auth";
 import {Card, CardContent, Container, Typography} from "@mui/material";
 import StaffingRequestFormWrapper from "@/components/StaffingRequest/StaffingRequestFormWrapper";
+import ErrorCard from "@/components/Error/ErrorCard";
 
 export default async function Page() {
 
     const session = await getServerSession(authOptions);
 
     if (!session?.user) {
-        throw new Error("You must be logged in to view this page");
+        return <ErrorCard heading="Staffing Request" message="You must be logged in to view this page."/>
     }
 
 
