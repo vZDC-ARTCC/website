@@ -1,3 +1,5 @@
+const {version} = require('./package.json');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
@@ -16,6 +18,9 @@ const nextConfig = {
         }
     },
     output: 'standalone',
+    publicRuntimeConfig: {
+        version,
+    },
 };
 
 export default nextConfig;

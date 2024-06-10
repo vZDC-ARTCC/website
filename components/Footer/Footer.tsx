@@ -1,12 +1,18 @@
 import React from 'react';
-import {AppBar, Container, Stack, Toolbar, Tooltip, Typography} from "@mui/material";
+import {AppBar, Box, Container, Stack, Toolbar, Tooltip, Typography} from "@mui/material";
 import Logo from "@/components/Logo/Logo";
 import vatusa from "@/public/img/vatusa.png";
 import vatsim from "@/public/img/vatsim.png";
 import Image from "next/image";
 import Link from "next/link";
+import getConfig from "next/config";
+
+const DEV_MODE = process.env['DEV_MODE'] === 'true';
+
 
 export default function Footer() {
+
+    const {publicRuntimeConfig} = getConfig();
 
     return (
         <AppBar position="static" sx={{marginTop: 20}}>
@@ -29,7 +35,11 @@ export default function Footer() {
                         </Link>
                     </Stack>
                     <Tooltip title={`Developed by Aneesh Reddy & vZDC Web Team`}>
-                        <Typography textAlign="center" sx={{mt: 2,}}>v{process.env.npm_package_version}</Typography>
+                        <Box sx={{mt: 2,}}>
+                            {DEV_MODE &&
+                                <Typography variant="subtitle2" color="limegreen">Development Build</Typography>}
+                            {!DEV_MODE && <Typography>v{publicRuntimeConfig?.version}</Typography>}
+                        </Box>
                     </Tooltip>
                     <Stack direction="row" spacing={1} sx={{mt: 2,}} justifyContent="center">
                         <Link href="/privacy" style={{color: 'inherit',}}>
