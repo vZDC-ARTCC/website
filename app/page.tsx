@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import bg from "@/public/img/home-bg.png";
-import {Caveat} from "next/font/google";
+import {Roboto} from "next/font/google";
 import prisma from "@/lib/db";
 import UpcomingEventsCarousel from "@/components/HomePage/UpcomingEventsCarousel";
 import {UTApi} from "uploadthing/server";
@@ -32,7 +32,7 @@ import {
 } from "@mui/icons-material";
 import {getTop3Controllers} from "@/lib/hours";
 
-const headingFont = Caveat({subsets: ['latin'], weight: '400',});
+const headingFont = Roboto({subsets: ['latin'], weight: '400',});
 
 const ut = new UTApi();
 
@@ -143,28 +143,6 @@ export default async function Home() {
             <Grid item xs={8} lg={2}>
                 <Card sx={{height: '100%',}}>
                     <CardContent>
-                        <Typography {...headingFont.style} variant="h4" sx={{mb: 1,}}>Solo Certifications</Typography>
-                        <Stack direction="column" spacing={1}>
-                            {soloCertifications.length > 0 ? soloCertifications.map(solo => (
-                                <Card elevation={0} key={solo.id}>
-                                    <CardContent>
-                                        <Typography variant="h6">{solo.position}</Typography>
-                                        <Typography variant="body2">Expires {solo.expires.toDateString()}</Typography>
-                                        <Link href={`/controllers/${solo.controller.cid}`}
-                                              style={{textDecoration: 'none', color: 'inherit',}}>
-                                            <Typography
-                                                variant="subtitle2">{solo.controller.firstName} {solo.controller.lastName} - {getRating(solo.controller.rating)}</Typography>
-                                        </Link>
-                                    </CardContent>
-                                </Card>
-                            )) : <Typography>No active solo certifications</Typography>}
-                        </Stack>
-                    </CardContent>
-                </Card>
-            </Grid>
-            <Grid item xs={8} lg={2}>
-                <Card sx={{height: '100%',}}>
-                    <CardContent>
                         <Typography {...headingFont.style} variant="h4" sx={{mb: 1,}}>Quick Links</Typography>
                         <List>
                             <Link href="/airports" style={{textDecoration: 'none', color: 'inherit',}}>
@@ -260,6 +238,29 @@ export default async function Home() {
                     </CardContent>
                 </Card>
             </Grid>
+            <Grid item xs={8} lg={2}>
+                <Card sx={{height: '100%',}}>
+                    <CardContent>
+                        <Typography {...headingFont.style} variant="h4" sx={{mb: 1,}}>Solo Certifications</Typography>
+                        <Stack direction="column" spacing={1}>
+                            {soloCertifications.length > 0 ? soloCertifications.map(solo => (
+                                <Card elevation={0} key={solo.id}>
+                                    <CardContent>
+                                        <Typography variant="h6">{solo.position}</Typography>
+                                        <Typography variant="body2">Expires {solo.expires.toDateString()}</Typography>
+                                        <Link href={`/controllers/${solo.controller.cid}`}
+                                              style={{textDecoration: 'none', color: 'inherit',}}>
+                                            <Typography
+                                                variant="subtitle2">{solo.controller.firstName} {solo.controller.lastName} - {getRating(solo.controller.rating)}</Typography>
+                                        </Link>
+                                    </CardContent>
+                                </Card>
+                            )) : <Typography>No active solo certifications</Typography>}
+                        </Stack>
+                    </CardContent>
+                </Card>
+            </Grid>
         </Grid>
+
     );
 }
