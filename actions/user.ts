@@ -17,7 +17,7 @@ export const refreshData = async () => {
 
     const now = new Date();
     if (!DEV_MODE && now.getTime() - session.user.updatedAt.getTime() < 1000 * 60 * 5) {
-        throw new Error("You can only refresh your data every 5 minutes.");
+        return "You can only refresh your data every 5 minutes.";
     }
 
     const {user} = session;

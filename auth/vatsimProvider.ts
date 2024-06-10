@@ -74,7 +74,7 @@ export const getVatusaData = async (data: Profile | User): Promise<{
     const res = await fetch(`https://api.vatusa.net/v2/facility/${VATUSA_FACILITY}/roster/both`);
     const rosterData = await res.json();
     const controllers = rosterData.data as {
-        cid: string,
+        cid: number,
         membership: 'home' | 'visit',
         roles: {
             facility: string,
@@ -82,7 +82,7 @@ export const getVatusaData = async (data: Profile | User): Promise<{
         }[],
     }[];
 
-    const controller = controllers.find(c => c.cid === data.cid);
+    const controller = controllers.find(c => c.cid.toString() === data.cid);
     if (!controller) return {controllerStatus: "NONE", roles: [], staffPositions: [],};
     const controllerRoles = controller.roles.filter(r => r.facility === VATUSA_FACILITY).map(r => r.role);
     const controllerStatus: ControllerStatus = controller && controller.membership === "home" ? "HOME" : "VISITOR";

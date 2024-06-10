@@ -1,9 +1,8 @@
-import {NextAuthOptions, Profile} from "next-auth";
+import {NextAuthOptions} from "next-auth";
 import {PrismaAdapter} from "@auth/prisma-adapter";
-import VatsimProvider, {getVatusaData} from "@/auth/vatsimProvider";
+import VatsimProvider from "@/auth/vatsimProvider";
 import {Adapter} from "next-auth/adapters";
 import prisma from "@/lib/db";
-import {refreshData} from "@/actions/user";
 
 
 export const authOptions: NextAuthOptions = {

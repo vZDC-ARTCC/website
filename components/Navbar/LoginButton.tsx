@@ -22,12 +22,12 @@ export default function LoginButton({session, sidebar,}: { session: Session | nu
     const router = useRouter();
 
     const handleRefresh = async () => {
-        try {
-            await refreshData();
-            router.refresh();
-        } catch (e: any) {
-            toast(e.message, {type: 'error'});
+        const error = await refreshData();
+        if (error) {
+            toast(error, {type: 'error'});
+            return;
         }
+        router.refresh();
     }
     const handleClick = (e: { currentTarget: HTMLElement | EventTarget | null, }) => {
         if (!session) {
