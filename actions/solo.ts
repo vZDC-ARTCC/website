@@ -58,8 +58,8 @@ export const addSolo = async (formData: FormData) => {
             certificationOption: 'SOLO',
         },
         where: {
-            certificationOption_userId: {
-                certificationOption: 'SOLO',
+            certificationTypeId_userId: {
+                certificationTypeId: result.data.certificationType,
                 userId: result.data.controller,
             },
         },

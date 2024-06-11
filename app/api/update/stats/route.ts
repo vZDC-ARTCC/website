@@ -37,7 +37,7 @@ export async function GET() {
     const vatsimData = await fetchVatsimControllerData();
 
     for (const controller of allControllers) {
-        const vatsimUser = vatsimData.find((user) => user.cid + '' === '811680');
+        const vatsimUser = vatsimData.find((user) => user.cid + '' === controller.cid);
 
         const activePosition = await prisma.controllerPosition.findFirst({
             where: {
@@ -94,13 +94,31 @@ export async function GET() {
                     active: true,
                 },
             });
+        } else if (!activePosition) {
+            await prisma.controllerPosition.create({
+                data: {
+                    log: {
+                        connectOrCreate: {
+                            create: {
+                                userId: controller.id,
+                            },
+                            where: {
+                                userId: controller.id,
+                            },
+                        },
+                    },
+                    position: vatsimUser.callsign,
+                    start: vatsimUser.logon_time,
+                    active: true,
+                },
+            });
         }
 
         const month = now.getMonth();
         const year = now.getFullYear();
         const log = controller.log?.months.find((controllerMonth) => controllerMonth.month === month && controllerMonth.year === year);
 
-        const onlineTimeSinceLastUpdate = getHoursControlledSinceLastUpdate(new Date(vatsimUser.logon_time), vatsimUpdate?.timestamp || new Date());
+        const onlineTimeSinceLastUpdate = getHoursControlledSinceLastUpdate(new Date(vatsimUser.last_updated), vatsimUpdate?.timestamp || new Date());
 
         await prisma.controllerLogMonth.upsert({
             create: {
@@ -123,11 +141,11 @@ export async function GET() {
                 },
             },
             update: {
-                deliveryHours: getFacilityType(vatsimUser.facility) === 'DEL' ? onlineTimeSinceLastUpdate : 0,
-                groundHours: getFacilityType(vatsimUser.facility) === 'GND' ? onlineTimeSinceLastUpdate : 0,
-                towerHours: getFacilityType(vatsimUser.facility) === 'TWR' ? onlineTimeSinceLastUpdate : 0,
-                approachHours: getFacilityType(vatsimUser.facility) === 'APP' ? onlineTimeSinceLastUpdate : 0,
-                centerHours: getFacilityType(vatsimUser.facility) === 'CTR' ? onlineTimeSinceLastUpdate : 0,
+                deliveryHours: (log?.deliveryHours || 0) + (getFacilityType(vatsimUser.facility) === 'DEL' ? onlineTimeSinceLastUpdate : 0),
+                groundHours: (log?.groundHours || 0) + (getFacilityType(vatsimUser.facility) === 'GND' ? onlineTimeSinceLastUpdate : 0),
+                towerHours: (log?.towerHours || 0) + (getFacilityType(vatsimUser.facility) === 'TWR' ? onlineTimeSinceLastUpdate : 0),
+                approachHours: (log?.approachHours || 0) + (getFacilityType(vatsimUser.facility) === 'APP' ? onlineTimeSinceLastUpdate : 0),
+                centerHours: (log?.centerHours || 0) + (getFacilityType(vatsimUser.facility) === 'CTR' ? onlineTimeSinceLastUpdate : 0),
             },
             where: {
                 logId_month_year: {

@@ -1,12 +1,12 @@
 'use server';
 import {User} from "next-auth";
-import {mailTransport} from "@/lib/email";
+import {FROM_EMAIL, mailTransport} from "@/lib/email";
 import {Feedback} from "@prisma/client";
 import emailFooter from "@/actions/mail/footer";
 
 export const sendNewFeedbackEmail = async (controller: User, feedback: Feedback) => {
     await mailTransport.sendMail({
-        from: process.env.EMAIL_FROM,
+        from: FROM_EMAIL,
         to: controller.email,
         subject: "New Feedback",
         text: `
