@@ -11,8 +11,6 @@ export default function RosterTabs() {
 
     const [selectedRoster, setSelectedRoster] = useState(rosterType);
 
-    console.log(rosterType);
-
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
         setSelectedRoster(newValue);
         router.push(`/controllers/roster/${newValue}`);

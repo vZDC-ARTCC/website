@@ -67,6 +67,7 @@ export default async function RosterTable({membership, search}: {
             controllerStatus: {
                 not: 'NONE',
             },
+            hiddenFromRoster: false,
             OR: [
                 {
                     fullName: {

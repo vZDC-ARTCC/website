@@ -79,6 +79,7 @@ export const createOrUpdateFile = async (formData: FormData, category: FileCateg
     const inputFile = formData.get('file') as File;
     const res = await ut.uploadFiles(inputFile);
     if (res.error) {
+        console.log(res.error);
         throw new Error("Error saving file");
     }
     if (fileExists) {

@@ -78,6 +78,7 @@ model User {
   noEventSignup                  Boolean?
   noEditProfile                  Boolean?
   excludedFromVatusaRosterUpdate Boolean?
+  hiddenFromRoster               Boolean?
 
   accounts              Account[]
   sessions              Session[]
@@ -117,6 +118,8 @@ model ControllerLogMonth {
   towerHours    Float
   approachHours Float
   centerHours   Float
+
+  @@unique([logId, month, year])
 }
 
 model ControllerPosition {
@@ -202,7 +205,7 @@ model Certification {
   certificationTypeId String
   userId              String
 
-  @@unique([certificationOption, userId])
+  @@unique([certificationTypeId, userId])
 }
 
 enum LogType {

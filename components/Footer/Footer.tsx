@@ -37,7 +37,7 @@ export default function Footer() {
                             <Image src={vatsim} alt="VATSIM" height={50}/>
                         </Link>
                     </Stack>
-                    <Tooltip title={`Developed by Aneesh Reddy & vZDC Web Team`}>
+                    <Tooltip title={`Developed by ${publicRuntimeConfig?.author}`}>
                         <Box sx={{mt: 2, textAlign: 'center',}}>
                             {DEV_MODE &&
                                 <Typography variant="subtitle2" color="limegreen">Development Build</Typography>}

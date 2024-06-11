@@ -9,6 +9,8 @@ export const metadata: Metadata = {
     description: 'vZDC roster page',
 };
 
+export const revalidate = 300;
+
 export default function Layout({children}: { children: React.ReactNode }) {
 
     return (

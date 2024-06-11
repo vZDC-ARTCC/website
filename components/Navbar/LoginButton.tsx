@@ -3,32 +3,21 @@ import React, {useState} from 'react';
 import {signIn, signOut} from "next-auth/react";
 import {ListItemIcon, ListItemText, MenuItem} from "@mui/material";
 import {Session} from "next-auth";
-import {AdminPanelSettings, Class, Logout, Person, Refresh, Settings} from "@mui/icons-material";
+import {AdminPanelSettings, Class, Logout, Person, Settings} from "@mui/icons-material";
 import NavDropdown from "@/components/Navbar/NavDropdown";
 import Link from "next/link";
 import {getRating} from "@/lib/vatsim";
 import NavSidebarButton from "@/components/Sidebar/NavSidebarButton";
 import NavButton from "@/components/Navbar/NavButton";
 import NavSidebar from "@/components/Sidebar/NavSidebar";
-import {usePathname, useRouter} from "next/navigation";
-import {refreshData} from "@/actions/user";
-import {toast} from "react-toastify";
+import {usePathname} from "next/navigation";
 
 export default function LoginButton({session, sidebar,}: { session: Session | null, sidebar?: boolean, }) {
 
     const [dropdownAnchor, setDropdownAnchor] = React.useState<null | HTMLElement>(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const pathname = usePathname();
-    const router = useRouter();
 
-    const handleRefresh = async () => {
-        const error = await refreshData();
-        if (error) {
-            toast(error, {type: 'error'});
-            return;
-        }
-        router.refresh();
-    }
     const handleClick = (e: { currentTarget: HTMLElement | EventTarget | null, }) => {
         if (!session) {
             signIn('vatsim', {
@@ -72,7 +61,6 @@ export default function LoginButton({session, sidebar,}: { session: Session | nu
                     <Link href="/training/overview" style={{textDecoration: 'none', color: 'inherit',}}>
                         <NavSidebarButton icon={<Class/>} text="Training Administration"/>
                     </Link>}
-                <NavSidebarButton icon={<Refresh/>} text="Sync VATUSA information" onClick={() => handleRefresh()}/>
                 <NavSidebarButton icon={<Logout/>} text="Logout" onClick={logout}/>
             </NavSidebar>}
             {!sidebar && <NavButton icon={null}
@@ -106,12 +94,6 @@ export default function LoginButton({session, sidebar,}: { session: Session | nu
                             <ListItemText>Training Administration</ListItemText>
                         </MenuItem>
                     </Link>}
-                <MenuItem onClick={() => handleRefresh()}>
-                    <ListItemIcon>
-                        <Refresh/>
-                    </ListItemIcon>
-                    <ListItemText>Sync VATUSA information</ListItemText>
-                </MenuItem>
                 <MenuItem onClick={logout}>
                     <ListItemIcon>
                         <Logout/>

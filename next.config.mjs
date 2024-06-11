@@ -20,6 +20,7 @@ const nextConfig = {
     output: 'standalone',
     publicRuntimeConfig: {
         version: config.version,
+        author: config.author,
     },
 };
 

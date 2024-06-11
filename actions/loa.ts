@@ -147,6 +147,7 @@ export const deleteExpiredLoas = async () => {
             end: {
                 lt: new Date(),
             },
+            status: 'APPROVED',
         },
         include: {
             user: true,

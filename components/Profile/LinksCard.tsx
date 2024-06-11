@@ -51,12 +51,15 @@ export default function LinksCard() {
                             <ListItemText primary="ARTCC Staff"/>
                         </ListItemButton>
                     </Link>
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <BugReport/>
-                        </ListItemIcon>
-                        <ListItemText primary="Report a Bug"/>
-                    </ListItemButton>
+                    <Link href="https://forms.gle/QBKikm64ZYhWVZLw9"
+                          style={{color: 'inherit', textDecoration: 'none',}}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <BugReport/>
+                            </ListItemIcon>
+                            <ListItemText primary="Report a Bug"/>
+                        </ListItemButton>
+                    </Link>
                 </List>
             </CardContent>
         </Card>
