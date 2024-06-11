@@ -24,6 +24,9 @@ export default function EventCalendar({events}: { events: Event[], }) {
             eventClick={(info) => {
                 router.push(`/events/${info.event.id}`);
             }}
+            buttonText={{
+                today: "Today"
+            }}
         />
     );
 }

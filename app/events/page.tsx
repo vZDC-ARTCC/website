@@ -26,10 +26,10 @@ export default async function Page() {
     return (
         <Container maxWidth="lg">
             <Stack direction="row" justifyContent="space-evenly" sx={{ mb: 2, }}>
-                <Typography color="red" fontWeight="bold" sx={{ p: 1, border: 1, }}>Home</Typography>
-                <Typography color="blue" fontWeight="bold" sx={{ p: 1, border: 1, }}>Supporting</Typography>
-                <Typography color="green" fontWeight="bold" sx={{ p: 1, border: 1, }}>Group Flight</Typography>
-                <Typography color="orange" fontWeight="bold" sx={{ p: 1, border: 1, }}>Training</Typography>
+                <Typography color="#f44336" fontWeight="bold" sx={{ p: 1, border: 1, }}>Home</Typography>
+                <Typography color="#ce93d8" fontWeight="bold" sx={{ p: 1, border: 1, }}>Supporting</Typography>
+                <Typography color="#66bb6a" fontWeight="bold" sx={{ p: 1, border: 1, }}>Group Flight</Typography>
+                <Typography color="#ffa726" fontWeight="bold" sx={{ p: 1, border: 1, }}>Training</Typography>
             </Stack>
             <EventCalendar events={events}/>
             {events.length > 0 && <Typography variant="h6" sx={{my: 2,}}>List View</Typography>}

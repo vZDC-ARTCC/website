@@ -22,8 +22,11 @@ export default function Footer() {
                         Rights Reserved.</Typography>
                     <Typography textAlign="center" sx={{marginTop: 1,}}>A sub-division of VATUSA, a division of the
                         VATSIM network.</Typography>
-                    <Typography textAlign="center" fontWeight={700} sx={{marginTop: 2,}}>NOT FOR REAL WORLD
-                        USE</Typography>
+                    <Link href="/misc/AvDr/" style={{color: 'inherit',textDecoration: 'none'}}>
+                        <Typography textAlign="center" fontWeight={700} sx={{marginTop: 2,}}>NOT FOR REAL WORLD
+                        USE
+                        </Typography>
+                    </Link>
                     <Stack direction={{xs: 'column', lg: 'row',}} spacing={5} justifyContent="center"
                            alignItems="center" sx={{marginTop: 3,}}>
                         <Link href="https://www.vatusa.net/" target="_blank">
@@ -42,15 +45,18 @@ export default function Footer() {
                         </Box>
                     </Tooltip>
                     <Stack direction="row" spacing={1} sx={{mt: 2,}} justifyContent="center">
-                        <Link href="/privacy" style={{color: 'inherit',}}>
-                            <Typography textAlign="center">Privacy</Typography>
-                        </Link>
+                        <Tooltip title={'vZDC Privicy Policy'}>
+                            <Link href="/privacy" style={{color: 'inherit',}}>
+                                <Typography textAlign="center">Privacy</Typography>
+                            </Link>
+                        </Tooltip>
                         <Typography>|</Typography>
-                        <Link href="https://github.com/vZDC-ARTCC/website" style={{color: 'inherit',}}>
-                            <Typography textAlign="center">GitHub</Typography>
-                        </Link>
+                        <Tooltip title={'vZDC Website Public Repository'}>
+                            <Link href="https://github.com/vZDC-ARTCC/website" style={{color: 'inherit',}}>
+                                <Typography textAlign="center">GitHub</Typography>
+                            </Link>
+                        </Tooltip>
                     </Stack>
-
                 </Container>
             </Toolbar>
         </AppBar>

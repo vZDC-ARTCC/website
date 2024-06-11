@@ -23,7 +23,7 @@ import {getRating} from "@/lib/vatsim";
 import Link from "next/link";
 import {
     AirplanemodeActive,
-    BarChart,
+    BarChart, BugReport,
     ListAlt,
     OpenInNew,
     PersonAdd,
@@ -185,6 +185,15 @@ export default async function Home() {
                                     <ListItemText primary="Statistics"/>
                                 </ListItemButton>
                             </Link>
+                            <Link href="https://docs.google.com/forms/d/e/1FAIpQLSeDtwt5ZSY88Mry-Dieis21V5ezSC4zGdr55yksAFGe7x0QPA/viewform" target="_blank"
+                                  style={{textDecoration: 'none', color: 'inherit',}}>
+                                <ListItemButton>
+                                    <ListItemIcon>
+                                        <BugReport/>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Report a Bug"/>
+                                </ListItemButton>
+                            </Link>
                             <Link href="https://www.vatusa.net" target="_blank"
                                   style={{textDecoration: 'none', color: 'inherit',}}>
                                 <ListItemButton>
@@ -203,7 +212,6 @@ export default async function Home() {
                                     <ListItemText primary="VATSIM"/>
                                 </ListItemButton>
                             </Link>
-
                         </List>
                     </CardContent>
                 </Card>
