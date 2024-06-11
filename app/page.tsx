@@ -119,7 +119,7 @@ export default async function Home() {
             <Grid item xs={8} lg={2}>
                 <Card sx={{height: '100%',}}>
                     <CardContent>
-                        <Typography {...headingFont.style} variant="h4" sx={{mb: 1,}}>Online A.T.C.</Typography>
+                        <Typography {...headingFont.style} variant="h4" sx={{mb: 1,}}>Online ATC</Typography>
                         <Stack direction="column" spacing={1}>
                             {onlineAtc.length > 0 ? onlineAtc.map(position => (
                                 <Card elevation={0} key={position.position + position.log.userId}>
