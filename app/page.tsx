@@ -177,7 +177,7 @@ export default async function Home() {
                                     <ListItemText primary="Preferred Route Database"/>
                                 </ListItemButton>
                             </Link>
-                            <Link href="/statistics" style={{textDecoration: 'none', color: 'inherit',}}>
+                            <Link href="/controllers/statistics" style={{textDecoration: 'none', color: 'inherit',}}>
                                 <ListItemButton>
                                     <ListItemIcon>
                                         <BarChart/>
