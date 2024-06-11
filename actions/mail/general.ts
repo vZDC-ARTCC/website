@@ -6,8 +6,6 @@ import {log} from "@/actions/log";
 
 export const sendMail = async (to: string[], subject: string, replyTo: string, body: string) => {
 
-    console.log(to);
-
     const emailZ = z.object({
         to: z.string().array().min(1, "At least one recipient is required"),
         subject: z.string().min(1, "Subject must not be empty"),

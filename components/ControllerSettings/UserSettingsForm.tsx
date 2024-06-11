@@ -29,9 +29,11 @@ export default function UserSettingsForm({user}: { user: User, }) {
                                   label="Allowed to edit profile?" name="allowedEditProfile"/>
                 <FormControlLabel control={<Switch defaultChecked={user.excludedFromVatusaRosterUpdate}/>}
                                   label="Excluded from VATUSA Roster Update?" name="excludedRosterUpdate"/>
+                <FormControlLabel control={<Switch defaultChecked={user.hiddenFromRoster}/>}
+                                  label="Hidden from roster?" name="hiddenFromRoster"/>
             </FormGroup>
             <Box sx={{my: 2}}>
-                <TextField required variant="filled" fullWidth label="Dossier Entry*" name="dossier"/>
+                <TextField required variant="filled" fullWidth label="Dossier Entry" name="dossier"/>
             </Box>
             <FormSaveButton/>
         </form>
