@@ -50,7 +50,7 @@ export const saveStaffPositions = async (formData: FormData) => {
     });
 
     await writeDossier(result.data.dossier, user.cid);
-    await log("UPDATE", "STAFF_POSITION", `Staff positions updated for ${user.cid}`);
+    await log("UPDATE", "STAFF_POSITION", `Staff positions updated for ${user.firstName} ${user.lastName} (${user.cid})`);
     revalidatePath(`/admin/staff/${user.cid}`);
     revalidatePath(`/controllers/roster`);
     return {user};
@@ -92,7 +92,7 @@ export const saveRoles = async (formData: FormData) => {
     });
 
     await writeDossier(result.data.dossier, user.cid);
-    await log("UPDATE", "ROLE", `Roles updated for ${user.cid}`);
+    await log("UPDATE", "ROLE", `Roles updated for ${user.firstName} ${user.lastName} (${user.cid})`);
     revalidatePath(`/admin/staff/${user.cid}`);
     revalidatePath(`/controllers/roster`);
     return {user};

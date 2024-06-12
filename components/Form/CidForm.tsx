@@ -15,7 +15,7 @@ export default function CidForm({basePath, controllers, initialCid}: {
     const router = useRouter();
     const [controller, setController] = useState(initialCid);
 
-    const handleSubmit = (formData: FormData) => {
+    const handleSubmit = () => {
         if (!controller) {
             router.push(`${basePath}`, {
                 scroll: true,
