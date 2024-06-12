@@ -15,10 +15,10 @@ export default function UpcomingEventsCarousel({events, imageUrls}: {
 }) {
     return (
         <Carousel
-            autoPlay
+            autoPlay={false}
             animation="slide"
             fullHeightHover
-            navButtonsAlwaysVisible
+            navButtonsAlwaysVisible={false}
         >
             {events.map(event => (
                 <Link key={event.id} href={`/events/${event.id}`} style={{textDecoration: 'none', color: 'inherit',}}>
@@ -33,5 +33,4 @@ export default function UpcomingEventsCarousel({events, imageUrls}: {
             ))}
         </Carousel>
     );
-
 }
