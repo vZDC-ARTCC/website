@@ -1,9 +1,10 @@
 'use client';
-import React from 'react';
+import React, {useState} from 'react';
 import {useParams, useRouter} from "next/navigation";
-import {Box, Button, Card, CardContent, MenuItem, Stack, TextField} from "@mui/material";
+import {Autocomplete, Box, Button, Card, CardContent, MenuItem, Stack, TextField} from "@mui/material";
 import {z} from "zod";
 import {toast} from "react-toastify";
+import {User} from "next-auth";
 
 const months = [
     {
@@ -60,7 +61,7 @@ const months = [
     },
 ]
 
-export default function StatisticsTimeSelector() {
+export default function StatisticsTimeSelector({controllers}: { controllers: User[], }) {
 
     const params = useParams();
     const router = useRouter();
@@ -68,6 +69,8 @@ export default function StatisticsTimeSelector() {
     const month = params.month as string | undefined;
     const year = params.year as string | undefined;
     const cid = params.cid as string | undefined;
+
+    const [controller, setController] = useState(cid);
 
     const onSubmit = (formData: FormData) => {
 
@@ -85,7 +88,7 @@ export default function StatisticsTimeSelector() {
         const timeframe = timeframeZ.safeParse({
             month: Number(formData.get('month') as string),
             year: Number(formData.get('year') as string),
-            cid: Number(formData.get('cid') as string),
+            cid: Number(controller || undefined) || undefined,
         });
 
         if (!timeframe.success) {
@@ -127,14 +130,15 @@ export default function StatisticsTimeSelector() {
                             defaultValue={Number(year) || new Date().getFullYear()}
                             name="year"
                         />
-                        <TextField
-                            id="cid"
+                        <Autocomplete
                             fullWidth
-                            type="number"
-                            label="VATSIM CID"
-                            variant="filled"
-                            defaultValue={cid || ''}
-                            name="cid"
+                            options={controllers}
+                            getOptionLabel={(option) => `${option.firstName} ${option.lastName} (${option.cid})`}
+                            value={controllers.find((u) => u.cid === controller) || null}
+                            onChange={(event, newValue) => {
+                                setController(newValue ? newValue.cid : '');
+                            }}
+                            renderInput={(params) => <TextField {...params} label="Controller"/>}
                         />
                         <Box>
                             <Button type="submit" variant="contained" size="large">Search</Button>

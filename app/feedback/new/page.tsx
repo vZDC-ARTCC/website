@@ -6,6 +6,7 @@ import FeedbackFormWrapper from "@/components/Feedback/FeedbackFormWrapper";
 import {authOptions} from "@/auth/auth";
 import ErrorCard from "@/components/Error/ErrorCard";
 import {Metadata} from "next";
+
 export const metadata: Metadata = {
     title: 'Feedback | vZDC',
     description: 'vZDC feedback page',
@@ -14,13 +15,20 @@ export const metadata: Metadata = {
 export default async function Page() {
 
     const controllers = await prisma.user.findMany({
-        orderBy: {
-            lastName: 'asc',
-        },
         where: {
-            roles: {
-                has: "CONTROLLER",
+            controllerStatus: {
+                not: "NONE",
             },
+            OR: [
+                {
+                    hiddenFromRoster: null,
+                },
+                {
+                    hiddenFromRoster: {
+                        not: true,
+                    },
+                },
+            ],
         },
     });
 

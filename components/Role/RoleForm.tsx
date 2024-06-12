@@ -4,40 +4,18 @@ import {User} from "next-auth";
 import {Box, Chip, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography} from "@mui/material";
 import {Role} from "@prisma/client";
 import FormSaveButton from "@/components/Form/FormSaveButton";
-import {z} from "zod";
 import {toast} from "react-toastify";
 import {saveRoles} from "@/actions/role";
 
-const DEV_MODE = process.env.NODE_ENV === 'development';
-
-export default function RoleForm({sessionUser, user}: { sessionUser: User, user: User, }) {
+export default function RoleForm({user}: { user: User, }) {
 
     const handleSubmit = async (formData: FormData) => {
-        const rolesZ = z.object({
-            roles: z.array(z.string()),
-            dossier: z.string().min(1, 'Dossier entry is required'),
-        });
-
-        const result = rolesZ.safeParse({
-            roles: typeof formData.get('roles') === 'string' ? (formData.get('roles') as string)?.split(',') : formData.get('roles'),
-            dossier: formData.get('dossier') as string,
-        });
-
-        if (!result.success) {
-            toast(result.error.errors.map((e) => e.message).join(".  "), {type: 'error'})
+        const {errors} = await saveRoles(formData);
+        if (errors) {
+            toast(errors.map((e) => e.message).join(".  "), {type: 'error'})
             return;
         }
 
-        if (!DEV_MODE && sessionUser.id === user.id) {
-            toast("You cannot change your own roles.", {type: 'error'});
-            return;
-        }
-        if (result.data.roles.includes("MENTOR") && result.data.roles.includes("INSTRUCTOR")) {
-            toast("You must pick either MENTOR or INSTRUCTOR, not both.", {type: 'error'})
-            return;
-        }
-
-        await saveRoles(user, result.data.roles as Role[], result.data.dossier);
         toast("Roles saved successfully.", {type: 'success'});
     };
 
@@ -48,6 +26,7 @@ export default function RoleForm({sessionUser, user}: { sessionUser: User, user:
                     User is not a rostered controller.
                 </Typography>}
             {user.controllerStatus !== "NONE" && <form action={handleSubmit}>
+                <input type="hidden" name="userId" value={user.id}/>
                 <Stack direction="column" spacing={2}>
                     <FormControl fullWidth>
                         <InputLabel id="role-select-label">Role(s)</InputLabel>

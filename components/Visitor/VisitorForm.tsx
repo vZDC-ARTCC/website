@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
-import {Button, Checkbox, FormControlLabel, Grid, Stack, TextField, Typography} from "@mui/material";
-import {z} from "zod";
+import {Checkbox, FormControlLabel, Grid, Stack, TextField, Typography} from "@mui/material";
 import {toast} from "react-toastify";
 import {addVisitingApplication} from "@/actions/visitor";
 import {useRouter} from "next/navigation";
@@ -14,37 +13,20 @@ export default function VisitorForm({user}: { user: User, }) {
     const router = useRouter();
 
     const handleSubmit = async (formData: FormData) => {
-        const visitorZ = z.object({
-            homeFacility: z.string().trim().min(1, "Home ARTCC is required"),
-            whyVisit: z.string().trim().min(1, "Reason for visiting is required"),
-            meetUsaReqs: z.boolean().refine((val) => val, "You must meet the VATUSA visiting requirements"),
-            meetZdcReqs: z.boolean().refine((val) => val, "You must agree to our visiting policy"),
-            goodStanding: z.boolean().refine((val) => val, "You must be in good standing with your home ARTCC"),
-        });
 
-        const result = visitorZ.safeParse({
-            homeFacility: formData.get("homeFacility"),
-            whyVisit: formData.get("whyVisit"),
-            meetUsaReqs: formData.get("meetUsaReqs") === 'on',
-            meetZdcReqs: formData.get("meetZdcReqs") === 'on',
-            goodStanding: formData.get("goodStanding") === 'on',
-        });
+        const {errors} = await addVisitingApplication(formData);
 
-        if (!result.success) {
-            toast(result.error.errors.map((e) => e.message).join(".  "), {type: 'error'})
+        if (errors) {
+            toast(errors.map((e) => e.message).join(".  "), {type: "error"});
             return;
         }
 
-        try {
-            await addVisitingApplication(result.data as any, user);
-            router.push('/visitor/success');
-        } catch (e: any) {
-            toast(e.message, {type: "error"});
-        }
+        router.push('/visitor/success');
     }
 
     return (
         <form action={handleSubmit}>
+            <input type="hidden" name="userId" value={user.id}/>
             <Grid container spacing={2} rowSpacing={4} columns={2}>
                 <Grid item xs={2} lg={1}>
                     <TextField variant="filled" fullWidth name="name" label="Full Name" defaultValue={user.fullName}
@@ -78,6 +60,8 @@ export default function VisitorForm({user}: { user: User, }) {
                                           label="you agree to our visiting policy"/>
                         <FormControlLabel control={<Checkbox name="goodStanding"/>}
                                           label="you are in good standing with your home ARTCC"/>
+                        <FormControlLabel control={<Checkbox name="notRealWorld"/>}
+                                          label="you understand that we are not the real world FAA nor do we have any affiliation with them"/>
                         <VisitorFormSubmitButton />
                     </Stack>
                 </Grid>

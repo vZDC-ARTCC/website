@@ -13,42 +13,64 @@ import {
     sendVisitorApplicationRejectedEmail
 } from "@/actions/mail/visitor";
 
-export const addVisitingApplication = async (data: VisitorApplication, user: User) => {
+export const addVisitingApplication = async (formData: FormData) => {
 
     const visitorZ = z.object({
+        userId: z.string(),
         homeFacility: z.string().trim().min(1, "Home ARTCC is required"),
         whyVisit: z.string().trim().min(1, "Reason for visiting is required"),
+        meetUsaReqs: z.boolean().refine((val) => val, "You must meet the VATUSA visiting requirements"),
+        meetZdcReqs: z.boolean().refine((val) => val, "You must agree to our visiting policy"),
+        goodStanding: z.boolean().refine((val) => val, "You must be in good standing with your home ARTCC"),
+        notRealWorld: z.boolean().refine((val) => val, "You must understand that we are not the real world FAA nor do we have any affiliation with them"),
     });
 
-    const result = visitorZ.parse(data);
+    const result = visitorZ.safeParse({
+        userId: formData.get('userId'),
+        homeFacility: formData.get("homeFacility"),
+        whyVisit: formData.get("whyVisit"),
+        meetUsaReqs: formData.get("meetUsaReqs") === 'on',
+        meetZdcReqs: formData.get("meetZdcReqs") === 'on',
+        goodStanding: formData.get("goodStanding") === 'on',
+        notRealWorld: formData.get("notRealWorld") === 'on',
+    });
+
+    if (!result.success) {
+        return {errors: result.error.errors};
+    }
 
     const existing = await prisma.visitorApplication.findFirst({
         where: {
-            userId: user.id,
+            userId: result.data.userId,
             status: "PENDING",
         },
     });
     if (existing) {
-        throw new Error("You already have a pending visitor application. Please wait for a decision before submitting another.");
+        return {errors: [{message: "You already have a pending visitor application"},]};
     }
 
-    await prisma.visitorApplication.create({
+    const application = await prisma.visitorApplication.create({
         data: {
-            ...result,
+            homeFacility: result.data.homeFacility,
+            whyVisit: result.data.whyVisit,
             user: {
                 connect: {
-                    id: user.id,
+                    id: result.data.userId,
                 }
             },
             status: "PENDING",
             submittedAt: new Date(),
         },
+        include: {
+            user: true,
+        },
     });
 
-    await sendVisitorApplicationCreatedEmail(user);
+    await sendVisitorApplicationCreatedEmail(application.user as User);
 
     revalidatePath('/admin/visitor-applications');
     revalidatePath('/visitor/new');
+    return {application};
 }
 
 export const addVisitor = async (application: VisitorApplication, user: User) => {

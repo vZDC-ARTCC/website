@@ -231,9 +231,10 @@ export default async function RosterTable({membership, search}: {
                                                 <Link href={`/controllers/${user.user.cid}`}
                                                       style={{color: 'inherit', textDecoration: 'none',}}>
                                                     <Typography
-                                                        variant="h6">{user.user.preferredName || `${user.user.firstName} ${user.user.lastName}`}</Typography>
+                                                        variant="h6">{user.user.preferredName || `${user.user.firstName} ${user.user.lastName}`}
                                                     {approvedLoas.length > 0 &&
                                                         <Chip label="LOA" color="primary" size="small" sx={{ml: 1,}}/>}
+                                                    </Typography>
                                                 </Link>
                                                 <Typography
                                                     variant="body2">{user.user.preferredName && `${user.user.firstName} ${user.user.lastName}`}</Typography>
@@ -242,6 +243,9 @@ export default async function RosterTable({membership, search}: {
                                                 {user.user.controllerStatus === "HOME" && getChips(user.user as User)}
                                                 {user.user.controllerStatus === "VISITOR" &&
                                                     <Typography>{user.user.artcc}</Typography>}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography variant="h5">{user.user.operatingInitials}</Typography>
                                             </TableCell>
                                             {certificationTypes.map((certificationType) => (
                                                 <TableCell key={certificationType.id}>
@@ -271,6 +275,9 @@ export default async function RosterTable({membership, search}: {
                                                     variant="body1">{getRating(user.vatusa.rating)} • {user.vatusa.cid}</Typography>
                                                 <Typography
                                                     variant="subtitle2">{user.vatusa.membership === 'home' ? 'Home Controller' : `Visiting Controller (${user.vatusa.facility})`}</Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography variant="h5">-</Typography>
                                             </TableCell>
                                             {certificationTypes.map((certificationType) => (
                                                 <TableCell key={certificationType.id}>

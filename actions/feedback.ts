@@ -8,7 +8,7 @@ import {log} from "@/actions/log";
 import {sendNewFeedbackEmail} from "@/actions/mail/feedback";
 import {User} from "next-auth";
 
-export const submitFeedback = async (data: Feedback) => {
+export const submitFeedback = async (formData: FormData) => {
 
     const feedbackZ = z.object({
         pilotId: z.string().min(1),
@@ -19,29 +19,45 @@ export const submitFeedback = async (data: Feedback) => {
         comments: z.string().trim(),
     });
 
-    feedbackZ.parse(data);
+    const result = feedbackZ.safeParse({
+        pilotId: formData.get('pilotId') as string,
+        pilotCallsign: formData.get('pilotCallsign') as string,
+        controllerId: formData.get('controllerId') as string,
+        controllerPosition: formData.get('controllerPosition') as string,
+        rating: parseInt(formData.get('rating') as string),
+        comments: formData.get('comments') as string,
+    });
 
-    await prisma.feedback.create({
+    if (!result.success) {
+        return {errors: result.error.errors};
+    }
+
+    if (result.data.pilotId === result.data.controllerId) {
+        return {errors: [{message: "You cannot submit feedback for yourself."}]};
+    }
+
+    const feedback = await prisma.feedback.create({
         data: {
             pilot: {
                 connect: {
-                    id: data.pilotId,
+                    id: result.data.pilotId,
                 },
             },
-            pilotCallsign: data.pilotCallsign,
+            pilotCallsign: result.data.pilotCallsign,
             controller: {
                 connect: {
-                    id: data.controllerId,
+                    id: result.data.controllerId,
                 },
             },
-            controllerPosition: data.controllerPosition,
-            rating: data.rating,
-            comments: data.comments,
+            controllerPosition: result.data.controllerPosition,
+            rating: result.data.rating,
+            comments: result.data.comments,
             submittedAt: new Date(),
             status: "PENDING",
         },
     });
     revalidatePath('/admin/feedback');
+    return {feedback};
 }
 
 export const releaseFeedback = async (feedback: Feedback) => {

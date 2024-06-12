@@ -29,45 +29,66 @@ export const deleteEventPosition = async (id: string) => {
     return data;
 }
 
-export const createOrUpdateEventPosition = async (event: Event, eventPosition: EventPosition) => {
-    const EventPosition = z.object({
+export const createOrUpdateEventPosition = async (formData: FormData) => {
+    const eventPositionZ = z.object({
+        eventId: z.string(),
+        id: z.string().optional(),
         position: z.string().min(1, "Position Name is required.").max(40, 'Position name must be less than 40 characters'),
         signupCap: z.number().optional(),
         minRating: z.number().min(-1, "Rating is invalid").max(10, "Rating is invalid"),
     });
 
-    const result = EventPosition.parse(eventPosition);
+    const result = eventPositionZ.safeParse({
+        eventId: formData.get('eventId') as string,
+        id: formData.get('id') as string,
+        position: formData.get('position'),
+        signupCap: Number(formData.get('signupCap') as string),
+        minRating: Number(formData.get('minRating') as string),
+    });
+
+    if (!result.success) {
+        return {errors: result.error.errors};
+    }
 
     const eventPositionExists = await prisma.eventPosition.findUnique({
         where: {
-            id: eventPosition.id,
+            id: result.data.id,
         },
     });
 
-    const data = await prisma.eventPosition.upsert({
+    const eventPosition = await prisma.eventPosition.upsert({
         where: {
-            id: eventPosition.id,
+            id: result.data.id,
         },
-        update: result,
+        update: {
+            position: result.data.position,
+            signupCap: result.data.signupCap,
+            minRating: result.data.minRating,
+        },
         create: {
-            ...result,
+            position: result.data.position,
+            signupCap: result.data.signupCap,
+            minRating: result.data.minRating,
             event: {
                 connect: {
-                    id: event.id,
+                    id: result.data.eventId,
                 },
             },
+        },
+        include: {
+            event: true,
         },
     });
 
     if (eventPositionExists) {
-        await log('UPDATE', 'EVENT_POSITION', `Updated event position ${data.position} for ${event.name}`);
+        await log('UPDATE', 'EVENT_POSITION', `Updated event position ${eventPosition.position} for ${eventPosition.event.name}`);
     } else {
-        await log('CREATE', 'EVENT_POSITION', `Created event position ${data.position} for ${event.name}`);
+        await log('CREATE', 'EVENT_POSITION', `Created event position ${eventPosition.position} for ${eventPosition.event.name}`);
     }
 
-    revalidatePath(`/admin/events/edit/${event.id}/positions`);
+    revalidatePath(`/admin/events/edit/${eventPosition.eventId}/positions`);
     revalidatePath(`/admin/events`);
-    return data;
+    return {eventPosition};
 }
 
 export const assignEventPosition = async (event: Event, eventPosition: EventPosition,  controllers: User[], user: User) => {
@@ -141,15 +162,30 @@ export const unassignEventPosition = async (event: Event, eventPosition: EventPo
     return data;
 }
 
-export const forceAssignPosition = async (eventPositionId: string, userId: string) => {
+export const forceAssignPosition = async (formData: FormData) => {
+
+    const assignZ = z.object({
+        position: z.string(),
+        controller: z.string(),
+    });
+
+    const result = assignZ.safeParse({
+        position: formData.get('position') as string,
+        controller: formData.get('controller') as string,
+    });
+
+    if (!result.success) {
+        return {errors: [{message: 'Invalid form data'}]};
+    }
+
     const eventPosition = await prisma.eventPosition.update({
         where: {
-            id: eventPositionId,
+            id: result.data.position,
         },
         data: {
             controllers: {
                 connect: {
-                    id: userId,
+                    id: result.data.controller,
                 },
             },
         },
@@ -157,9 +193,10 @@ export const forceAssignPosition = async (eventPositionId: string, userId: strin
             event: true,
         }
     });
+
     const controller = await prisma.user.findUniqueOrThrow({
         where: {
-            id: userId,
+            id: result.data.controller,
         }
     });
 

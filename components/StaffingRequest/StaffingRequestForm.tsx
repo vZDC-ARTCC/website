@@ -4,7 +4,6 @@ import {User} from "next-auth";
 import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 import {Grid, TextField} from "@mui/material";
 import StaffingRequestSubmitButton from "@/components/StaffingRequest/StaffingRequestSubmitButton";
-import {z} from "zod";
 import {toast} from "react-toastify";
 import {createStaffingRequest} from "@/actions/staffingRequest";
 import {useRouter} from "next/navigation";
@@ -16,30 +15,21 @@ export default function StaffingRequestForm({user}: { user: User, }) {
     const {executeRecaptcha} = useGoogleReCaptcha();
 
     const handleSubmit = async (formData: FormData) => {
-        const staffPositionZ = z.object({
-            name: z.string().min(1, 'Name must be at least 1 character long'),
-            description: z.string().min(1, 'Description must be at least 1 character long'),
-        });
-
-        const result = staffPositionZ.safeParse({
-            name: formData.get('name') as string,
-            description: formData.get('description') as string,
-        });
-
-        if (!result.success) {
-            toast(result.error.errors.map((e) => e.message).join(".  "), {type: 'error'})
-            return;
-        }
 
         const recaptchaToken = await executeRecaptcha?.('submit_feedback');
         await checkCaptcha(recaptchaToken);
 
-        await createStaffingRequest(user, result.data.name, result.data.description);
+        const {errors} = await createStaffingRequest(formData);
+        if (errors) {
+            toast(errors.map((e) => e.message).join(".  "), {type: 'error'});
+            return;
+        }
         router.push(`/staffing/success`);
     }
 
     return (
         <form action={handleSubmit}>
+            <input type="hidden" name="userId" value={user.id}/>
             <Grid container columns={2} spacing={2}>
                 <Grid item xs={2} sm={1}>
                     <TextField fullWidth variant="filled" name="pilotName" label="Your Name"

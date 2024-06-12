@@ -1,21 +1,8 @@
 'use client';
 import React from 'react';
 import {User} from "next-auth";
-import {
-    Box,
-    Button,
-    Chip,
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
-    Stack,
-    TextField,
-    Typography
-} from '@mui/material';
+import {Box, Chip, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography} from '@mui/material';
 import {StaffPosition} from "@prisma/client";
-import {Save} from "@mui/icons-material";
-import {z} from "zod";
 import {toast} from "react-toastify";
 import {saveStaffPositions} from "@/actions/role";
 import FormSaveButton from "@/components/Form/FormSaveButton";
@@ -23,23 +10,14 @@ import FormSaveButton from "@/components/Form/FormSaveButton";
 function StaffPositionForm({user}: { user: User }) {
 
     const handleSubmit = async (formData: FormData) => {
-        const staffPositionsZ = z.object({
-            staffPositions: z.array(z.string()),
-            dossier: z.string().min(1, 'Dossier entry is required'),
-        });
 
-        const result = staffPositionsZ.safeParse({
-            staffPositions: typeof formData.get('staffPositions') === 'string' ? (formData.get('staffPositions') as string)?.split(',') : formData.get('staffPositions'),
-            dossier: formData.get('dossier') as string,
-        });
+        const {errors} = await saveStaffPositions(formData);
 
-        if (!result.success) {
-            toast(result.error.errors.map((e) => e.message).join(".  "), {type: 'error'})
+        if (errors) {
+            toast(errors.map((e) => e.message).join(".  "), {type: 'error'})
             return;
         }
 
-
-        await saveStaffPositions(user, result.data.staffPositions as StaffPosition[], result.data.dossier);
         toast("Staff positions saved!", {type: 'success'})
 
     }
@@ -51,6 +29,8 @@ function StaffPositionForm({user}: { user: User }) {
                     User is not a rostered controller.
                 </Typography>}
             {user.controllerStatus !== "NONE" && <form action={handleSubmit}>
+                <input type="hidden" name="userId" value={user.id}/>
+                <input type="hidden" name="roles" value={user.roles}/>
                 <Stack direction="column" spacing={2}>
                     <FormControl fullWidth>
                         <InputLabel id="staff-position-select-label">Staff Position(s)</InputLabel>

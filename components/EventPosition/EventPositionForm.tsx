@@ -1,9 +1,7 @@
 'use client';
 import React from 'react';
 import {Event, EventPosition} from "@prisma/client";
-import {Button, Grid, MenuItem, TextField} from "@mui/material";
-import {Save} from "@mui/icons-material";
-import {z} from "zod";
+import {Grid, MenuItem, TextField} from "@mui/material";
 import {toast} from "react-toastify";
 import {createOrUpdateEventPosition} from "@/actions/eventPosition";
 import FormSaveButton from "@/components/Form/FormSaveButton";
@@ -14,35 +12,20 @@ function EventPositionForm({event, eventPosition}: { event: Event, eventPosition
     const router = useRouter();
 
     const handleSubmit = async (formData: FormData) => {
-        const eventPositionZ = z.object({
-            position: z.string().min(1, "Position Name is required.").max(40, 'Position name must be less than 40 characters'),
-            signupCap: z.number().optional(),
-            minRating: z.number().min(-1, "Rating is invalid").max(10, "Rating is invalid"),
-        });
-
-        const result = eventPositionZ.safeParse({
-            position: formData.get('position'),
-            signupCap: Number(formData.get('signupCap') as string),
-            minRating: Number(formData.get('minRating') as string),
-        });
-
-        if (!result.success) {
-            toast(result.error.errors.map((e) => e.message).join(".  "), {type: 'error'})
+        const {eventPosition, errors} = await createOrUpdateEventPosition(formData);
+        if (errors) {
+            toast(errors.map(e => e.message).join('.  '), {type: 'error'});
             return;
         }
 
-        const data = await createOrUpdateEventPosition(event, {
-            ...result.data,
-            id: eventPosition?.id || '',
-            eventId: event.id,
-        } as EventPosition);
-
-        toast(`Position ${data.position} saved successfully!`, {type: 'success'});
+        toast(`Position ${eventPosition.position} saved successfully!`, {type: 'success'});
         router.push(`/admin/events/edit/${event.id}/positions`);
     }
 
     return (
         <form action={handleSubmit}>
+            <input type="hidden" name="eventId" value={event.id}/>
+            <input type="hidden" name="id" value={eventPosition?.id}/>
             <Grid container columns={2} spacing={2}>
                 <Grid item xs={2}>
                     <TextField label="Position Name" fullWidth name="position" defaultValue={eventPosition?.position}/>
