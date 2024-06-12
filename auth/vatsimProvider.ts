@@ -1,6 +1,7 @@
 import {OAuthConfig} from "@auth/core/providers";
 import {Profile, User} from "next-auth";
 import {ControllerStatus, Role, StaffPosition} from "@prisma/client";
+import prisma from "@/lib/db";
 
 // vatusa facility id from environment variables
 const VATUSA_FACILITY = process.env['VATUSA_FACILITY'];
@@ -59,7 +60,16 @@ export const getVatusaData = async (data: Profile | User): Promise<{
     controllerStatus: ControllerStatus,
     roles: Role[],
     staffPositions: StaffPosition[],
+    operatingInitials?: string,
 }> => {
+
+    let operatingInitials;
+    if ('personal' in data && 'name_first' in data.personal && 'name_last' in data.personal) {
+        const users = await prisma.user.findMany();
+        const otherInitials = users.map(user => user.operatingInitials).filter(initial => initial !== null) as string[];
+        operatingInitials = getOperatingInitials(data.personal.name_first, data.personal.name_last, otherInitials);
+    }
+
     if (DEV_MODE) {
         return {
             controllerStatus: "HOME",
@@ -69,6 +79,7 @@ export const getVatusaData = async (data: Profile | User): Promise<{
             staffPositions: [
                 "ATM"
             ],
+            operatingInitials,
         };
     }
     const res = await fetch(`https://api.vatusa.net/v2/facility/${VATUSA_FACILITY}/roster/both`, {
@@ -90,7 +101,26 @@ export const getVatusaData = async (data: Profile | User): Promise<{
     if (!controller) return {controllerStatus: "NONE", roles: [], staffPositions: [],};
     const controllerRoles = controller.roles.filter(r => r.facility === VATUSA_FACILITY).map(r => r.role);
     const controllerStatus: ControllerStatus = controller && controller.membership === "home" ? "HOME" : "VISITOR";
-    return {controllerStatus, ...getRolesAndStaffPositions(controllerRoles)};
+    return {controllerStatus, operatingInitials, ...getRolesAndStaffPositions(controllerRoles)};
+}
+
+export const getOperatingInitials = (firstName: string, lastName: string, otherInitials: string[]): string => {
+    let initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+
+    while (otherInitials.includes(initials)) {
+        initials = generateRandomInitials();
+    }
+
+    return initials;
+}
+
+const generateRandomInitials = (): string => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let result = '';
+    for (let i = 0; i < 2; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
 }
 
 export const getRolesAndStaffPositions = (controllerRoles: string[]) => {

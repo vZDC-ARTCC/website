@@ -19,7 +19,8 @@ export default async function ProfileCard({user, admin, viewOnly}: {
                     <Stack direction="row" spacing={2} alignItems="center">
                         <Avatar src={user.avatarUrl}/>
                         <Box>
-                            <Typography variant="h6">{user.fullName}</Typography>
+                            <Typography
+                                variant="h6">{user.fullName} {user.operatingInitials ? `(${user.operatingInitials})` : ''}</Typography>
                             {getChips(user)}
                         </Box>
                     </Stack>

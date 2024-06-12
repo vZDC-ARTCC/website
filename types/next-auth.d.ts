@@ -42,6 +42,7 @@ declare module "next-auth" {
 
     interface User {
         cid: string,
+        operatingInitials?: string,
         firstName: string,
         lastName: string,
         fullName: string,

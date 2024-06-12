@@ -52,6 +52,7 @@ model Session {
 model User {
   id                 String              @id @default(cuid())
   cid                String              @unique
+  operatingInitials  String?
   firstName          String?
   lastName           String?
   fullName           String?

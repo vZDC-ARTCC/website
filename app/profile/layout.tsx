@@ -3,6 +3,7 @@ import {getServerSession} from "next-auth";
 import {authOptions} from "@/auth/auth";
 import {Box, Typography} from "@mui/material";
 import {Metadata} from "next";
+
 export const metadata: Metadata = {
     title: 'Profile | vZDC',
     description: 'vZDC profile page',
@@ -18,10 +19,10 @@ export default async function Layout({children}: { children: React.ReactNode }) 
         );
     }
 
-    if (session.user.controllerStatus === "NONE") {
+    if (session.user.roles.length === 0) {
         return (
             <Box>
-                <Typography textAlign="center" variant="h5">You must be a rostered controller to access this
+                <Typography textAlign="center" variant="h5">You must be a controller to access this
                     page.</Typography>
             </Box>
         );

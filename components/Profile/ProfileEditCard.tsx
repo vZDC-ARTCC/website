@@ -1,15 +1,13 @@
 'use client';
 import React from 'react';
 import {User} from "next-auth";
-import {Button, Card, CardContent, Divider, Stack, TextField} from "@mui/material";
+import {Card, CardContent, Divider, Stack, TextField} from "@mui/material";
 import {getRating} from "@/lib/vatsim";
-import {Save} from "@mui/icons-material";
 import {z} from "zod";
 import {toast} from "react-toastify";
 import {updateCurrentProfile} from "@/actions/profile";
 import {useRouter} from "next/navigation";
 import {writeDossier} from "@/actions/dossier";
-import {useSession} from "next-auth/react";
 import FormSaveButton from "@/components/Form/FormSaveButton";
 
 export default function ProfileEditCard({user, sessionUser, admin = false}: {
@@ -24,11 +22,13 @@ export default function ProfileEditCard({user, sessionUser, admin = false}: {
         const User = z.object({
             preferredName: z.string().max(40, "Preferred name must not be over 40 characters").optional(),
             bio: z.string().max(400, "Bio must not be over 400 characters").optional(),
+            operatingInitials: z.string().length(2, "Operating Initials must be 2 characters").toUpperCase(),
         });
 
         const result = User.safeParse({
             preferredName: formData.get('preferredName') as string,
             bio: formData.get('bio') as string,
+            operatingInitials: formData.get('operatingInitials') as string,
         });
 
         if (!result.success) {
@@ -48,7 +48,13 @@ export default function ProfileEditCard({user, sessionUser, admin = false}: {
             return;
         }
 
-        await updateCurrentProfile({...user, ...result.data});
+        const oiError = await updateCurrentProfile({...user, ...result.data});
+
+        if (oiError) {
+            toast(oiError, {type: 'error'});
+            return;
+        }
+
         if (admin) {
             router.push(`/admin/controller/${user.cid}`);
             return;
@@ -71,6 +77,8 @@ export default function ProfileEditCard({user, sessionUser, admin = false}: {
                                    defaultValue={user.preferredName || ''}/>
                         <TextField fullWidth multiline rows={5} variant="filled" name="bio" label="Bio"
                                    defaultValue={user.bio || ''}/>
+                        {admin && <TextField variant="filled" name="operatingInitials" label="Operating Initials"
+                                             defaultValue={user.operatingInitials || ''}/>}
                         <FormSaveButton />
                     </Stack>
                 </form>

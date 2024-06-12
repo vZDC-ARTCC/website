@@ -67,25 +67,44 @@ export default async function RosterTable({membership, search}: {
             controllerStatus: {
                 not: 'NONE',
             },
-            hiddenFromRoster: false,
             OR: [
                 {
-                    fullName: {
-                        contains: search || '',
-                        mode: 'insensitive',
-                    },
-                },
-                {
-                    preferredName: {
-                        contains: search || '',
-                        mode: 'insensitive',
-                    },
-                },
-                {
-                    cid: {
-                        contains: search || '',
-                        mode: 'insensitive',
-                    },
+                    AND: [
+                        {
+                            OR: [
+                                {
+                                    hiddenFromRoster: null,
+                                },
+                                {
+                                    hiddenFromRoster: {
+                                        not: true,
+                                    },
+                                },
+                            ],
+                        },
+                        {
+                            OR: [
+                                {
+                                    fullName: {
+                                        contains: search || '',
+                                        mode: 'insensitive',
+                                    },
+                                },
+                                {
+                                    preferredName: {
+                                        contains: search || '',
+                                        mode: 'insensitive',
+                                    },
+                                },
+                                {
+                                    cid: {
+                                        contains: search || '',
+                                        mode: 'insensitive',
+                                    },
+                                },
+                            ],
+                        },
+                    ],
                 },
             ],
         },
@@ -154,6 +173,7 @@ export default async function RosterTable({membership, search}: {
                         <TableHead>
                             <TableRow>
                                 <TableCell>Controller</TableCell>
+                                <TableCell>Operating Initials</TableCell>
                                 {certificationTypes.map((certificationType) => (
                                     <TableCell key={certificationType.id}>{certificationType.name}</TableCell>
                                 ))}
@@ -177,6 +197,9 @@ export default async function RosterTable({membership, search}: {
                                             variant="body2">{user.preferredName && `${user.firstName} ${user.lastName}`}</Typography>
                                         <Typography variant="body1">{getRating(user.rating)} • {user.cid}</Typography>
                                         {getChips(user as User)}
+                                    </TableCell>
+                                    <TableCell>
+                                        <Typography variant="h5">{user.operatingInitials}</Typography>
                                     </TableCell>
                                     {certificationTypes.map((certificationType) => (
                                         <TableCell key={certificationType.id}>

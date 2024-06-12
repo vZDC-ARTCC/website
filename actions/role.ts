@@ -67,11 +67,13 @@ export const saveRoles = async (user: User, roles: Role[], dossier: string) => {
         throw new Error("You must pick either MENTOR or INSTRUCTOR, not both.");
     }
 
+    console.log(result.roles);
+
     const savedRoles = await prisma.user.update({
         where: {id: user.id},
         data: {
             roles: {
-                set: result.roles as Role[],
+                set: result.roles.filter((r) => !!r) as Role[],
             },
         },
     });

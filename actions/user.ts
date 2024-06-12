@@ -1,12 +1,13 @@
 'use server';
 
-import {getServerSession} from "next-auth";
+import {getServerSession, User} from "next-auth";
 import {authOptions} from "@/auth/auth";
 import prisma from "@/lib/db";
 import {revalidatePath} from "next/cache";
 import {z} from "zod";
 import {writeDossier} from "@/actions/dossier";
 import {log} from "@/actions/log";
+import {getController} from "@/actions/vatusa/controller";
 
 export const updateSettings = async (formData: FormData) => {
 
@@ -53,4 +54,28 @@ export const updateSettings = async (formData: FormData) => {
 
     revalidatePath('/', "layout");
     return null;
+}
+
+export const refreshAccountData = async (user: User) => {
+
+    if (user.updatedAt && new Date().getTime() - new Date(user.updatedAt).getTime() < 300000) {
+        return 'Please wait at least 5 minutes before refreshing your account information.';
+    }
+
+    const controller = await getController(user.cid);
+    if (!controller) return;
+    await prisma.user.update({
+        data: {
+            rating: controller.rating,
+            email: controller.email,
+            firstName: controller.fname,
+            lastName: controller.lname,
+            updatedAt: new Date(),
+        },
+        where: {
+            id: user.id,
+        }
+    });
+
+    revalidatePath('/', "layout");
 }
