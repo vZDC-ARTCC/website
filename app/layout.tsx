@@ -43,7 +43,7 @@ export default async function RootLayout({
                     {children}
                 </Container>
                 <Footer/>
-                <ToastContainer/>
+                <ToastContainer theme="dark"/>
             </div>
         </CssVarsProvider>
     </AppRouterCacheProvider>

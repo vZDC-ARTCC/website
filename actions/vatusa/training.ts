@@ -2,49 +2,44 @@
 
 import {VATUSA_API, VATUSA_API_KEY} from "@/actions/vatusa/config";
 
-export const createVatusaTrainingSession = async (studentCid: string, instructorCid: string, sessionDate: Date, position: string, duration: string, notes: string) => {
+export const createVatusaTrainingSession = async (location:number = 2 ,facility_id: string = 'ZDC', studentCid: string, instructor_id: string,
+                                                  session_date: Date, position: string, duration: string, notes: string) => {
     const res = await fetch(`${VATUSA_API}/user/${studentCid}/training/record?apiKey=${VATUSA_API_KEY}`, {
         method: 'POST',
         headers: {
-            'Authorization': `Bearer ${VATUSA_API_KEY}`,
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            instructorCid,
-            sessionDate,
+            facility_id,
+            instructor_id,
+            session_date,
             position,
             duration,
             notes,
+            location,
         }),
     });
 
-    if (!res.ok) {
-        console.log(await res.json());
-    }
 
     const data = await res.json();
 
-    return data.id;
-}
+        return data.id;
+    }
 
-export const editVatusaTrainingSession = async (studentCid: string, instructorCid: string, sessionDate: Date, position: string, duration: string, notes: string, id: string) => {
+export const editVatusaTrainingSession = async (studentCid: string, instructor_id: string, session_date: Date, position: string, duration: string, notes: string, id: string) => {
     const res = await fetch(`${VATUSA_API}/training/record/${id}?apiKey=${VATUSA_API_KEY}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            instructorCid,
-            sessionDate,
+            instructor_id,
+            session_date,
             position,
             duration,
             notes,
         })
     });
-
-    if (!res.ok) {
-        console.log(await res.json());
-    }
 
     const data = await res.json();
 
@@ -59,9 +54,6 @@ export const deleteVatusaTrainingSession = async (id: string) => {
         },
     });
 
-    if (!res.ok) {
-        console.log(res.statusText);
-    }
 
     return res.ok;
 }
