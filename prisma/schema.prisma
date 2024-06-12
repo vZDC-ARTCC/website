@@ -385,6 +385,7 @@ model File {
 model Lesson {
   id                     String           @id @default(cuid())
   identifier             String
+  location               Int
   name                   String
   description            String
   position               String

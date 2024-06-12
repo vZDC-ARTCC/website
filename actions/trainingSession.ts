@@ -148,7 +148,7 @@ export async function createOrUpdateTrainingSession(
 
             await log("UPDATE", "TRAINING_SESSION", `Updated training session with student ${trainingSession.student.cid} - ${trainingSession.student.firstName} ${trainingSession.student.lastName}`);
 
-            const vatusaId = await editVatusaTrainingSession(trainingSession.student.cid, session.user.cid, start, trainingSession.tickets[0].lesson.position || 'N/A', getDuration(trainingSession.start, trainingSession.end), result.data.additionalComments || '', trainingSession.vatusaId || '');
+            const vatusaId = await editVatusaTrainingSession(session.user.cid, start, trainingSession.tickets[0].lesson.position || 'N/A', getDuration(trainingSession.start, trainingSession.end), result.data.additionalComments || '', trainingSession.vatusaId || '');
 
             await prisma.trainingSession.update({
                 where: {id: trainingSession.id},
@@ -211,7 +211,7 @@ export async function createOrUpdateTrainingSession(
 
             await log("CREATE", "TRAINING_SESSION", `Created training session with student ${trainingSession.student.cid} - ${trainingSession.student.firstName} ${trainingSession.student.lastName}`);
 
-            const vatusaId = await createVatusaTrainingSession(trainingSession.student.cid, session.user.cid, start, trainingSession.tickets[0].lesson.position || 'N/A', getDuration(trainingSession.start, trainingSession.end), result.data.additionalComments || '');
+            const vatusaId = await createVatusaTrainingSession(trainingSession.tickets[0].lesson.location, trainingSession.student.cid, session.user.cid, start, trainingSession.tickets[0].lesson.position || 'N/A', getDuration(trainingSession.start, trainingSession.end), result.data.additionalComments || '');
 
             await prisma.trainingSession.update({
                 where: {id: trainingSession.id},

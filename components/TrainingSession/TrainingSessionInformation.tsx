@@ -65,6 +65,7 @@ export default async function TrainingSessionInformation({id, trainerView}: { id
                                     <Chip label={ticket.passed ? 'PASS' : 'FAIL'}
                                           color={ticket.passed ? 'success' : 'error'}/>
                                 </Stack>
+                                <Typography variant="subtitle2">{ticket.lesson.location}</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Card variant="outlined">
