@@ -115,11 +115,11 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
                         />
                     </Grid>
                     <Grid item xs={2} md={1}>
-                        <DateTimePicker label="Start" value={dayjs(start)}
+                        <DateTimePicker  ampm={false} label="Start" value={dayjs(start)}
                                         onChange={(d) => setStart(d?.toDate() || null)}/>
                     </Grid>
                     <Grid item xs={2} md={1}>
-                        <DateTimePicker label="End" value={dayjs(end)}
+                        <DateTimePicker  ampm={false} label="End" value={dayjs(end)}
                                         onChange={(d) => setEnd(d?.toDate() || null)}/>
                     </Grid>
                     <Grid item xs={2}>

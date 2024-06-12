@@ -43,7 +43,7 @@ export default function IncidentReportForm({allUsers,}: { allUsers: User[], }) {
                         />
                     </Grid>
                     <Grid item xs={2} md={1}>
-                        <DateTimePicker disableFuture name="timestamp"
+                        <DateTimePicker  ampm={false} disableFuture name="timestamp"
                                         label="Date and time of incident"/>
                     </Grid>
                     <Grid item xs={2} sm={1}>

@@ -66,7 +66,7 @@ export default function SoloForm({controllers, certificationTypes,}: {
                         <TextField fullWidth variant="filled" name="position" label="Position" required/>
                     </Grid>
                     <Grid item xs={2} md={1}>
-                        <DateTimePicker name="expires" defaultValue={dayjs(new Date()).add(1, "month")}/>
+                        <DateTimePicker  ampm={false} name="expires" defaultValue={dayjs(new Date()).add(1, "month")}/>
                     </Grid>
                     <Grid item xs={2}>
                         <FormSaveButton/>

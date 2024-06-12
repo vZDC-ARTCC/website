@@ -10,7 +10,7 @@ import {
     TableCell,
     TableContainer,
     TableHead,
-    TableRow,
+    TableRow, Tooltip,
     Typography
 } from "@mui/material";
 import Link from "next/link";
@@ -67,18 +67,22 @@ export default async function Page() {
                                     <TableCell>{event.external ? event.host :
                                         <Typography fontWeight="bold">{VATUSA_FACILITY}</Typography>}</TableCell>
                                     <TableCell>
-                                        <Link href={`/admin/events/edit/${event.id}/positions`}
-                                              style={{color: 'inherit',}}>
-                                            <IconButton>
-                                                <Checklist/>
-                                            </IconButton>
-                                        </Link>
-                                        <Link href={`/admin/events/edit/${event.id}`}
-                                              style={{color: 'inherit',}}>
-                                            <IconButton>
-                                                <Edit/>
-                                            </IconButton>
-                                        </Link>
+                                        <Tooltip title={'Edit Positions'}>
+                                            <Link href={`/admin/events/edit/${event.id}/positions`}
+                                                  style={{color: 'inherit',}}>
+                                                <IconButton>
+                                                    <Checklist/>
+                                                </IconButton>
+                                            </Link>
+                                        </Tooltip>
+                                        <Tooltip title={'Edit Event'}>
+                                            <Link href={`/admin/events/edit/${event.id}`}
+                                                  style={{color: 'inherit',}}>
+                                                <IconButton>
+                                                    <Edit/>
+                                                </IconButton>
+                                            </Link>
+                                        </Tooltip>
                                         <EventDeleteButton event={event} />
                                     </TableCell>
                                 </TableRow>
