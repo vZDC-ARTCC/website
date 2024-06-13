@@ -40,6 +40,26 @@ export const fetchLogs = async (pagination: GridPaginationModel, sort: GridSortM
                 model: {
                     in: [...(onlyModels || []), filter.field === 'model' && filter.value].filter((v) => !!v),
                 },
+            } : filter.field === 'user' ? {
+                model: {
+                    in: onlyModels || Object.values(LogModel),
+                },
+                user: {
+                    OR: [
+                        {
+                            cid: {
+                                [filter.operator]: filter.value as string,
+                                mode: 'insensitive',
+                            }
+                        },
+                        {
+                            fullName: {
+                                [filter.operator]: filter.value as string,
+                                mode: 'insensitive',
+                            }
+                        },
+                    ],
+                },
             } : {
                 model: {
                     in: onlyModels || Object.values(LogModel),
@@ -57,6 +77,26 @@ export const fetchLogs = async (pagination: GridPaginationModel, sort: GridSortM
             where: filter ? filter?.field === 'model' ? {
                 model: {
                     in: [...(onlyModels || []), filter.field === 'model' && filter.value].filter((v) => !!v),
+                },
+            } : filter.field === 'user' ? {
+                model: {
+                    in: onlyModels || Object.values(LogModel),
+                },
+                user: {
+                    OR: [
+                        {
+                            cid: {
+                                [filter.operator]: filter.value as string,
+                                mode: 'insensitive',
+                            }
+                        },
+                        {
+                            fullName: {
+                                [filter.operator]: filter.value as string,
+                                mode: 'insensitive',
+                            }
+                        },
+                    ],
                 },
             } : {
                 model: {

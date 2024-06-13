@@ -241,6 +241,7 @@ enum LogModel {
   INCIDENT_REPORT
   EMAIL
   USER_SETTINGS
+  STATISTICS_PREFIXES
 }
 
 model Log {
@@ -508,4 +509,9 @@ model SyncTimes {
   loas     DateTime?
   events   DateTime?
   soloCert DateTime?
+}
+
+model StatisticsPrefixes {
+  id       String   @id @default(cuid())
+  prefixes String[]
 }

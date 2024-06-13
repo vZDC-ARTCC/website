@@ -82,7 +82,7 @@ export default async function TrainingSessionInformation({id, trainerView}: { id
                                                 {ticket.mistakes.map((mistake) => (
                                                     <Accordion key={mistake.id}>
                                                         <AccordionSummary expandIcon={<ExpandMore/>}>
-                                                            <Typography>{mistake.facility} - {mistake.description}</Typography>
+                                                            <Typography>{mistake.facility ? `${mistake.facility} - ` : ''}{mistake.name}</Typography>
                                                         </AccordionSummary>
                                                         <AccordionDetails>
                                                             <Markdown>{mistake.description}</Markdown>

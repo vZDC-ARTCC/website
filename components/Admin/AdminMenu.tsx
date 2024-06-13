@@ -6,6 +6,7 @@ import {
     AddModerator,
     AirplanemodeActive,
     Badge as BadgeIcon,
+    BarChart,
     CalendarMonth,
     DeleteSweep,
     Feedback,
@@ -193,6 +194,14 @@ export default async function AdminMenu() {
                                 <Folder/>
                             </ListItemIcon>
                             <ListItemText primary="File Center"/>
+                        </ListItemButton>
+                    </Link>
+                    <Link href="/admin/stats-prefixes" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <BarChart/>
+                            </ListItemIcon>
+                            <ListItemText primary="Statistics Prefixes"/>
                         </ListItemButton>
                     </Link>
                     <Link href="/admin/logs" style={{textDecoration: 'none', color: 'inherit',}}>

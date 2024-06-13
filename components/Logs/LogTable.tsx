@@ -33,20 +33,22 @@ export default function LogTable({onlyModels}: { onlyModels?: LogModel[], }) {
     const columns: GridColDef[] = [
         {
             field: 'timestamp',
+            flex: 1,
             headerName: 'Timestamp',
-            width: 200,
             type: 'dateTime',
             filterable: false,
         },
         {
             field: 'user',
+            flex: 1,
             headerName: 'User',
-            renderCell: (params) => `${params.row.user?.cid} (${params.row.user?.fullName})` || 'Unknown',
+            renderCell: (params) => `${params.row.user?.firstName} ${params.row.user?.lastName} (${params.row.user?.cid})` || 'Unknown',
             sortable: false,
             filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
         },
         {
             field: 'type',
+            flex: 1,
             type: 'singleSelect',
             valueOptions: Object.keys(LogType).map((model) => ({value: model, label: model})),
             headerName: 'Type',
@@ -55,6 +57,7 @@ export default function LogTable({onlyModels}: { onlyModels?: LogModel[], }) {
         },
         {
             field: 'model',
+            flex: 1,
             type: 'singleSelect',
             valueOptions: onlyModels?.map((model) => ({
                 value: model,
@@ -67,6 +70,7 @@ export default function LogTable({onlyModels}: { onlyModels?: LogModel[], }) {
         },
         {
             field: 'message',
+            flex: 2,
             headerName: 'Message',
             width: 400,
             sortable: false,
@@ -86,6 +90,7 @@ export default function LogTable({onlyModels}: { onlyModels?: LogModel[], }) {
                 }));
             }
         } catch (error) {
+            alert(error)
             toast('Error fetching logs', {type: 'error'});
         }
     }, [filter, onlyModels, pagination, sortModel]);
@@ -117,6 +122,8 @@ export default function LogTable({onlyModels}: { onlyModels?: LogModel[], }) {
             columns={columns}
             pagination
             paginationMode="server"
+            filterMode="server"
+            sortingMode="server"
             paginationModel={pagination}
             rowCount={pagination.rowCount}
             onPaginationModelChange={handlePaginationModelChange}

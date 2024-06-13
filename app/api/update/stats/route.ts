@@ -36,6 +36,8 @@ export async function GET() {
 
     const vatsimData = await fetchVatsimControllerData();
 
+    const prefixes = await prisma.statisticsPrefixes.findFirst();
+
     for (const controller of allControllers) {
         const vatsimUser = vatsimData.find((user) => user.cid + '' === controller.cid);
 
@@ -46,7 +48,7 @@ export async function GET() {
             },
         });
 
-        if (!vatsimUser) {
+        if (!vatsimUser || !prefixes?.prefixes.some((prefix) => vatsimUser.callsign.startsWith(prefix))) {
             // The controller is offline
             if (activePosition) {
                 // The controller was active on a position, mark it as inactive

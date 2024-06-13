@@ -1,8 +1,8 @@
 import React from 'react';
-import TrainingSessionStudentTable from "@/components/TrainingSession/TrainingSessionStudentTable";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/auth/auth";
 import {Card, CardContent, Typography} from "@mui/material";
+import TrainingSessionTable from "@/components/TrainingSession/TrainingSessionTable";
 
 export default async function Page() {
 
@@ -13,7 +13,7 @@ export default async function Page() {
             <CardContent>
                 <Typography variant="h6">Training Tickets</Typography>
                 <Typography sx={{my: 1,}}>All times in GMT</Typography>
-                <TrainingSessionStudentTable user={session.user}/>
+                <TrainingSessionTable onlyUser={session.user}/>
             </CardContent>
         </Card>
     );

@@ -4,7 +4,7 @@ import prisma from "@/lib/db";
 import {log} from "@/actions/log";
 import {revalidatePath} from "next/cache";
 import {z} from "zod";
-import {CommonMistake, Lesson, RubricCriteraScore} from "@prisma/client";
+import {CommonMistake, Lesson, Prisma, RubricCriteraScore} from "@prisma/client";
 import {getServerSession, User} from "next-auth";
 import {authOptions} from "@/auth/auth";
 import {
@@ -14,6 +14,7 @@ import {
 } from "@/actions/vatusa/training";
 import {getDuration} from "@/lib/date";
 import {sendInstructorsTrainingSessionCreatedEmail, sendTrainingSessionCreatedEmail} from "@/actions/mail/training";
+import {GridFilterItem, GridPaginationModel, GridSortModel} from "@mui/x-data-grid";
 
 
 export async function deleteTrainingSession(id: string) {
@@ -245,4 +246,115 @@ export async function createOrUpdateTrainingSession(
     }
 
 
+}
+
+export const fetchTrainingSessions = async (pagination: GridPaginationModel, sort: GridSortModel, filter?: GridFilterItem, onlyUser?: User) => {
+    const orderBy: Prisma.TrainingSessionOrderByWithRelationInput = {};
+    if (sort.length > 0) {
+        orderBy[sort[0].field === 'start' ? 'start' : 'end'] = sort[0].sort === 'asc' ? 'asc' : 'desc';
+    }
+
+    return prisma.$transaction([
+        prisma.trainingSession.count({
+            where: getWhere(filter, onlyUser),
+        }),
+        prisma.trainingSession.findMany({
+            orderBy,
+            where: getWhere(filter, onlyUser),
+            include: {
+                student: true,
+                instructor: true,
+                tickets: {
+                    include: {
+                        lesson: true,
+                        mistakes: true,
+                    },
+                },
+            },
+            take: pagination.pageSize,
+            skip: pagination.page * pagination.pageSize,
+        })
+    ]);
+}
+
+const getWhere = (filter?: GridFilterItem, onlyUser?: User): Prisma.TrainingSessionWhereInput => {
+    if (!filter) {
+        return onlyUserWhere(onlyUser);
+    }
+    switch (filter?.field) {
+        case 'student':
+            return {
+                student: {
+                    OR: [
+                        {
+                            cid: {
+                                [filter.operator]: filter.value as string,
+                                mode: 'insensitive',
+                            }
+                        },
+                        {
+                            fullName: {
+                                [filter.operator]: filter.value as string,
+                                mode: 'insensitive',
+                            }
+                        },
+                    ],
+                },
+            };
+        case 'trainer':
+            return {
+                instructor: {
+                    OR: [
+                        {
+                            cid: {
+                                [filter.operator]: filter.value as string,
+                                mode: 'insensitive',
+                            }
+                        },
+                        {
+                            fullName: {
+                                [filter.operator]: filter.value as string,
+                                mode: 'insensitive',
+                            }
+                        },
+                    ],
+                },
+            };
+        case 'lessons':
+            return {
+                tickets: {
+                    some: {
+                        lesson: {
+                            OR: [
+                                {
+                                    identifier: {
+                                        [filter.operator]: filter.value,
+                                        mode: 'insensitive',
+                                    },
+                                },
+                                {
+                                    name: {
+                                        [filter.operator]: filter.value,
+                                        mode: 'insensitive',
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                },
+            };
+        default:
+            return onlyUserWhere(onlyUser);
+    }
+}
+
+const onlyUserWhere = (onlyUser?: User): Prisma.TrainingSessionWhereInput => {
+    if (onlyUser) {
+        return {
+            student: {
+                id: onlyUser.id,
+            }
+        }
+    }
+    return {};
 }
