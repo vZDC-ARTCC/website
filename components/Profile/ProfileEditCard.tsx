@@ -28,7 +28,7 @@ export default function ProfileEditCard({user, sessionUser, admin = false}: {
         const result = User.safeParse({
             preferredName: formData.get('preferredName') as string,
             bio: formData.get('bio') as string,
-            operatingInitials: formData.get('operatingInitials') as string,
+            operatingInitials: formData.get('operatingInitials') as string || user.operatingInitials,
         });
 
         if (!result.success) {
@@ -44,7 +44,7 @@ export default function ProfileEditCard({user, sessionUser, admin = false}: {
                     `Staff ${sessionUser.cid} attempted to force update profile with profanity in preferred name or bio.` :
                     `Attempted to update profile with profanity in preferred name or bio.`,
                 user.cid);
-            toast('Please ensure your preferred name and bio do not contain any profanity.', {type: 'error'});
+            toast('Please ensure your preferred name and bio do not contain any profanity.  This has been added to your dossier.', {type: 'error'});
             return;
         }
 

@@ -17,6 +17,7 @@ import {
 import {getRating} from "@/lib/vatsim";
 import {toast} from "react-toastify";
 import {purgeControllers} from "@/actions/controller";
+import {useSession} from "next-auth/react";
 
 export default function PurgeAssistantTable({controllers, user}: {
     controllers: { controller: User, totalHours: number, totalTrainingHours: string, }[],
@@ -26,6 +27,7 @@ export default function PurgeAssistantTable({controllers, user}: {
     const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
     const [clickedOnce, setClickedOnce] = React.useState<boolean>(false);
     const [disabled, setDisabled] = React.useState<boolean>(false);
+    const session = useSession();
 
     const handlePurge = async () => {
         setDisabled(true);
@@ -97,7 +99,9 @@ export default function PurgeAssistantTable({controllers, user}: {
                 </Table>
             </TableContainer>
             <Stack direction="row" spacing={2} alignItems="center" sx={{mt: 2,}}>
-                <Button variant="contained" color="error" disabled={disabled || selectedIds.length === 0} size="large"
+                <Button variant="contained" color="error"
+                        disabled={disabled || selectedIds.length === 0 || !session.data?.user.staffPositions.some((sp) => ["ATM", "DATM"].includes(sp))}
+                        size="large"
                         sx={{mt: 2,}}
                         onClick={handlePurge}>Purge {selectedIds.length} controller{selectedIds.length === 1 ? '' : 's'}</Button>
                 <Button variant="contained" color="warning" size="large" disabled={!clickedOnce} onClick={() => {

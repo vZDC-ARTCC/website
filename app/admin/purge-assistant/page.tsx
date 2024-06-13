@@ -83,7 +83,7 @@ export default async function Page({searchParams,}: {
     });
 
     condensedControllers = condensedControllers.filter(data => {
-        return data.totalHours < parseInt(maxHours);
+        return data.totalHours + (Number(data.totalTrainingHours) || 0) < parseInt(maxHours);
     });
 
     const session = await getServerSession(authOptions);

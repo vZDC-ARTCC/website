@@ -5,9 +5,16 @@ import {revalidatePath} from "next/cache";
 import {log} from "@/actions/log";
 import {removeVatusaController} from "@/actions/vatusa/roster";
 import {sendRosterRemovalEmail} from "@/actions/mail/controller";
-import {User} from "next-auth";
+import {getServerSession, User} from "next-auth";
+import {authOptions} from "@/auth/auth";
 
 export const purgeControllers = async (ids: string[]) => {
+
+    const session = await getServerSession(authOptions);
+
+    if (!session || !session.user.staffPositions.some((sp) => ["ATM", "DATM"])) {
+        return;
+    }
 
     const users = await prisma.user.findMany({
         where: {
