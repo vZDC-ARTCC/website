@@ -152,7 +152,7 @@ export default async function Page() {
                     <CardContent>
                         <Typography variant="subtitle2">Air Traffic Manager (ATM)</Typography>
                         <Typography variant="h3">{atm?.firstName} {atm?.lastName}</Typography>
-                        <Typography>{atm?.email}</Typography>
+                        <Typography>atm@vzdc.org</Typography>
                     </CardContent>
                 </Card>
             </Grid>
@@ -161,7 +161,7 @@ export default async function Page() {
                     <CardContent>
                         <Typography variant="subtitle2">Deputy Air Traffic Manager (DATM)</Typography>
                         <Typography variant="h3">{datm?.firstName} {datm?.lastName}</Typography>
-                        <Typography>{datm?.email}</Typography>
+                        <Typography>datm@vzdc.org</Typography>
                     </CardContent>
                 </Card>
             </Grid>
@@ -170,7 +170,7 @@ export default async function Page() {
                     <CardContent>
                         <Typography variant="subtitle2">Training Administrator (TA)</Typography>
                         <Typography variant="h4">{ta?.firstName} {ta?.lastName}</Typography>
-                        <Typography>{ta?.email}</Typography>
+                        <Typography>ta@vzdc.org</Typography>
                         <Typography variant="subtitle2" sx={{mt: 4,}}>Assistant Training Administrators
                             (ATAs)</Typography>
                         <TableContainer sx={{maxHeight: 400}}>
@@ -199,7 +199,7 @@ export default async function Page() {
                     <CardContent>
                         <Typography variant="subtitle2">Event Coordinator (EC)</Typography>
                         <Typography variant="h4">{ec?.firstName} {ec?.lastName}</Typography>
-                        <Typography>{ec?.email}</Typography>
+                        <Typography>ec@vzdc.org</Typography>
                         <Typography variant="subtitle2" sx={{mt: 4,}}>Assistant Event Coordinators (AECs)</Typography>
                         <TableContainer sx={{maxHeight: 400}}>
                             <Table size="small">
@@ -227,7 +227,7 @@ export default async function Page() {
                     <CardContent>
                         <Typography variant="subtitle2">Facility Engineer (FE)</Typography>
                         <Typography variant="h4">{fe?.firstName} {fe?.lastName}</Typography>
-                        <Typography>{fe?.email}</Typography>
+                        <Typography>fe@vzdc.org</Typography>
                         <Typography variant="subtitle2" sx={{mt: 4,}}>Assistant Facility Engineers (AFEs)</Typography>
                         <TableContainer sx={{maxHeight: 400}}>
                             <Table size="small">
@@ -255,7 +255,7 @@ export default async function Page() {
                     <CardContent>
                         <Typography variant="subtitle2">Webmaster (WM)</Typography>
                         <Typography variant="h4">{wm?.firstName} {wm?.lastName}</Typography>
-                        <Typography>{wm?.email}</Typography>
+                        <Typography>wm@vzdc.org</Typography>
                         <Typography variant="subtitle2" sx={{mt: 4,}}>Assistant Webmasters (AWMs)</Typography>
                         <TableContainer sx={{maxHeight: 400}}>
                             <Table size="small">
