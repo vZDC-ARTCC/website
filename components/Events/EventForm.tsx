@@ -6,7 +6,6 @@ import {DateTimePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
-import {z} from "zod";
 import {toast} from "react-toastify";
 import {createOrUpdateEvent} from "@/actions/event";
 import {useRouter} from "next/navigation";
@@ -20,9 +19,6 @@ const MarkdownEditor = dynamic(
     { ssr: false }
 );
 
-const MAX_FILE_SIZE = 1024 * 1024 * 4;
-const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
-
 export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl?: string }) {
 
     const theme = useTheme();
@@ -31,65 +27,21 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
     dayjs.extend(utc);
 
     const handleSubmit = async (formData: FormData) => {
-        const eventZ = z.object({
-            name: z.string().min(1, "Name is required"),
-            host: z.string().optional(),
-            type: z.string().min(1, "Type is required"),
-            description: z.string().min(1, "Description is required"),
-            start: z.date(),
-            end: z.date(),
-            featuredFields: z.array(z.string()),
-            bannerImage: z.any()
-                .optional()
-                .refine((file) => {
-                    return event?.id || !file || file.size <= MAX_FILE_SIZE;
-                }, 'File size must be less than 4MB')
-                .refine((file) => {
-                    return event?.id || ALLOWED_FILE_TYPES.includes(file?.type || '');
-                }, 'File must be a PNG, JPEG, or GIF'),
-        });
-
-        const result = eventZ.safeParse({
-            name: formData.get('name'),
-            host: formData.get('host'),
-            type: formData.get('type'),
-            description,
-            start: new Date(formData.get('start') as unknown as string),
-            end: new Date(formData.get('end') as unknown as string),
-            featuredFields: formData.get('featuredFields')?.toString().split(',').map((f) => f.trim()) || [],
-            bannerImage: formData.get('bannerImage') as File,
-        });
-
-        if (!result.success) {
-            toast(result.error.errors.map((e) => e.message).join(".  "), {type: 'error'})
-            return;
-        }
-
-        const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-        if (result.data.end.getTime() <= oneWeekAgo.getTime()) {
-            toast("Event end time is more than a week ago.", {type: 'error'});
-            return;
-        }
-
-        if (result.data.start.getTime() >= result.data.end.getTime()) {
-            toast("Event start time must be before the end time", {type: 'error'});
-            return;
-        }
-
-        formData.set('description', description);
         toast("Saving event. This might take a couple seconds.", {type: 'info'})
-        const data = await createOrUpdateEvent(formData, event?.id || '');
+        const {event, errors} = await createOrUpdateEvent(formData);
+        if (errors) {
+            toast(errors.map((e) => e.message).join('.  '), {type: 'error'});
+            return;
+        }
         router.push('/admin/events');
-        toast(`Event '${data.name}' saved successfully!`, {type: 'success'});
+        toast(`Event '${event.name}' saved successfully!`, {type: 'success'});
     }
-
-    console.log(theme.palette.mode);
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
             <form action={handleSubmit}>
+                <input type="hidden" name="id" value={event?.id}/>
+                <input type="hidden" name="description" value={description}/>
                 <Grid container columns={2} spacing={2}>
                     <Grid item xs={2} md={1}>
                         <TextField variant="filled" fullWidth name="name" label="Name"

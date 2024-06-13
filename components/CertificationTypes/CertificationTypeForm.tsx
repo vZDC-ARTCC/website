@@ -1,12 +1,10 @@
 'use client';
 import React from 'react';
-import {CertificationOption, CertificationType} from "@prisma/client";
+import {CertificationType} from "@prisma/client";
 import {useRouter} from "next/navigation";
-import {z} from "zod";
 import {toast} from "react-toastify";
 import {createOrUpdateCertificationType} from "@/actions/certificationTypes";
-import {Button, FormControlLabel, Stack, Switch, TextField, Typography} from "@mui/material";
-import {Save} from "@mui/icons-material";
+import {FormControlLabel, Stack, Switch, TextField} from "@mui/material";
 import FormSaveButton from "@/components/Form/FormSaveButton";
 
 export default function CertificationTypeForm({certificationType}: { certificationType?: CertificationType }) {
@@ -14,54 +12,38 @@ export default function CertificationTypeForm({certificationType}: { certificati
 
     const handleSubmit = async (formData: FormData) => {
 
-        const canSoloCert = formData.get('canSoloCert') === 'on';
+        formData.set('certificationOptions', ["NONE", "MAJOR",] as any);
 
-        const CertificationType = z.object({
-            name: z.string().min(1, "Name is required").max(20, "Name cannot be longer than 20 characters"),
-            order: z.number().int("Order must be a whole number"),
-            canSoloCert: z.boolean(),
-        });
+        if (formData.get('canMinorCert') === 'on') {
+            formData.set('certificationOptions', ["NONE", "MAJOR", "MINOR"] as any);
+        }
 
-        const result = CertificationType.safeParse({
-            name: formData.get('name'),
-            order: parseInt(formData.get('order') as string),
-            canSoloCert,
-        });
+        const {certificationType, errors} = await createOrUpdateCertificationType(formData);
 
-        if (!result.success) {
-            toast(result.error.errors.map((e) => e.message).join(".  "), {type: 'error'})
+        if (errors) {
+            toast(errors.map((e) => e.message).join(".  "), {type: 'error'});
             return;
         }
 
-
-        const certificationOptions: CertificationOption[] = ["NONE", "MAJOR",];
-
-        if (formData.get('canMinorCert') === 'on') {
-            certificationOptions.splice(1, 0, "MINOR");
-        }
-
-        const data = await createOrUpdateCertificationType({
-            id: certificationType?.id || '',
-            ...result.data,
-            certificationOptions,
-        });
-
         router.push('/admin/certification-types');
-        toast(`Certification type '${data.name}' saved successfully!`, {type: 'success'})
+        toast(`Certification type '${certificationType.name}' saved successfully!`, {type: 'success'})
     }
+
+    const splitCertification = certificationType?.certificationOptions && certificationType.certificationOptions.length > 2;
 
     return (
         <form action={handleSubmit}>
+            <input type="hidden" name="id" value={certificationType?.id}/>
             <Stack direction="column" spacing={2}>
                 <TextField variant="filled" name="name" label="Name" defaultValue={certificationType?.name || ''}/>
                 <TextField variant="filled" type="number" name="order" label="Order"
                            defaultValue={certificationType?.order || 0}
                            helperText="Lower number will put this certification higher in lists or first in table columns."/>
                 <FormControlLabel name="canSoloCert"
-                                  control={<Switch defaultChecked={certificationType?.canSoloCert || true}/>}
+                                  control={<Switch defaultChecked={certificationType?.canSoloCert}/>}
                                   label="Can get solo certified?"/>
                 <FormControlLabel name="canMinorCert"
-                                  control={<Switch defaultChecked={certificationType?.canSoloCert || true}/>}
+                                  control={<Switch defaultChecked={splitCertification}/>}
                                   label="Split certification?"/>
                 <FormSaveButton />
             </Stack>

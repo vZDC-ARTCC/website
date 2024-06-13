@@ -1,9 +1,7 @@
 'use client';
 import React from 'react';
 import {TraconGroup} from "@prisma/client";
-import {Button, Stack, TextField} from "@mui/material";
-import {Save} from "@mui/icons-material";
-import {z} from "zod";
+import {Stack, TextField} from "@mui/material";
 import {toast} from "react-toastify";
 import {upsertTraconGroup} from "@/actions/airports";
 import {useRouter} from "next/navigation";
@@ -14,23 +12,13 @@ export default function TraconGroupForm({traconGroup}: { traconGroup?: TraconGro
     const router = useRouter();
 
     const handleSubmit = async (formData: FormData) => {
-        const traconGroupZ = z.object({
-            id: z.string().optional(),
-            name: z.string().min(1, "Name must not be empty"),
-        });
 
-        const result = traconGroupZ.safeParse({
-            id: traconGroup?.id,
-            name: formData.get("name") as string,
-        });
-
-        if (!result.success) {
-            toast(result.error.errors.map((e) => e.message).join(".  "), {type: 'error'});
+        const {traconGroup: savedTraconGroup, errors} = await upsertTraconGroup(formData);
+        if (errors) {
+            toast(errors.map((e) => e.message).join(".  "), {type: 'error'});
             return;
         }
-
-        const savedTraconGroup = await upsertTraconGroup(result.data as TraconGroup);
-        toast(`Tracon group '${result.data.name}' saved successfully!`, {type: 'success'});
+        toast(`Tracon group '${savedTraconGroup.name}' saved successfully!`, {type: 'success'});
 
         if (!traconGroup) {
             const query = new URLSearchParams();
@@ -41,6 +29,7 @@ export default function TraconGroupForm({traconGroup}: { traconGroup?: TraconGro
 
     return (
         <form action={handleSubmit}>
+            <input type="hidden" name="id" value={traconGroup?.id}/>
             <Stack direction="column" spacing={2}>
                 <TextField fullWidth variant="filled" label="Name*" name="name" defaultValue={traconGroup?.name || ''}/>
                 <FormSaveButton />

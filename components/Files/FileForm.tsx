@@ -14,10 +14,10 @@ export default function FileForm({file, category,}: { file?: DBFile, category: F
     const handleSubmit = async (formData: FormData) => {
 
         toast('Saving file. This might take a couple seconds.', {type: 'info'});
-        const error = await createOrUpdateFile(formData, category, file?.id);
+        const {file, errors} = await createOrUpdateFile(formData);
 
-        if (error) {
-            toast(error.errors.map((e) => e.message).join(".  "), {type: 'error'})
+        if (errors) {
+            toast(errors.map((e) => e.message).join(".  "), {type: 'error'})
             return;
         }
 
@@ -30,6 +30,8 @@ export default function FileForm({file, category,}: { file?: DBFile, category: F
 
     return (
         <form action={handleSubmit}>
+            <input type="hidden" name="categoryId" value={category.id}/>
+            <input type="hidden" name="id" value={file?.id}/>
             <Stack direction="column" spacing={2}>
                 <TextField variant="filled" fullWidth name="name" label="Name" required
                            defaultValue={file?.name || ''}/>

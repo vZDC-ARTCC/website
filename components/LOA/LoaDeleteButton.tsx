@@ -22,7 +22,7 @@ export default function LoaDeleteButton({loa, icon}: { loa: LOA, icon?: boolean,
 
     if (icon) {
         return (
-            <Tooltip title="Mark as inactive">
+            <Tooltip title="Close LOA">
                 <IconButton color="inherit" onClick={handleClick}>
                     {clicked ? <Storage color="warning"/> : <Storage/>}
                 </IconButton>
@@ -33,7 +33,7 @@ export default function LoaDeleteButton({loa, icon}: { loa: LOA, icon?: boolean,
     return (
         <Button variant="outlined" color="inherit" onClick={handleClick}
                 startIcon={clicked ? <Delete color="warning"/> : <Delete/>}>
-            Mark as Inactive
+            Close LOA
         </Button>
     );
 }

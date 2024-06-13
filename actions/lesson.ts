@@ -17,6 +17,7 @@ export const createOrUpdateLessonDetails = async (formData: FormData) => {
     const ldz = z.object({
         identifier: z.string(),
         name: z.string(),
+        location: z.number().min(0).max(2),
         facility: z.string(),
         position: z.string(),
         description: z.string(),
@@ -28,6 +29,7 @@ export const createOrUpdateLessonDetails = async (formData: FormData) => {
     const result = ldz.safeParse({
         identifier: formData.get("identifier") as string,
         name: formData.get("name") as string,
+        location: parseInt(formData.get("location") as string),
         facility: formData.get("facility") as string,
         position: formData.get("position") as string,
         description: formData.get("description") as string,
@@ -47,6 +49,7 @@ export const createOrUpdateLessonDetails = async (formData: FormData) => {
                 identifier: result.data.identifier,
                 name: result.data.name,
                 facility: result.data.facility,
+                location: result.data.location,
                 position: result.data.position,
                 description: result.data.description,
                 instructorOnly: result.data.instructorOnly,
@@ -61,6 +64,7 @@ export const createOrUpdateLessonDetails = async (formData: FormData) => {
             data: {
                 identifier: result.data.identifier,
                 name: result.data.name,
+                location: result.data.location,
                 facility: result.data.facility,
                 position: result.data.position,
                 description: result.data.description,

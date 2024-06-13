@@ -11,7 +11,7 @@ export const addVatusaSolo = async (cid: string, position: string, expires: Date
         body: JSON.stringify({
             cid,
             position,
-            expires,
+            expires: expires.toUTCString(),
         }),
     });
 

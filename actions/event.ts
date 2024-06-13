@@ -64,9 +64,10 @@ export const deleteEvent = async (id: string) => {
     return data;
 }
 
-export const createOrUpdateEvent = async (formData: FormData, id: string) => {
+export const createOrUpdateEvent = async (formData: FormData) => {
 
-    const Event = z.object({
+    const eventZ = z.object({
+        id: z.string().optional(),
         name: z.string(),
         host: z.string().optional(),
         type: z.string().min(1, "Type is required"),
@@ -78,14 +79,15 @@ export const createOrUpdateEvent = async (formData: FormData, id: string) => {
             .any()
             .optional()
             .refine((file) => {
-                return id || !file || file.size <= MAX_FILE_SIZE;
+                return formData.get('id') || !file || file.size <= MAX_FILE_SIZE;
             }, 'File size must be less than 4MB')
             .refine((file) => {
-                return id || ALLOWED_FILE_TYPES.includes(file?.type || '');
+                return formData.get('id') || ALLOWED_FILE_TYPES.includes(file?.type || '');
             }, 'File must be a PNG, JPEG, or GIF'),
     });
 
-    const result = Event.parse({
+    const result = eventZ.safeParse({
+        id: formData.get('id'),
         name: formData.get('name'),
         host: formData.get('host'),
         type: formData.get('type'),
@@ -96,79 +98,83 @@ export const createOrUpdateEvent = async (formData: FormData, id: string) => {
         bannerImage: formData.get('bannerImage') as File,
     });
 
-    if (result.start.getTime() >= result.end.getTime()) {
-        throw new Error("Event start time must be before the end time");
+    if (!result.success) {
+        return {errors: result.error.errors};
+    }
+
+    if (result.data.start.getTime() >= result.data.end.getTime()) {
+        return {errors: [{message: "eventZ start time must be before the end time",}]};
     }
 
     const eventExists = await prisma.event.findUnique({
             where: {
-                id,
-            }
+                id: result.data.id,
+            },
     });
 
-    if (!eventExists && !result.bannerImage) {
-        throw new Error("Banner image is required for new events");
+    if (!eventExists && !result.data.bannerImage) {
+        return {errors: [{message: "Banner image is required",}]};
     }
 
     let bannerKey = eventExists?.bannerKey || '';
     if (!eventExists) {
-        const res = await ut.uploadFiles(result.bannerImage);
+        const res = await ut.uploadFiles(result.data.bannerImage);
         if (!res.data) {
             throw new Error("Failed to upload banner image");
         }
         bannerKey = res.data?.key;
-    } else if ((result.bannerImage as File).size > 0) {
+    } else if ((result.data.bannerImage as File).size > 0) {
         const deletion = await ut.deleteFiles(eventExists.bannerKey);
         if (!deletion.success) {
             throw new Error("Failed to delete old banner image");
         }
-        const res = await ut.uploadFiles(result.bannerImage);
+        const res = await ut.uploadFiles(result.data.bannerImage);
         if (!res.data) {
             throw new Error("Failed to upload banner image");
         }
         bannerKey = res.data.key;
     }
 
-    const data = await prisma.event.upsert({
+    const event = await prisma.event.upsert({
         create: {
-            name: result.name,
-            host: result.host,
-            type: result.type as EventType,
-            description: result.description,
-            start: result.start,
-            end: result.end,
-            external: !!result.host,
-            featuredFields: result.featuredFields,
+            name: result.data.name,
+            host: result.data.host,
+            type: result.data.type as EventType,
+            description: result.data.description,
+            start: result.data.start,
+            end: result.data.end,
+            external: !!result.data.host,
+            featuredFields: result.data.featuredFields,
             positionsLocked: false,
             bannerKey,
         },
         update: {
-            name: result.name,
-            host: result.host,
-            type: result.type as EventType,
-            description: result.description,
-            start: result.start,
-            end: result.end,
-            external: !!result.host,
-            featuredFields: result.featuredFields,
+            name: result.data.name,
+            host: result.data.host,
+            type: result.data.type as EventType,
+            description: result.data.description,
+            start: result.data.start,
+            end: result.data.end,
+            external: !!result.data.host,
+            featuredFields: result.data.featuredFields,
             bannerKey,
         },
         where: {
-            id,
+            id: result.data.id,
         }
     });
 
-    if (eventExists) {
-        await log('UPDATE', 'EVENT', `Updated event ${data.name}`);
+    if (result.data.id) {
+        await log('UPDATE', 'EVENT', `Updated event ${event.name}`);
     } else {
-        await log('CREATE', 'EVENT', `Created event ${data.name}`);
+        await log('CREATE', 'EVENT', `Created event ${event.name}`);
     }
 
     revalidatePath('/admin/events');
     revalidatePath(`/events`);
-    revalidatePath(`/events/${data.id}`);
+    revalidatePath(`/events/${event.id}`);
 
-    return data;
+    return {event};
 }
 
 export const setPositionsLock = async (event: Event, lock: boolean) => {

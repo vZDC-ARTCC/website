@@ -1,31 +1,43 @@
 'use server';
 
-import {User} from "next-auth";
 import prisma from "@/lib/db";
 import {StaffingRequest} from "@prisma/client";
 import {log} from "@/actions/log";
 import {revalidatePath} from "next/cache";
+import {z} from "zod";
 
-export const createStaffingRequest = async (user: User, name: string, description: string) => {
+export const createStaffingRequest = async (formData: FormData) => {
 
-    if (!name || !description) {
-        throw new Error('Name and description are required');
+    const staffingRequestZ = z.object({
+        userId: z.string(),
+        name: z.string().min(1, 'Name must be at least 1 character long'),
+        description: z.string().min(1, 'Description must be at least 1 character long'),
+    });
+
+    const result = staffingRequestZ.safeParse({
+        userId: formData.get('userId'),
+        name: formData.get('name') as string,
+        description: formData.get('description') as string,
+    });
+
+    if (!result.success) {
+        return {errors: result.error.errors};
     }
 
-    const staffingRequestClient = await prisma.staffingRequest.create({
+    const staffingRequest = await prisma.staffingRequest.create({
         data: {
-            name,
-            description,
+            name: result.data.name,
+            description: result.data.description,
             user: {
                 connect: {
-                    id: user.id,
+                    id: result.data.userId,
                 }
             }
         }
     });
 
     revalidatePath("/admin/staffing-requests");
-    return staffingRequestClient;
+    return {staffingRequest};
 }
 
 export const closeStaffingRequest = async (staffingRequest: StaffingRequest) => {

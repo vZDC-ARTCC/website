@@ -1,21 +1,29 @@
 'use client';
-import React from 'react';
+import React, {useState} from 'react';
 import {useRouter} from "next/navigation";
 import {z} from "zod";
 import {toast} from "react-toastify";
-import {Button, Stack, TextField} from "@mui/material";
+import {Autocomplete, Button, Stack, TextField} from "@mui/material";
+import {User} from "next-auth";
 
-export default function CidForm({basePath, initialCid}: { basePath: string, initialCid?: string }) {
+export default function CidForm({basePath, controllers, initialCid}: {
+    basePath: string,
+    controllers: User[],
+    initialCid?: string
+}) {
+
     const router = useRouter();
-    const cidZ = z.number().int().positive("CID must be numbers").min(1, "CID must be positive numbers");
-    const handleSubmit = (formData: FormData) => {
-        if (!formData.get('cid')) {
+    const [controller, setController] = useState(initialCid);
+
+    const handleSubmit = () => {
+        if (!controller) {
             router.push(`${basePath}`, {
                 scroll: true,
             });
             return;
         }
-        const result = cidZ.safeParse(Number(formData.get('cid')));
+        const cidZ = z.number().int().positive("CID must be numbers").min(1, "CID must be positive numbers");
+        const result = cidZ.safeParse(Number(controller));
         if (!result.success) {
             const message = result.error.issues.map((issue) => issue.message).join(", ");
             toast(message, {type: "error"});
@@ -29,8 +37,16 @@ export default function CidForm({basePath, initialCid}: { basePath: string, init
     return (
         <form action={handleSubmit} style={{width: '100%',}}>
             <Stack direction={{xs: 'column', md: 'row',}} spacing={2}>
-                <TextField fullWidth type="number" name="cid" label="VATSIM CID"
-                           variant="filled"/>
+                <Autocomplete
+                    fullWidth
+                    options={controllers}
+                    getOptionLabel={(option) => `${option.firstName} ${option.lastName} (${option.cid})`}
+                    value={controllers.find((u) => u.cid === controller) || null}
+                    onChange={(event, newValue) => {
+                        setController(newValue ? newValue.cid : '');
+                    }}
+                    renderInput={(params) => <TextField {...params} variant="filled" label="Controller"/>}
+                />
                 <Button type="submit" variant="contained" size="large">Search</Button>
             </Stack>
         </form>

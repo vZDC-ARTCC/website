@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import {Lesson} from "@prisma/client";
-import {Box, FormControlLabel, FormGroup, Grid, Switch, TextField, Typography, useTheme} from "@mui/material";
+import {Box, FormControlLabel, FormGroup, Grid, MenuItem, Switch, TextField, Typography, useTheme} from "@mui/material";
 import MarkdownEditor from "@uiw/react-markdown-editor";
 import {createOrUpdateLessonDetails} from "@/actions/lesson";
 import {toast} from "react-toastify";
@@ -48,6 +48,26 @@ export default function LessonForm({lesson}: { lesson?: Lesson, }) {
                 <Grid item xs={2} md={1}>
                     <TextField fullWidth variant="filled" name="position" label="Position"
                                defaultValue={lesson?.position || ''} required/>
+                </Grid>
+                <Grid item xs={2} md={1}>
+                    <TextField
+                        select
+                        label="Location"
+                        name="location"
+                        required
+                        defaultValue={2}
+                        helperText="This is for VATUSA"
+                    >
+                        <MenuItem value={0}>
+                            Classroom
+                        </MenuItem>
+                        <MenuItem value={1}>
+                            Live
+                        </MenuItem>
+                        <MenuItem value={2}>
+                            Sweatbox
+                        </MenuItem>
+                    </TextField>
                 </Grid>
                 <Grid item xs={2}>
                     <FormGroup>

@@ -38,7 +38,7 @@ export default async function Page() {
     const totalHours = sessions.reduce((sum, session) => {
         const duration = (session.end.getTime() - session.start.getTime()) / (1000 * 60 * 60); // convert milliseconds to hours
         return sum + duration;
-    }, 0);
+    }, 0).toPrecision(3);
 
     const recentLogs = await prisma.log.findMany({
         take: 10,
