@@ -10,8 +10,6 @@ export const updatePrefixes = async (formData: FormData) => {
         prefixes: z.array(z.string().toUpperCase()),
     });
 
-    console.log((formData.get('prefixes') + '').split(','));
-
     const result = prefixesZ.safeParse({
         id: formData.get('id') as string,
         prefixes: (formData.get('prefixes') + '').split(','),
