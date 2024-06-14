@@ -11,7 +11,7 @@ export default async function Page() {
         <Card>
             <CardContent>
                 <Typography variant="h5" sx={{mb: 2,}}>Statistics Prefixes</Typography>
-                <StatisticsPrefixesForm prefixes={prefixes}/>
+                <StatisticsPrefixesForm prefixes={prefixes || undefined}/>
             </CardContent>
         </Card>
     );

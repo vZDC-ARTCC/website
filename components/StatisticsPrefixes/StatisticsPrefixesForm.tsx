@@ -8,7 +8,7 @@ import {toast} from "react-toastify";
 
 export default function StatisticsPrefixesForm({prefixes}: { prefixes?: StatisticsPrefixes, }) {
 
-    const [selectedPrefixes, setSelectedPrefixes] = React.useState<string[]>([]);
+    const [selectedPrefixes, setSelectedPrefixes] = React.useState<string[]>(prefixes?.prefixes || []);
 
     const handleSubmit = async (formData: FormData) => {
 
@@ -25,13 +25,12 @@ export default function StatisticsPrefixesForm({prefixes}: { prefixes?: Statisti
     return (
         <form action={handleSubmit}>
             <input type="hidden" name="id" value={prefixes?.id}/>
-            <input type="hidden" name="prefixes" value={selectedPrefixes}/>
+            <input type="hidden" name="prefixes" value={selectedPrefixes.join(',')}/>
             <Autocomplete
                 sx={{mb: 1,}}
                 multiple
                 options={[]}
                 value={selectedPrefixes}
-                defaultValue={prefixes?.prefixes}
                 freeSolo
                 renderTags={(value: readonly string[], getTagProps) =>
                     value.map((option: string, index: number) => {

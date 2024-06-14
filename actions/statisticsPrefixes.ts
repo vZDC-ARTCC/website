@@ -10,24 +10,32 @@ export const updatePrefixes = async (formData: FormData) => {
         prefixes: z.array(z.string().toUpperCase()),
     });
 
+    console.log((formData.get('prefixes') + '').split(','));
+
     const result = prefixesZ.safeParse({
         id: formData.get('id') as string,
-        prefixes: (formData.get('prefixes') as unknown as string).split(','),
+        prefixes: (formData.get('prefixes') + '').split(','),
     });
 
     if (!result.success) {
         return {errors: result.error.errors};
     }
 
+    await prisma.statisticsPrefixes.deleteMany();
+
     const prefixes = await prisma.statisticsPrefixes.upsert({
         where: {
             id: result.data.id,
         },
         update: {
-            prefixes: result.data.prefixes,
+            prefixes: {
+                set: result.data.prefixes,
+            },
         },
         create: {
-            prefixes: result.data.prefixes,
+            prefixes: {
+                set: result.data.prefixes,
+            },
         },
     });
 
