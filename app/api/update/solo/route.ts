@@ -1,7 +1,7 @@
 import {deleteExpiredSolos} from "@/actions/solo";
 import prisma from "@/lib/db";
 import {revalidatePath} from "next/cache";
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
 
