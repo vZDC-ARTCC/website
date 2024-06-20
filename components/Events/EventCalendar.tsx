@@ -34,13 +34,13 @@ export default function EventCalendar({events}: { events: Event[], }) {
 const getEventColor = (eventType: EventType) => {
     switch (eventType) {
         case EventType.HOME:
-            return 'red';
+            return '#f44336';
         case EventType.SUPPORT:
-            return 'blue';
+            return '#ce93d8';
         case EventType.GROUP_FLIGHT:
-            return 'green';
+            return '#66bb6a';
         case EventType.TRAINING:
-            return 'orange';
+            return '#ffa726';
         default:
             return 'gray';
     }
