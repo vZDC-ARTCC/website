@@ -168,7 +168,7 @@ export default async function RosterTable({membership, search}: {
     return (
         <Card variant="outlined">
             <CardContent>
-                <TableContainer sx={{maxHeight: 600,}}>
+                <TableContainer sx={{}}>
                     <Table stickyHeader size="small">
                         <TableHead>
                             <TableRow>

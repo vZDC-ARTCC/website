@@ -17,7 +17,7 @@ export default async function FileTable({files, admin}: { files: File[], admin?:
     }
 
     return (
-        <TableContainer sx={{maxHeight: 500}}>
+        <TableContainer sx={{}}>
             <Table size="small">
                 <TableHead>
                     <TableRow>
