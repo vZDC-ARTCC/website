@@ -16,7 +16,7 @@ import {
     Route,
     Chat,
     Radio,
-    Forum
+    Forum, OpenInNew
 } from "@mui/icons-material";
 
 export type NavigationButton = {
@@ -94,6 +94,11 @@ export const NAVIGATION: NavigationButton[] = [
                     label: 'ASX',
                     link: 'https://asx.vzdc.org',
                     icon: <Radar/>,
+                },
+                {
+                    label: 'Training Scheduler',
+                    link: 'https://training.vzdc.org/',
+                    icon: <OpenInNew/>,
                 },
             ],
         },
