@@ -16,7 +16,7 @@ export default async function Page() {
                 <Stack direction="column" spacing={1}>
                     <Typography variant="h5">Training Sessions</Typography>
                 </Stack>
-                {session?.user.roles.includes("STAFF") &&
+                {session?.user.roles.includes("STAFF") || session?.user.roles.includes("MENTOR") || session?.user.roles.includes("INSTRUCTOR") &&
                     <Link href="/training/sessions/new">
                         <Button variant="contained" size="large" startIcon={<Add/>}>New Training Session</Button>
                     </Link>

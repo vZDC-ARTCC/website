@@ -13,7 +13,10 @@ import {
     ListAlt,
     PersonAdd,
     Radar,
-    Route
+    Route,
+    Chat,
+    Radio,
+    Forum
 } from "@mui/icons-material";
 
 export type NavigationButton = {
@@ -132,8 +135,26 @@ export const NAVIGATION: NavigationButton[] = [
         },
     },
     {
+        label: 'Community',
+        icon: <Chat/>,
+        dropdown: {
+            buttons: [
+                {
+                    label: 'Discord',
+                    link: '/discord',
+                    icon: <Forum/>,
+                },
+                {
+                    label: 'TeamSpeak',
+                    link: '/teamspeak',
+                    icon: <Radio/>,
+                },
+            ],
+        },
+    },
+    {
         label: 'Feedback',
         icon: <AddComment/>,
         link: '/feedback/new',
-    }
+    },
 ];
