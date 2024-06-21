@@ -56,6 +56,18 @@ export default function Footer() {
                                 <Typography textAlign="center">GitHub</Typography>
                             </Link>
                         </Tooltip>
+                        <Typography>|</Typography>
+                        <Tooltip title={'License'}>
+                            <Link href="/license" style={{color: 'inherit',}}>
+                                <Typography textAlign="center">License</Typography>
+                            </Link>
+                        </Tooltip>
+                        <Typography>|</Typography>
+                        <Tooltip title={'Credits'}>
+                            <Link href="/credits" style={{color: 'inherit',}}>
+                                <Typography textAlign="center">Credits</Typography>
+                            </Link>
+                        </Tooltip>
                     </Stack>
                 </Container>
             </Toolbar>
