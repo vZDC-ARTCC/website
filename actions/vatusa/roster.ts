@@ -5,7 +5,7 @@ import {VATUSA_API, VATUSA_API_KEY, VATUSA_FACILITY} from "@/actions/vatusa/conf
 
 export const removeVatusaController = async (cid: string, visitor?: boolean) => {
 
-    const res = await fetch(`${VATUSA_API}/facility/${VATUSA_FACILITY}/roster/${visitor ? 'manageVisitor/' : ''}${cid}?apiKey=${VATUSA_API_KEY}`, {
+    const res = await fetch(`${VATUSA_API}/facility/${VATUSA_FACILITY}/roster/${visitor ? 'manageVisitor/' : ''}${cid}?apikey=${VATUSA_API_KEY}`, {
         method: 'DELETE',
     });
 
@@ -17,7 +17,7 @@ export const removeVatusaController = async (cid: string, visitor?: boolean) => 
 }
 
 export const addVatusaVisitor = async (cid: string) => {
-    const res = await fetch(`${VATUSA_API}/facility/${VATUSA_FACILITY}/roster/manageVisitor/${cid}?apiKey=${VATUSA_API_KEY}`, {
+    const res = await fetch(`${VATUSA_API}/facility/${VATUSA_FACILITY}/roster/manageVisitor/${cid}?apikey=${VATUSA_API_KEY}`, {
         method: 'POST',
     });
 

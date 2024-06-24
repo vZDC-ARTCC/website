@@ -4,7 +4,7 @@ import {VATUSA_API, VATUSA_API_KEY, VATUSA_FACILITY} from "@/actions/vatusa/conf
 
 export const createVatusaTrainingSession = async (location: number, studentCid: string, instructor_id: string,
                                                   session_date: Date, position: string, duration: string, notes: string) => {
-    const res = await fetch(`${VATUSA_API}/user/${studentCid}/training/record?apiKey=${VATUSA_API_KEY}`, {
+    const res = await fetch(`${VATUSA_API}/user/${studentCid}/training/record?apikey=${VATUSA_API_KEY}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -27,7 +27,7 @@ export const createVatusaTrainingSession = async (location: number, studentCid: 
     }
 
 export const editVatusaTrainingSession = async (instructor_id: string, session_date: Date, position: string, duration: string, notes: string, id: string) => {
-    const res = await fetch(`${VATUSA_API}/training/record/${id}?apiKey=${VATUSA_API_KEY}`, {
+    const res = await fetch(`${VATUSA_API}/training/record/${id}?apikey=${VATUSA_API_KEY}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ export const editVatusaTrainingSession = async (instructor_id: string, session_d
 }
 
 export const deleteVatusaTrainingSession = async (id: string) => {
-    const res = await fetch(`${VATUSA_API}/training/record/${id}?apiKey=${VATUSA_API_KEY}`, {
+    const res = await fetch(`${VATUSA_API}/training/record/${id}?apikey=${VATUSA_API_KEY}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',

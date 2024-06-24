@@ -3,7 +3,7 @@
 import {VATUSA_API, VATUSA_API_KEY} from "@/actions/vatusa/config";
 
 export const addVatusaSolo = async (cid: string, position: string, expires: Date) => {
-    const res = await fetch(`${VATUSA_API}/solo?apiKey=${VATUSA_API_KEY}`, {
+    const res = await fetch(`${VATUSA_API}/solo?apikey=${VATUSA_API_KEY}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -24,7 +24,7 @@ export const addVatusaSolo = async (cid: string, position: string, expires: Date
 }
 
 export const deleteVatusaSolo = async (cid: string, position: string) => {
-    const res = await fetch(`${VATUSA_API}/solo?apiKey=${VATUSA_API_KEY}`, {
+    const res = await fetch(`${VATUSA_API}/solo?apikey=${VATUSA_API_KEY}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ export const getController = async (cid: string): Promise<{
     email: string,
     rating: number,
 } | undefined> => {
-    const res = await fetch(`${VATUSA_API}/user/${cid}?apiKey=${VATUSA_API_KEY}`);
+    const res = await fetch(`${VATUSA_API}/user/${cid}?apikey=${VATUSA_API_KEY}`);
     const data = await res.json();
     if (data.data.status === 'error') {
         return undefined;
