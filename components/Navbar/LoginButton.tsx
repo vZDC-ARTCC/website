@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import {signIn, signOut} from "next-auth/react";
 import {ListItemIcon, ListItemText, MenuItem} from "@mui/material";
 import {Session} from "next-auth";
-import {AdminPanelSettings, Class, Logout, Person, Refresh, Settings} from "@mui/icons-material";
+import {AdminPanelSettings, Class, Logout, OpenInNew, Person, Refresh, Settings} from "@mui/icons-material";
 import NavDropdown from "@/components/Navbar/NavDropdown";
 import Link from "next/link";
 import {getRating} from "@/lib/vatsim";
@@ -76,6 +76,10 @@ export default function LoginButton({session, sidebar,}: { session: Session | nu
                         <NavSidebarButton icon={<Class/>} text="Training Administration"/>
                     </Link>}
                 <NavSidebarButton icon={<Refresh/>} text="Refresh VATUSA Account Information" onClick={handleClick}/>
+                {session?.user.controllerStatus !== "NONE" &&
+                    <Link href="https://training.vzdc.org/" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <NavSidebarButton icon={<OpenInNew/>} text="Training Scheduler"/>
+                    </Link>}
                 <NavSidebarButton icon={<Logout/>} text="Logout" onClick={logout}/>
             </NavSidebar>}
             {!sidebar && <NavButton icon={null}
@@ -115,6 +119,15 @@ export default function LoginButton({session, sidebar,}: { session: Session | nu
                     </ListItemIcon>
                     <ListItemText>Refresh VATUSA Account Information</ListItemText>
                 </MenuItem>
+                {session?.user.controllerStatus == "VISITOR" || "HOME" &&
+                    <Link href="https://training.vzdc.org/" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <MenuItem onClick={closeDropdown}>
+                            <ListItemIcon>
+                                <OpenInNew/>
+                            </ListItemIcon>
+                            <ListItemText>Training Scheduler</ListItemText>
+                        </MenuItem>
+                    </Link>}
                 <MenuItem onClick={logout}>
                     <ListItemIcon>
                         <Logout/>

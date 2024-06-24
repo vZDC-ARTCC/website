@@ -95,11 +95,6 @@ export const NAVIGATION: NavigationButton[] = [
                     link: 'https://asx.vzdc.org',
                     icon: <Radar/>,
                 },
-                {
-                    label: 'Training Scheduler',
-                    link: 'https://training.vzdc.org/',
-                    icon: <OpenInNew/>,
-                },
             ],
         },
     },
