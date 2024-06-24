@@ -107,9 +107,9 @@ export const assignEventPosition = async (event: Event, eventPosition: EventPosi
             },
         },
     });
-    if (signedUpPositions.length > 0) {
-        throw new Error("User is already signed up for another position");
-    }
+    // if (signedUpPositions.length > 0) {
+    //     throw new Error("User is already signed up for another position");
+    // }
     if (event.positionsLocked) {
         throw new Error("Event positions are locked");
     }
