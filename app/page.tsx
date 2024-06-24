@@ -52,7 +52,10 @@ export default async function Home() {
 
     const upcomingEventsImages = await ut.getFileUrls(upcomingEvents.map(event => event.bannerKey));
 
-    const imageUrls = Object.fromEntries(upcomingEvents.map((event, i) => [event.id, upcomingEventsImages.data.find(o=>o.key === event.bannerKey).url]));
+    const imageUrls = Object.fromEntries(upcomingEvents.map((event, i) => {
+        const foundObject = upcomingEventsImages.data.find(o => o.key === event.bannerKey);
+        return [event.id, foundObject ? foundObject.url : ''];
+    }));
 
     const onlineAtc = await prisma.controllerPosition.findMany({
         where: {
