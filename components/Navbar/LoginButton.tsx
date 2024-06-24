@@ -1,9 +1,17 @@
 'use client';
 import React, {useState} from 'react';
 import {signIn, signOut} from "next-auth/react";
-import {ListItemIcon, ListItemText, MenuItem} from "@mui/material";
+import {
+    Button, Checkbox,
+    Dialog, DialogActions, DialogContent, DialogContentText,
+    DialogTitle, FormControlLabel,
+    ListItemIcon,
+    ListItemText,
+    MenuItem,
+    Typography
+} from "@mui/material";
 import {Session} from "next-auth";
-import {AdminPanelSettings, Class, Logout, OpenInNew, Person, Refresh, Settings} from "@mui/icons-material";
+import {AdminPanelSettings, Class, Logout, OpenInNew, Person, Refresh, Settings, Login, Cancel} from "@mui/icons-material";
 import NavDropdown from "@/components/Navbar/NavDropdown";
 import Link from "next/link";
 import {getRating} from "@/lib/vatsim";
@@ -18,7 +26,9 @@ export default function LoginButton({session, sidebar,}: { session: Session | nu
 
     const [dropdownAnchor, setDropdownAnchor] = React.useState<null | HTMLElement>(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [openAlert, setOpenAlert] = useState(false);
     const pathname = usePathname();
+    const [accepted, setAccepted] = useState(false);
 
     const handleRefresh = async () => {
         if (!session) return;
@@ -34,15 +44,23 @@ export default function LoginButton({session, sidebar,}: { session: Session | nu
 
     const handleClick = (e: { currentTarget: HTMLElement | EventTarget | null, }) => {
         if (!session) {
-            signIn('vatsim', {
-                callbackUrl: pathname,
-            });
+            setOpenAlert(true);
         } else {
             setDropdownAnchor(e.currentTarget as HTMLElement);
             if (sidebar) {
                 setSidebarOpen((prev) => !prev);
             }
         }
+    };
+
+    const handleAlertClose = () => {
+        setOpenAlert(false);
+    };//New
+
+    const handleSignIn = () => {
+        signIn('vatsim', {
+            callbackUrl: pathname,
+        });
     };
 
     const closeDropdown = () => {
@@ -55,6 +73,14 @@ export default function LoginButton({session, sidebar,}: { session: Session | nu
         }).then(() => {
             closeDropdown();
         });
+    }
+
+    const handleChange = () => {
+        if (!accepted) {
+            setAccepted(true)
+        } else {
+            setAccepted(false)
+        }
     }
 
     return (
@@ -135,8 +161,32 @@ export default function LoginButton({session, sidebar,}: { session: Session | nu
                     <ListItemText>Logout</ListItemText>
                 </MenuItem>
             </NavDropdown>}
-        </>
 
+            <Dialog
+                open={openAlert}
+                onClose={handleAlertClose}
+            >
+                <DialogTitle>{"Confirm Sign In"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        <Typography variant="body2"> The information contained on all pages of this website is to be used for flight simulation purposes only on the VATSIM
+                            network. It is not intended nor should it be used for real world navigation. This site is not affiliated with the FAA, NATCA,
+                            the actual Washington ARTCC, or any governing aviation body. All content contained herein is approved only for use on the VATSIM network.
+                        </Typography>
+                        <br/>
+                        <FormControlLabel control={<Checkbox color="success" onClick={handleChange}/>} label="I understand that we are not the real world FAA nor do we have any affiliation with them." />
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="contained" color="error" onClick={handleAlertClose} startIcon={<Cancel/>}>
+                        I do not agree, cancel login
+                    </Button>
+                    <Button variant="contained" color="success" onClick={handleSignIn} startIcon={<Login/>} disabled={ !accepted } autoFocus>
+                        Continue login
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </>
     );
 }
 
