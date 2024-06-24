@@ -78,12 +78,14 @@ export const createOrUpdateEvent = async (formData: FormData) => {
         bannerImage: z
             .any()
             .optional()
-            .refine((file) => {
+            .or(
+            z.any().refine((file) => {
                 return formData.get('id') || !file || file.size <= MAX_FILE_SIZE;
             }, 'File size must be less than 4MB')
             .refine((file) => {
                 return formData.get('id') || ALLOWED_FILE_TYPES.includes(file?.type || '');
-            }, 'File must be a PNG, JPEG, or GIF'),
+            }, 'File must be a PNG, JPEG, or GIF')
+            ),
     });
 
     const result = eventZ.safeParse({

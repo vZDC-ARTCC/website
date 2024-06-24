@@ -27,6 +27,7 @@ import {getRating} from "@/lib/vatsim";
 import {EventPosition} from "@prisma/client";
 import {Lock} from "@mui/icons-material";
 import EventPositionSignupForm from "@/components/EventPosition/EventPositionSignupForm";
+import Placeholder from "../../../public/img/logo_large.png";
 
 const ut = new UTApi();
 
@@ -71,7 +72,7 @@ export default async function Page({params}: { params: { id: string } }) {
                     <Grid container columns={2} spacing={2}>
                         <Grid item xs={2}>
                             <Box sx={{position: 'relative', width: '100%', minHeight: 400,}}>
-                                <Image src={imageUrl} alt={event.name} priority fill style={{objectFit: 'contain'}}/>
+                                <Image src={imageUrl.split('.').at(-1)==='png'?imageUrl:Placeholder} alt={event.name} priority fill style={{objectFit: 'contain'}}/>
                             </Box>
                         </Grid>
                         <Grid item xs={2}>
