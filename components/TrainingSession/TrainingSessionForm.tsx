@@ -55,7 +55,7 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
     const getInitialData = useCallback(async () => {
         setAllLoading(true);
         const {lessons, commonMistakes, users} = await getAllData();
-        setAllLessons(lessons.sort(({identifier:a},{identifier:b})=>b.localeCompare(a)));
+        setAllLessons(lessons.sort(({identifier:a},{identifier:b})=>a.localeCompare(b)));
         setAllCommonMistakes(commonMistakes);
         setAllUsers(users as User[]);
         setAllLoading(false);
