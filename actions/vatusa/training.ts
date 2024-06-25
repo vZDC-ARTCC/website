@@ -36,7 +36,7 @@ export const createVatusaTrainingSession = async (location: number, studentCid: 
 
     const data = await res.json();
 
-    return data.data.id.toString();
+    return ''+data.data.id;
 }
 
 export const editVatusaTrainingSession = async (instructor_id: string, session_date: Date, position: string, duration: string, notes: string, id: string) => {
@@ -69,7 +69,7 @@ export const editVatusaTrainingSession = async (instructor_id: string, session_d
 
     const data = await res.json();
 
-    return data.data.id.toString();
+    return ''+data.data.id;
 }
 
 export const deleteVatusaTrainingSession = async (id: string) => {
