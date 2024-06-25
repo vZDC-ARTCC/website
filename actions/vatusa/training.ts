@@ -1,6 +1,6 @@
 'use server';
 
-import {VATUSA_API, VATUSA_API_KEY, VATUSA_FACILITY} from "@/actions/vatusa/config";
+import {VATUSA_API, VATUSA_API_KEY} from "@/actions/vatusa/config";
 
 export const createVatusaTrainingSession = async (location: number, studentCid: string, instructor_id: string,
                                                   session_date: Date, position: string, duration: string, notes: string) => {
@@ -9,22 +9,22 @@ export const createVatusaTrainingSession = async (location: number, studentCid: 
 
     const sessionDate = timeSplit[0]+" "+timeSplit[1].split(":")[0]+":"+timeSplit[1].split(":")[1]
 
-    var ticketObj = {
+    let ticketObj: { [key: string]: string | number } = {
         'instructor_id': Number(instructor_id),
         'session_date': sessionDate,
         'position': position,
         'duration': duration,
-        'notes': notes?notes:"No Notes",
+        'notes': notes ? notes : "No Notes",
         'location': location,
-    }
+    };
 
-    var ticketForm = []
-    for (var property in ticketObj) {
-        var encodedKey = encodeURIComponent(property);
-        var encodedValue = encodeURIComponent(ticketObj[property]);
+    let ticketForm = [];
+    for (let property in ticketObj) {
+        let encodedKey = encodeURIComponent(property);
+        let encodedValue = encodeURIComponent(ticketObj[property]);
         ticketForm.push(encodedKey + "=" + encodedValue);
     }
-    
+
     const res = await fetch(`${VATUSA_API}/user/${studentCid}/training/record?apikey=${VATUSA_API_KEY}`, {
         method: 'POST',
         headers: {
