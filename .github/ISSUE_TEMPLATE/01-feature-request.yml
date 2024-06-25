@@ -1,10 +1,8 @@
 name: Feature Request/Suggestion
 description:  Do you want us to improve or add something?
-# labels: [ "enhancement", "pending triage" ]
-# labels: ["enhancement", "pending triage"]
-# projects: ["website", "octo-org/44"]
-# assignees:
-#   - Vainnor
+labels: ["enhancement"]
+assignees:
+  - Vainnor
 body:
 - type: markdown
   attributes:
