@@ -31,9 +31,14 @@ export const getMonth = (month: number) => {
 
 export const getDuration = (start: Date, end: Date) => {
     const diff = end.getTime() - start.getTime();
-    const hours = Math.floor(diff / 1000 / 60 / 60);
-    const minutes = Math.floor(diff / 1000 / 60 % 60);
-    return `${hours}h ${minutes}m`;
+    var difference = new Date(diff);
+
+    const timeSplit = difference.toISOString().split("T");
+
+    const sessionTime = timeSplit[1].split(":")[0]+":"+timeSplit[1].split(":")[1]
+    // const hours = Math.floor(diff / 1000 / 60 / 60);
+    // const minutes = Math.floor(diff / 1000 / 60 % 60);
+    return `${sessionTime}`;
 }
 
 export const formatZuluDate = (date: Date) => {
