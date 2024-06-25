@@ -10,12 +10,15 @@ body:
   attributes:
     value: |
       Before reporting, please also check existing feature requests and enhancements in this repository - you can filter them by feature request label (also check closed ones). Also please check our roadmap - your request could already be planned to be implemented or is actually a separate feature.
+
 - type: textarea
+    id: reporter-cid
     attributes:
       label: Your Vatsim CID
       description: It is your Vatsim login. Required for us to contact you in Discord if you're there.
     validations:
       required: true
+
 - type: textarea
   id: what
   attributes:
@@ -25,6 +28,7 @@ body:
       render: shell
   validations:
       required: true
+
 - type: textarea
   id: why
   attributes:
@@ -34,6 +38,7 @@ body:
     render: shell
     validations:
       required: true
+
   - type: textarea
     id: alternatives
     attributes:
@@ -43,6 +48,7 @@ body:
       render: shell
     validations:
       required: false
+
   - type: textarea
     id: additional
     attributes:
@@ -52,6 +58,7 @@ body:
       render: shell
     validations:
       required: false
+
   - type: checkboxes
     id: validation
     attributes:
