@@ -6,14 +6,9 @@ projects: ["website", "octo-org/44"]
 assignees:
   - Vainnor
 body:
-  - type: markdown
-    attributes:
-      value: |
-       Hello! Thank you for suggesting an improvement for the vZDC Website.
-
-       Before reporting, please also check existing feature requests and enhancements in this repository - you can filter them by "feature request" label (also check closed ones).
-
-       Also please check our roadmap - your request could already be planned to be implemented or is actually a separate feature.
+- type: markdown
+  attributes:
+    value: " Before reporting, please also check existing feature requests and enhancements in this repository - you can filter them by feature request label (also check closed ones). Also please check our roadmap - your request could already be planned to be implemented or is actually a separate feature."
   type: input
     id: id
     attributes:
