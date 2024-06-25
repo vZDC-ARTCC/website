@@ -1,20 +1,61 @@
----
-name: Feature request/feedback
-about: Do you want us to improve or add something?
-title: ''
-labels: ''
-assignees: ''
+name: Feature Request/Suggestion
+description:  Do you want us to improve or add something?
+labels: [ "enhancement", "pending triage" ]
+labels: ["enhancement", "pending triage"]
+projects: ["website", "octo-org/44"]
+assignees:
+  - Vainnor
+body:
+  - type: markdown
+    attributes:
+      value: |
+       Hello! Thank you for suggesting an improvement for the vZDC Website.
 
----
+       Before reporting, please also check existing feature requests and enhancements in this repository - you can filter them by "feature request" label (also check closed ones).
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
-
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
-
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
-
-**Additional context**
-Add any other context or screenshots about the feature request here.
+      Also please check our roadmap - your request could already be planned to be implemented or is actually a separate feature.
+  type: input
+    id: id
+    attributes:
+      label: Your Vatsim CID
+      description: It is your Vatsim login. Required for us to contact you in Discord if you're there.
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What do you suggest?
+      description: Please tell us as much as possible about your suggestion
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why do you need that?
+      description: Describe your request - why do you need that, how would it benefit to people, what are you trying to solve.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: If there are any alternatives, how can you deal with this problem today - or what other services already have it implemented?
+    validations:
+      required: false
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional info
+      description: Is there something additional we need to know? Please tell us!
+    validations:
+      required: false
+  - type: checkboxes
+    id: validation
+    attributes:
+      label: Validation
+      description: Please validate your report
+      options:
+        - label: I have searched for other requests and didn't found any alike
+          required: true
+        - label: I have also checked roadmap, and this is not planned
+          required: true
