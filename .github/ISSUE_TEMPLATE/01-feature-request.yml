@@ -1,14 +1,15 @@
 name: Feature Request/Suggestion
 description:  Do you want us to improve or add something?
-labels: [ "enhancement", "pending triage" ]
-labels: ["enhancement", "pending triage"]
-projects: ["website", "octo-org/44"]
-assignees:
-  - Vainnor
+# labels: [ "enhancement", "pending triage" ]
+# labels: ["enhancement", "pending triage"]
+# projects: ["website", "octo-org/44"]
+# assignees:
+#   - Vainnor
 body:
 - type: markdown
   attributes:
-    value: " Before reporting, please also check existing feature requests and enhancements in this repository - you can filter them by feature request label (also check closed ones). Also please check our roadmap - your request could already be planned to be implemented or is actually a separate feature."
+    value: |
+      Before reporting, please also check existing feature requests and enhancements in this repository - you can filter them by feature request label (also check closed ones). Also please check our roadmap - your request could already be planned to be implemented or is actually a separate feature.
 - type: textarea
     attributes:
       label: Your Vatsim CID
@@ -20,6 +21,8 @@ body:
   attributes:
       label: What do you suggest?
       description: Please tell us as much as possible about your suggestion
+      value:
+      render: shell
   validations:
       required: true
 - type: textarea
@@ -27,6 +30,8 @@ body:
   attributes:
     label: Why do you need that?
     description: Describe your request - why do you need that, how would it benefit to people, what are you trying to solve.
+    value:
+    render: shell
     validations:
       required: true
   - type: textarea
@@ -34,6 +39,8 @@ body:
     attributes:
       label: Alternatives
       description: If there are any alternatives, how can you deal with this problem today - or what other services already have it implemented?
+      value:
+      render: shell
     validations:
       required: false
   - type: textarea
@@ -41,6 +48,8 @@ body:
     attributes:
       label: Additional info
       description: Is there something additional we need to know? Please tell us!
+      value:
+      render: shell
     validations:
       required: false
   - type: checkboxes
