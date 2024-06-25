@@ -16,18 +16,18 @@ body:
       description: It is your Vatsim login. Required for us to contact you in Discord if you're there.
     validations:
       required: true
-  - type: textarea
-    id: what
-    attributes:
+- type: textarea
+  id: what
+  attributes:
       label: What do you suggest?
       description: Please tell us as much as possible about your suggestion
-    validations:
+  validations:
       required: true
-  - type: textarea
-    id: why
-    attributes:
-      label: Why do you need that?
-      description: Describe your request - why do you need that, how would it benefit to people, what are you trying to solve.
+- type: textarea
+  id: why
+  attributes:
+    label: Why do you need that?
+    description: Describe your request - why do you need that, how would it benefit to people, what are you trying to solve.
     validations:
       required: true
   - type: textarea
