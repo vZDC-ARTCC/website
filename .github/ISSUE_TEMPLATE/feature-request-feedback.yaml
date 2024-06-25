@@ -13,7 +13,7 @@ body:
 
        Before reporting, please also check existing feature requests and enhancements in this repository - you can filter them by "feature request" label (also check closed ones).
 
-      Also please check our roadmap - your request could already be planned to be implemented or is actually a separate feature.
+       Also please check our roadmap - your request could already be planned to be implemented or is actually a separate feature.
   type: input
     id: id
     attributes:
