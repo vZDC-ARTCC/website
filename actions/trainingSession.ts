@@ -217,7 +217,7 @@ export async function createOrUpdateTrainingSession(
             await prisma.trainingSession.update({
                 where: {id: trainingSession.id},
                 data: {
-                    vatusaId,
+                    vatusaId: vatusaId,
                 }
             });
 
