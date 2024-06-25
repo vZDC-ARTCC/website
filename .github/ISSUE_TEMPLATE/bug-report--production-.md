@@ -1,9 +1,9 @@
 ---
-name: Bug report
-about: Create a report to help us improve
+name: Bug report (production)
+about: Report found issue on production
 title: ''
-labels: ''
-assignees: ''
+labels: bug
+assignees: Vainnor
 
 ---
 
