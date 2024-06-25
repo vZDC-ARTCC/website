@@ -10,7 +10,7 @@ body:
   attributes:
     value: " Before reporting, please also check existing feature requests and enhancements in this repository - you can filter them by feature request label (also check closed ones). Also please check our roadmap - your request could already be planned to be implemented or is actually a separate feature."
 - type: input
-    id: id
+    id: cid
     attributes:
       label: Your Vatsim CID
       description: It is your Vatsim login. Required for us to contact you in Discord if you're there.
