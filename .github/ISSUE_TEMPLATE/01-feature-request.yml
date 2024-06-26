@@ -63,7 +63,7 @@ body:
     label: Validation
     description: Please validate your report
     options:
-      - label: I have searched for other requests and didn't find any alike
+      - label: I have searched for other requests and did not find any alike
         required: true
       - label: I have also checked the roadmap, and this is not planned
         required: true

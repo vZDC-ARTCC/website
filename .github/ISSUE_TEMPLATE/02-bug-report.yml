@@ -31,7 +31,7 @@ body:
   id: reproducibility
   attributes:
     label: Minimal Reproduction
-    description: Give some brief steps on how to reproduce the bug. (e.g. Buttons pressed, pages visited, specific combination of actions etc.)
+    description: Give some brief steps on how to reproduce the bug (e.g. Buttons pressed, pages visited, specific combination of actions etc.).
     value:
     render: shell
   validations:
@@ -53,5 +53,5 @@ body:
     label: Validation
     description: Please validate your report
     options:
-      - label: I have searched open/closed issues and didn't find any similar bugs
+      - label: I have searched open/closed issues and did not find any similar bugs
         required: true
