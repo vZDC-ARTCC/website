@@ -51,7 +51,7 @@ export default function LinksCard() {
                             <ListItemText primary="ARTCC Staff"/>
                         </ListItemButton>
                     </Link>
-                    <Link href="https://github.com/vZDC-ARTCC/website/issues9"
+                    <Link href="https://github.com/vZDC-ARTCC/website/issues"
                           style={{color: 'inherit', textDecoration: 'none',}}>
                         <ListItemButton>
                             <ListItemIcon>
