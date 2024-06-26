@@ -69,7 +69,7 @@ export const editVatusaTrainingSession = async (instructor_id: string, session_d
 
     const data = await res.json();
 
-    return ''+data.data.id;
+    return data.data.status;
 }
 
 export const deleteVatusaTrainingSession = async (id: string) => {
