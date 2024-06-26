@@ -189,7 +189,7 @@ export default async function Home() {
                                     <ListItemText primary="Statistics"/>
                                 </ListItemButton>
                             </Link>
-                            <Link href="https://docs.google.com/forms/d/e/1FAIpQLSeDtwt5ZSY88Mry-Dieis21V5ezSC4zGdr55yksAFGe7x0QPA/viewform" target="_blank"
+                            <Link href="https://github.com/vZDC-ARTCC/website/issues" target="_blank"
                                   style={{textDecoration: 'none', color: 'inherit',}}>
                                 <ListItemButton>
                                     <ListItemIcon>
