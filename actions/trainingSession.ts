@@ -149,14 +149,11 @@ export async function createOrUpdateTrainingSession(
 
             await log("UPDATE", "TRAINING_SESSION", `Updated training session with student ${trainingSession.student.cid} - ${trainingSession.student.firstName} ${trainingSession.student.lastName}`);
 
-            const vatusaId = await editVatusaTrainingSession(session.user.cid, start, trainingSession.tickets[0].lesson.position || 'N/A', getDuration(trainingSession.start, trainingSession.end), result.data.additionalComments || '', trainingSession.vatusaId || '');
+            const updateStatus = await editVatusaTrainingSession(session.user.cid, start, trainingSession.tickets[0].lesson.position || 'N/A', getDuration(trainingSession.start, trainingSession.end), result.data.additionalComments || '', trainingSession.vatusaId || '');
 
-            await prisma.trainingSession.update({
-                where: {id: trainingSession.id},
-                data: {
-                    vatusaId,
-                }
-            });
+            if (updateStatus !== 'OK'){
+                throw new Error("Failed to update ticket")
+            }
 
             revalidatePath('/training/sessions', "layout");
 
