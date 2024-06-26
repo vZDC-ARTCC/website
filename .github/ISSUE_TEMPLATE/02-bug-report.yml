@@ -3,6 +3,7 @@ description:  Did you encounter a bug or unexpected behavior on the website?
 labels: ["bug"]
 assignees:
   - Vainnor
+  - harryxu2626
 body:
 - type: markdown
   attributes:
