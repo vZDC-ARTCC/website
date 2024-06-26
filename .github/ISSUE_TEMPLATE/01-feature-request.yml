@@ -9,7 +9,7 @@ body:
     value: |
       Before reporting, please also check existing feature requests and enhancements in this repository - you can filter them by feature request label (also check closed ones). Also please check our roadmap - your request could already be planned to be implemented or is actually a separate feature.
 
-- type: textarea
+- type: input
   id: reporter-cid
   attributes:
     label: Your Vatsim CID
@@ -63,7 +63,7 @@ body:
     label: Validation
     description: Please validate your report
     options:
-      - label: I have searched for other requests and didn't found any alike
+      - label: I have searched for other requests and didn't find any alike
         required: true
-      - label: I have also checked roadmap, and this is not planned
+      - label: I have also checked the roadmap, and this is not planned
         required: true
