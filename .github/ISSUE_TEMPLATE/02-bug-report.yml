@@ -23,7 +23,6 @@ body:
       label: Description
       description: Please give a brief summary of the problem you encountered.
       value:
-      render: shell
   validations:
       required: true
 
@@ -33,7 +32,6 @@ body:
     label: Minimal Reproduction
     description: Give some brief steps on how to reproduce the bug (e.g. Buttons pressed, pages visited, specific combination of actions etc.).
     value:
-    render: shell
   validations:
       required: true
 
@@ -43,7 +41,6 @@ body:
     label: Additional info
     description: Is there something additional we need to know? Please tell us!
     value:
-    render: shell
   validations:
     required: false
 
