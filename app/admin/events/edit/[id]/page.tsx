@@ -7,6 +7,7 @@ import {ArrowBack, Checklist} from "@mui/icons-material";
 import EventForm from "@/components/Events/EventForm";
 import {UTApi} from "uploadthing/server";
 import EventPositionsLockButton from "@/components/EventPosition/EventPositionsLockButton";
+import Placeholder from "../../../../../public/img/logo_large.png";
 
 const ut = new UTApi();
 
@@ -25,7 +26,7 @@ export default async function Page({ params }: { params: { id: string; } }) {
     }
 
     const urls = await ut.getFileUrls([event.bannerKey]);
-    const imageUrl = urls.data[0]?.url || '';
+    const imageUrl = urls.data[0]?.url.split('.').at(-1)==='png' ? urls.data[0]?.url : Placeholder;
 
     return (
         <Card>
