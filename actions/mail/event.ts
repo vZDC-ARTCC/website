@@ -11,7 +11,7 @@ export const sendEventPositionEmail = async (controller: User, eventPosition: Ev
         const dateSplit = input.split(" ")
         const icalDate = '20'+dateSplit[0].split("/").at(-1)+dateSplit[0].split("/").join("").substr(0,4)
         const icalTime = dateSplit[1].replace('z','00')
-        const icalDateTime = icalDate+"T"+icalTime
+        const icalDateTime = icalDate+"T"+icalTime+"Z"
         return icalDateTime
     }
 
