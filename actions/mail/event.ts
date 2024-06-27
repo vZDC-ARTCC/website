@@ -7,11 +7,11 @@ import emailFooter from "@/actions/mail/footer";
 
 export const sendEventPositionEmail = async (controller: User, eventPosition: EventPosition, event: Event) => {
 
-    function splitTimeDate(input) {
+    function splitTimeDate(input: string) {
         const dateSplit = input.split(" ")
         const icalDate = '20'+dateSplit[0].split("/").at(-1)+dateSplit[0].split("/").join("").substr(0,4)
         const icalTime = dateSplit[1].replace('z','00')
-        const icalDateTime = icalDate+icalTime
+        const icalDateTime = icalDate+"T"+icalTime
         return icalDateTime
     }
 
@@ -19,7 +19,7 @@ export const sendEventPositionEmail = async (controller: User, eventPosition: Ev
     console.log(event)
     await mailTransport.sendMail({
         from: FROM_EMAIL,
-        to: 'harryxu2626@gmail.com',
+        to: controller.email,
         subject: `Event Position Assignment: ${event.name}`,
         text: `
         Hello ${controller.firstName} ${controller.lastName},\n\n
@@ -33,10 +33,10 @@ export const sendEventPositionEmail = async (controller: User, eventPosition: Ev
         Position: ${eventPosition.position}
         ${emailFooter(controller)}
         `,
-        attachments: {
+        attachments: [{
             filename: "event.ics",
             content: icalContent
-        },
+        }],
     });
 }
 

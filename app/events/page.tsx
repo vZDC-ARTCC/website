@@ -7,6 +7,7 @@ import Image from "next/image";
 import {UTApi} from "uploadthing/server";
 import Link from "next/link";
 import {Metadata} from "next";
+import Placeholder from "../../public/img/logo_large.png";
 
 const ut = new UTApi();
 const VATUSA_FACILITY = process.env.VATUSA_FACILITY;
@@ -39,7 +40,7 @@ export default async function Page() {
                         <CardContent>
                             <Link href={`/events/${event.id}`} style={{color: 'inherit', textDecoration: 'none',}}>
                                 <Box sx={{position: 'relative', width: '100%', minHeight: 200,}}>
-                                    <Image src={(await ut.getFileUrls([event.bannerKey])).data[0].url || ''}
+                                    <Image src={(await ut.getFileUrls([event.bannerKey])).data[0].url.split('.').at(-1)==='png'?(await ut.getFileUrls([event.bannerKey])).data[0].url:Placeholder}
                                            alt={event.name} fill style={{objectFit: 'contain'}}/>
                                 </Box>
                             </Link>

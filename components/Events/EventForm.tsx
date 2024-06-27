@@ -13,13 +13,14 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import FormSaveButton from "@/components/Form/FormSaveButton";
+import { StaticImageData } from '@/node_modules/next/image';
 
 const MarkdownEditor = dynamic(
     () => import("@uiw/react-markdown-editor").then((mod) => mod.default),
     { ssr: false }
 );
 
-export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl?: string }) {
+export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl?: string | StaticImageData}) {
 
     const theme = useTheme();
     const [description, setDescription] = React.useState<string>(event?.description || '');
@@ -89,7 +90,7 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
                         <Grid item xs={2} md={1}>
                             <Typography variant="h6">Active Banner Image</Typography>
                             <Typography>Click to open in a new tab.</Typography>
-                            <Link href={imageUrl} target="_blank" passHref>
+                            <Link href={typeof imageUrl === 'string'?imageUrl:''} target="_blank" passHref>
                                 <Box sx={{position: 'relative', width: '100%', height: '100%', minHeight: '200px',}}>
                                     <Image src={imageUrl} alt={event?.name || ''} fill style={{objectFit: 'contain',}}/>
                                 </Box>
