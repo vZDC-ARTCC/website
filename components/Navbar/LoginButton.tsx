@@ -55,6 +55,7 @@ export default function LoginButton({session, sidebar,}: { session: Session | nu
 
     const handleAlertClose = () => {
         setOpenAlert(false);
+        setAccepted(false);
     };//New
 
     const handleSignIn = () => {
