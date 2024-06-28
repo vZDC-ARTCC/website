@@ -16,6 +16,8 @@ export default function StatisticsTable({heading, logs,}: {
         return <Typography sx={{my: 1,}}>No data for this time period</Typography>
     }
 
+    logs.sort((a,b)=> parseFloat((b.deliveryHours + b.groundHours + b.towerHours + b.approachHours + b.centerHours).toPrecision(3)) - parseFloat((a.deliveryHours + a.groundHours + a.towerHours + a.approachHours + a.centerHours).toPrecision(3)))
+
     return (
         <TableContainer sx={{maxHeight: 600,}}>
             <Table>

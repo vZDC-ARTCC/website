@@ -40,7 +40,7 @@ export default async function Page() {
                         <CardContent>
                             <Link href={`/events/${event.id}`} style={{color: 'inherit', textDecoration: 'none',}}>
                                 <Box sx={{position: 'relative', width: '100%', minHeight: 200,}}>
-                                    <Image src={(await ut.getFileUrls([event.bannerKey])).data[0].url.split('.').at(-1)==='png'?(await ut.getFileUrls([event.bannerKey])).data[0].url:Placeholder}
+                                    <Image src={(await ut.getFileUrls([event.bannerKey])).data[0].url.split('.').at(-1)===('png'||'jpeg'||'jpg'||'gif')?(await ut.getFileUrls([event.bannerKey])).data[0].url:Placeholder}
                                            alt={event.name} fill style={{objectFit: 'contain'}}/>
                                 </Box>
                             </Link>
