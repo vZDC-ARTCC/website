@@ -26,7 +26,7 @@ export default async function Page({ params }: { params: { id: string; } }) {
     }
 
     const urls = await ut.getFileUrls([event.bannerKey]);
-    const imageUrl = urls.data[0]?.url.split('.').at(-1)===('png'||'jpeg'||'jpg'||'gif') ? urls.data[0]?.url : Placeholder;
+    const imageUrl = ['png','jpeg','jpg','gif'].indexOf(urls.data[0]?.url.split('.').at(-1)!) > -1 ? urls.data[0]?.url : Placeholder;
 
     return (
         <Card>

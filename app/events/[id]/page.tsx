@@ -72,7 +72,7 @@ export default async function Page({params}: { params: { id: string } }) {
                     <Grid container columns={2} spacing={2}>
                         <Grid item xs={2}>
                             <Box sx={{position: 'relative', width: '100%', minHeight: 400,}}>
-                                <Image src={imageUrl.split('.').at(-1)===('png'||'jpeg'||'jpg'||'gif')?imageUrl:Placeholder} alt={event.name} priority fill style={{objectFit: 'contain'}}/>
+                                <Image src={['png','jpeg','jpg','gif'].indexOf(imageUrl.split('.').at(-1)!) > -1 ?imageUrl:Placeholder} alt={event.name} priority fill style={{objectFit: 'contain'}}/>
                             </Box>
                         </Grid>
                         <Grid item xs={2}>
