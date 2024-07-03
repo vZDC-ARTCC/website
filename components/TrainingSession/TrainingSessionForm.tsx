@@ -17,7 +17,9 @@ import {
     Stack,
     TextField,
     Typography,
-    useTheme
+    useTheme,
+    Switch,
+    FormControlLabel
 } from "@mui/material";
 import {useRouter, useSearchParams} from "next/navigation";
 import {User} from "next-auth";
@@ -29,7 +31,7 @@ import {Delete, ExpandMore} from "@mui/icons-material";
 import {toast} from "react-toastify";
 import MarkdownEditor from "@uiw/react-markdown-editor";
 import FormSaveButton from "@/components/Form/FormSaveButton";
-import {createOrUpdateTrainingSession} from "@/actions/trainingSession";
+import {createOrUpdateTrainingSession} from "@/actions/trainingSession"
 
 export default function TrainingSessionForm({trainingSession,}: { trainingSession?: TrainingSession, }) {
 
@@ -51,6 +53,7 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
     }[]>([]);
     const [additionalNotes, setAdditionalNotes] = useState<string>(trainingSession?.additionalComments || '');
     const [trainerNotes, setTrainerNotes] = useState<string>(trainingSession?.trainerComments || '');
+    const [enableMarkdown, setEnableMarkdown] = useState<Boolean>(false);
 
     const getInitialData = useCallback(async () => {
         setAllLoading(true);
@@ -196,24 +199,49 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
                     </Grid>
                     <Grid item xs={2}>
                         <Box sx={{maxWidth: '700px',}} data-color-mode={theme.palette.mode}>
+                        <FormControlLabel control={<Switch onChange={()=>setEnableMarkdown(!enableMarkdown)}/>} label="Enable Markdown Editor" />
                             <Typography variant="subtitle1" sx={{mb: 1,}}>Additional Comments</Typography>
-                            <MarkdownEditor
-                                enableScroll={false}
-                                minHeight="200px"
-                                value={additionalNotes}
-                                onChange={(d) => setAdditionalNotes(d)}
-                            />
+                            {enableMarkdown ? 
+                                <MarkdownEditor
+                                    enableScroll={false}
+                                    minHeight="200px"
+                                    value={additionalNotes}
+                                    onChange={(d) => setAdditionalNotes(d)}
+                                />
+                                :
+                                <TextField
+                                    multiline
+                                    fullWidth
+                                    sx={{minHeight:"200px"}}
+                                    minRows={10}
+                                    variant="outlined"
+                                    value={additionalNotes}
+                                    onChange={(d)=>setAdditionalNotes(d.target.value)}
+                                />
+                            }
                         </Box>
                     </Grid>
                     <Grid item xs={2}>
                         <Box sx={{maxWidth: '700px',}} data-color-mode={theme.palette.mode}>
                             <Typography variant="subtitle1" sx={{mb: 1,}}>Trainer Comments</Typography>
-                            <MarkdownEditor
-                                enableScroll={false}
-                                minHeight="200px"
-                                value={trainerNotes}
-                                onChange={(d) => setTrainerNotes(d)}
-                            />
+                            {enableMarkdown ?
+                                <MarkdownEditor
+                                    enableScroll={false}
+                                    minHeight="200px"
+                                    value={trainerNotes}
+                                    onChange={(d) => {setTrainerNotes(d)}}
+                                />
+                                :
+                                <TextField
+                                    multiline
+                                    fullWidth
+                                    sx={{minHeight:"200px"}}
+                                    minRows={10}
+                                    variant="outlined"
+                                    value={trainerNotes}
+                                    onChange={(d)=>setTrainerNotes(d.target.value)}
+                                />
+                            }
                         </Box>
                     </Grid>
                     <Grid item xs={2}>
