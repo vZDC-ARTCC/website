@@ -91,6 +91,7 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
             if (session){
             router.replace(`/training/sessions/${session.id}`);
             }
+
         router.replace(`/training/sessions`);
 
         }
