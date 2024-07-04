@@ -88,7 +88,11 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
         }
 
         if (!trainingSession?.id) {
+            if (session){
             router.replace(`/training/sessions/${session.id}`);
+            }
+        router.replace(`/training/sessions`);
+
         }
         toast("Training session saved successfully!", {type: 'success'});
     }

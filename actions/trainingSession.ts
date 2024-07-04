@@ -239,7 +239,9 @@ export async function createOrUpdateTrainingSession(
 
     } catch (e) {
         console.log(e);
-        return {errors: [{message: "An error occurred when trying to save training ticket. Try refreshing the page."}]};
+        await log("CREATE", "TRAINING_SESSION", `An error occurred when trying to save training ticket. ${e.message}`)
+        //fetch latest session to return
+        return {};
     }
 
 
