@@ -1,7 +1,7 @@
 import React from 'react';
 import TrainingSessionHistory from '@/components/TrainingSession/TrainingSessionHistory';
 import prisma from '@/lib/db';
-import {User} from "next-auth";
+import { User } from "next-auth";
 
 export default async function Page({params}: { params: { cid: string, }, }) {
 
@@ -12,8 +12,8 @@ export default async function Page({params}: { params: { cid: string, }, }) {
             cid: cid
         },
     });
-
+ 
     return (
-        <TrainingSessionHistory onlyUser={controller as User[]}/>
+        <TrainingSessionHistory onlyUser={controller as User}/>
     );
 }
