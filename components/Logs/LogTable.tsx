@@ -21,7 +21,7 @@ const containsOnlyFilterOperator = getGridStringOperators().filter((operator) =>
 
 export default function LogTable({onlyModels}: { onlyModels?: LogModel[], }) {
     const [logs, setLogs] = useState<any[]>([]);
-    const [pagination, setPagination] = useState({page: 0, pageSize: 10, rowCount: 0});
+    const [pagination, setPagination] = useState({page: 0, pageSize: 20, rowCount: 0});
     const [filter, setFilter] = useState<GridFilterItem>();
     const [sortModel, setSortModel] = useState<GridSortModel>([
         {
