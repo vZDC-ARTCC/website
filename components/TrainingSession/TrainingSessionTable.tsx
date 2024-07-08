@@ -19,6 +19,7 @@ import Link from "next/link";
 import {Edit, Visibility} from "@mui/icons-material";
 import TrainingSessionDeleteButton from "@/components/TrainingSession/TrainingSessionDeleteButton";
 import {formatZuluDate, getDuration} from "@/lib/date";
+import { arrayBuffer } from 'stream/consumers';
 
 type TrainingSessionTableProps = {
     id: string;
@@ -39,7 +40,7 @@ type TrainingTicketTableProps = {
 const equalsOnlyFilterOperator = getGridStringOperators().filter((operator) => operator.value === 'equals');
 const containsOnlyFilterOperator = getGridStringOperators().filter((operator) => operator.value === 'contains');
 
-export default function TrainingSessionTable({admin, onlyUser}: { admin?: boolean, onlyUser?: User, }) {
+export default function TrainingSessionTable({admin, isStaff, isInstructor, mentorCID, onlyUser}: { admin?: boolean, isStaff?: boolean, isInstructor?: boolean, mentorCID?: string, onlyUser?: User, }) {
 
     const [trainingSessions, setTrainingSessions] = useState<TrainingSessionTableProps[]>([]);
     const [pagination, setPagination] = useState({page: 0, pageSize: 20, rowCount: 0});
@@ -50,7 +51,7 @@ export default function TrainingSessionTable({admin, onlyUser}: { admin?: boolea
             sort: 'desc',
         }
     ]);
-
+     
     const columns: GridColDef[] = [
         {
             field: 'student',
@@ -134,12 +135,12 @@ export default function TrainingSessionTable({admin, onlyUser}: { admin?: boolea
                             <Visibility/>
                         </IconButton>
                     </Link>
-                    {admin && <Link href={`/training/sessions/${params.row.id}/edit`} passHref>
+                    {(isStaff || isInstructor || mentorCID==`${params.row.instructor.cid}`) && <Link href={`/training/sessions/${params.row.id}/edit`} passHref>
                         <IconButton size="small">
                             <Edit/>
                         </IconButton>
                     </Link>}
-                    {admin &&
+                    {(isStaff || isInstructor || mentorCID==`${params.row.instructor.cid}`) &&
                         <TrainingSessionDeleteButton trainingSession={params.row}/>
                     }
                 </>

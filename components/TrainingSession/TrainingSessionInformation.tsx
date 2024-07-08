@@ -12,12 +12,14 @@ import {
     Stack,
     Typography,
     Switch,
-    FormControlLabel
+    FormControlLabel,
+    Checkbox,
 } from "@mui/material";
 import LessonRubricGrid from "@/components/Lesson/LessonRubricGrid";
 import {ExpandMore} from "@mui/icons-material";
 import Markdown from "react-markdown";
 import {formatZuluDate, getDuration} from "@/lib/date";
+import TrainingMarkdownSwitch from './TrainingMarkdownSwitch';
 
 const VATUSA_FACILITY = process.env.VATUSA_FACILITY;
 
@@ -100,30 +102,7 @@ export default async function TrainingSessionInformation({id, trainerView}: { id
                     ))}
                 </CardContent>
             </Card>
-            <FormControlLabel control={<Switch />} label="Enable Markdown Editor" />
-            <Card variant="outlined">
-            
-                <CardContent>
-                    <Typography variant="h6">Comments</Typography>
-                    <Markdown>{trainingSession.additionalComments || 'N/A'}</Markdown>
-                    {/* {trainingSession.enableMarkdown ? <Markdown>{trainingSession.additionalComments || 'N/A'}</Markdown> : <Typography variant="body1">{trainingSession.additionalComments || 'N/A'}</Typography>} */}
-                </CardContent>
-            </Card>
-            {trainerView &&
-                <Card variant="outlined">
-                    <CardContent>
-                        <Typography variant="h6">Trainer Comments</Typography>
-                        <Markdown>{trainingSession.trainerComments || 'N/A'}</Markdown>
-                        {/* {trainingSession.enableMarkdown ? <Markdown>{trainingSession.trainerComments || 'N/A'}</Markdown> : <Typography variant="body1">{trainingSession.trainerComments || 'N/A'}</Typography>} */}
-                    </CardContent>
-                </Card>
-            }
-            {!trainerView && <Box>
-                <Typography variant="subtitle2">Training provided by the v{VATUSA_FACILITY} Training
-                    Department.</Typography>
-                <Typography variant="body2">If anything above appears incorrect, contact your trainer or our training
-                    staff immediately.</Typography>
-            </Box>}
+            <TrainingMarkdownSwitch trainingSession={trainingSession} trainerView={trainerView}/>
         </Stack>
     );
 }
