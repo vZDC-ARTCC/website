@@ -105,14 +105,16 @@ export default async function TrainingSessionInformation({id, trainerView}: { id
             
                 <CardContent>
                     <Typography variant="h6">Comments</Typography>
-                    {trainingSession.enableMarkdown ? <Markdown>{trainingSession.additionalComments || 'N/A'}</Markdown> : <Typography variant="body1">{trainingSession.additionalComments || 'N/A'}</Typography>}
+                    <Markdown>{trainingSession.additionalComments || 'N/A'}</Markdown>
+                    {/* {trainingSession.enableMarkdown ? <Markdown>{trainingSession.additionalComments || 'N/A'}</Markdown> : <Typography variant="body1">{trainingSession.additionalComments || 'N/A'}</Typography>} */}
                 </CardContent>
             </Card>
             {trainerView &&
                 <Card variant="outlined">
                     <CardContent>
                         <Typography variant="h6">Trainer Comments</Typography>
-                        {trainingSession.enableMarkdown ? <Markdown>{trainingSession.trainerComments || 'N/A'}</Markdown> : <Typography variant="body1">{trainingSession.trainerComments || 'N/A'}</Typography>}
+                        <Markdown>{trainingSession.trainerComments || 'N/A'}</Markdown>
+                        {/* {trainingSession.enableMarkdown ? <Markdown>{trainingSession.trainerComments || 'N/A'}</Markdown> : <Typography variant="body1">{trainingSession.trainerComments || 'N/A'}</Typography>} */}
                     </CardContent>
                 </Card>
             }
