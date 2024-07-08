@@ -42,7 +42,7 @@ const containsOnlyFilterOperator = getGridStringOperators().filter((operator) =>
 export default function TrainingSessionHistory({admin, onlyUser}: { admin?: boolean, onlyUser?: User, }) {
 
     const [trainingSessions, setTrainingSessions] = useState<TrainingSessionTableProps[]>([]);
-    const [pagination, setPagination] = useState({page: 0, pageSize: 5, rowCount: 0});
+    const [pagination, setPagination] = useState({page: 0, pageSize: 10, rowCount: 0});
     const [filter, setFilter] = useState<GridFilterItem>();
     const [sortModel, setSortModel] = useState<GridSortModel>([
         {
