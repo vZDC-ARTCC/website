@@ -80,7 +80,7 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
         const {
             session,
             errors
-        } = await createOrUpdateTrainingSession(student, start, end, trainingTickets, additionalNotes, trainerNotes, trainingSession?.id);
+        } = await createOrUpdateTrainingSession(student, start, end, trainingTickets, additionalNotes, trainerNotes, trainingSession?.id, enableMarkdown);
 
         if (errors) {
             toast(errors.map((e) => e.message).join(".  "), {type: 'error'});

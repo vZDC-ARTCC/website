@@ -18,7 +18,7 @@ export default function CommonMistakeForm({mistake}: { mistake?: CommonMistake, 
         const error = await createOrUpdateMistake(formData);
 
         if (error) {
-            toast(error.errors.map((e) => e.message).join(".  "), {type: 'error'})
+            toast(error.map((e) => e.message).join(".  "), {type: 'error'})
             return;
         }
 

@@ -10,7 +10,9 @@ import {
     CardContent,
     Chip,
     Stack,
-    Typography
+    Typography,
+    Switch,
+    FormControlLabel
 } from "@mui/material";
 import LessonRubricGrid from "@/components/Lesson/LessonRubricGrid";
 import {ExpandMore} from "@mui/icons-material";
@@ -98,17 +100,19 @@ export default async function TrainingSessionInformation({id, trainerView}: { id
                     ))}
                 </CardContent>
             </Card>
+            <FormControlLabel control={<Switch />} label="Enable Markdown Editor" />
             <Card variant="outlined">
+            
                 <CardContent>
                     <Typography variant="h6">Comments</Typography>
-                    <Markdown>{trainingSession.additionalComments || 'N/A'}</Markdown>
+                    {trainingSession.enableMarkdown ? <Markdown>{trainingSession.additionalComments || 'N/A'}</Markdown> : <Typography variant="body1">{trainingSession.additionalComments || 'N/A'}</Typography>}
                 </CardContent>
             </Card>
             {trainerView &&
                 <Card variant="outlined">
                     <CardContent>
                         <Typography variant="h6">Trainer Comments</Typography>
-                        <Markdown>{trainingSession.trainerComments || 'N/A'}</Markdown>
+                        {trainingSession.enableMarkdown ? <Markdown>{trainingSession.trainerComments || 'N/A'}</Markdown> : <Typography variant="body1">{trainingSession.trainerComments || 'N/A'}</Typography>}
                     </CardContent>
                 </Card>
             }

@@ -46,6 +46,7 @@ export async function createOrUpdateTrainingSession(
     additionalComments: string,
     trainerComments: string,
     id?: string,
+    enableMarkdown: boolean,
 ) {
 
     const trainingSessionZ = z.object({
@@ -73,6 +74,7 @@ export async function createOrUpdateTrainingSession(
             })),
             passed: z.boolean(),
         })).nonempty("You must add at least one training ticket."),
+        enableMarkdown: z.boolean(),
     });
 
     const result = trainingSessionZ.safeParse({
@@ -83,6 +85,7 @@ export async function createOrUpdateTrainingSession(
         trainingTickets,
         additionalComments,
         trainerComments,
+        enableMarkdown,
     });
 
     if (!result.success) {
@@ -128,6 +131,7 @@ export async function createOrUpdateTrainingSession(
                             passed: t.passed,
                         })),
                     },
+                    enableMarkdown,
                 },
                 include: {
                     student: true,
@@ -195,6 +199,7 @@ export async function createOrUpdateTrainingSession(
                             passed: t.passed,
                         })),
                     },
+                    enableMarkdown,
                 },
                 include: {
                     student: true,

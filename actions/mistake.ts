@@ -32,7 +32,7 @@ export const createOrUpdateMistake = async (formData: FormData) => {
     });
 
     if (!result.success) {
-        return result.error;
+        return JSON.parse(JSON.stringify(result.error.errors));
     }
 
     if (result.data.mistakeId) {
@@ -49,6 +49,7 @@ export const createOrUpdateMistake = async (formData: FormData) => {
 
         await log("UPDATE", "COMMON_MISTAKE", `Updated mistake ${mistake.name} - ${mistake.facility || 'N/A'}`);
         revalidatePath(`/training/mistakes/${mistake.id}`);
+    
     } else {
         const mistake = await prisma.commonMistake.create({
             data: {
@@ -62,4 +63,5 @@ export const createOrUpdateMistake = async (formData: FormData) => {
     }
 
     revalidatePath('/training/mistakes');
+    return false
 }
