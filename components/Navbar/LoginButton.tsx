@@ -11,7 +11,7 @@ import {
     Typography
 } from "@mui/material";
 import {Session} from "next-auth";
-import {AdminPanelSettings, Class, Logout, OpenInNew, Person, Refresh, Settings, Login, Cancel} from "@mui/icons-material";
+import {AdminPanelSettings, Class, Logout, OpenInNew, Person, Refresh, Settings, Login, Cancel, Key} from "@mui/icons-material";
 import NavDropdown from "@/components/Navbar/NavDropdown";
 import Link from "next/link";
 import {getRating} from "@/lib/vatsim";
@@ -94,6 +94,10 @@ export default function LoginButton({session, sidebar,}: { session: Session | nu
                     <Link href="/profile/overview" style={{textDecoration: 'none', color: 'inherit',}}>
                     <NavSidebarButton icon={<Settings/>} text="Profile"/>
                     </Link>}
+                {session?.user.roles.some((r) => ["WEBMASTER"].includes(r)) &&
+                    <Link href="/webmaster/overview" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <NavSidebarButton icon={<Key/>} text="Webmaster Administration"/>
+                    </Link>}
                 {session?.user.roles.some((r) => ["STAFF"].includes(r)) &&
                     <Link href="/admin/overview" style={{textDecoration: 'none', color: 'inherit',}}>
                         <NavSidebarButton icon={<AdminPanelSettings/>} text="Facility Administration"/>
@@ -121,6 +125,15 @@ export default function LoginButton({session, sidebar,}: { session: Session | nu
                         </ListItemIcon>
                         <ListItemText>Profile</ListItemText>
                     </MenuItem>
+                    </Link>}
+                {session?.user.roles.some((r) => ["WEBMASTER"].includes(r)) &&
+                    <Link href="/webmaster/overview" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <MenuItem onClick={closeDropdown}>
+                            <ListItemIcon>
+                                <Key/>
+                            </ListItemIcon>
+                            <ListItemText>Webmaster Administration</ListItemText>
+                        </MenuItem>
                     </Link>}
                 {session?.user.roles.some((r) => ["STAFF"].includes(r)) &&
                     <Link href="/admin/overview" style={{textDecoration: 'none', color: 'inherit',}}>
