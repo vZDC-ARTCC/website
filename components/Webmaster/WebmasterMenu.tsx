@@ -2,8 +2,10 @@ import React from 'react';
 import {Card, CardContent, List, ListItemButton, ListItemIcon, ListItemText, Typography} from "@mui/material";
 import Link from "next/link";
 import {
+    AddModerator,
     Home,
-    ListAlt
+    ListAlt,
+    Badge
 } from "@mui/icons-material";
 import prisma from "@/lib/db";
 
@@ -36,7 +38,7 @@ export default async function WebmasterMenu() {
                     <Link href="/webmaster/controller" style={{textDecoration: 'none', color: 'inherit',}}>
                         <ListItemButton>
                             <ListItemIcon>
-                                <BadgeIcon/>
+                                <Badge/>
                             </ListItemIcon>
                             <ListItemText primary="Controller Management"/>
                         </ListItemButton>
