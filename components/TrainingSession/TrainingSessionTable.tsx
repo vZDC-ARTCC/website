@@ -40,7 +40,7 @@ type TrainingTicketTableProps = {
 const equalsOnlyFilterOperator = getGridStringOperators().filter((operator) => operator.value === 'equals');
 const containsOnlyFilterOperator = getGridStringOperators().filter((operator) => operator.value === 'contains');
 
-export default function TrainingSessionTable({admin, isStaff, isInstructor, mentorCID, onlyUser}: { admin?: boolean, isStaff?: boolean, isInstructor?: boolean, mentorCID?: string, onlyUser?: User, }) {
+export default function TrainingSessionTable({admin, isInstructor, mentorCID, onlyUser}: { admin?: boolean, isInstructor?: boolean, mentorCID?: string, onlyUser?: User, }) {
 
     const [trainingSessions, setTrainingSessions] = useState<TrainingSessionTableProps[]>([]);
     const [pagination, setPagination] = useState({page: 0, pageSize: 20, rowCount: 0});
@@ -135,12 +135,12 @@ export default function TrainingSessionTable({admin, isStaff, isInstructor, ment
                             <Visibility/>
                         </IconButton>
                     </Link>
-                    {(isStaff || isInstructor || mentorCID==`${params.row.instructor.cid}`) && <Link href={`/training/sessions/${params.row.id}/edit`} passHref>
+                    {(isInstructor || mentorCID==`${params.row.instructor.cid}`) && <Link href={`/training/sessions/${params.row.id}/edit`} passHref>
                         <IconButton size="small">
                             <Edit/>
                         </IconButton>
                     </Link>}
-                    {(isStaff || isInstructor || mentorCID==`${params.row.instructor.cid}`) &&
+                    {(isInstructor || mentorCID==`${params.row.instructor.cid}`) &&
                         <TrainingSessionDeleteButton trainingSession={params.row}/>
                     }
                 </>
