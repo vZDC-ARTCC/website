@@ -3,7 +3,7 @@
 The Virtual Washington ARTCC Website.
 
 >[!WARNING]  
-> This repo is still under development!
+> This repo and readme are still under development!
 
 ---
 
