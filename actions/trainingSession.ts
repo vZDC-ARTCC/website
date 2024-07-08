@@ -45,8 +45,8 @@ export async function createOrUpdateTrainingSession(
     }[],
     additionalComments: string,
     trainerComments: string,
-    id?: string,
     enableMarkdown: boolean,
+    id?: string,
 ) {
 
     const trainingSessionZ = z.object({
@@ -243,8 +243,8 @@ export async function createOrUpdateTrainingSession(
         }
 
     } catch (e) {
-        console.log(e);
-        await log("CREATE", "TRAINING_SESSION", `An error occurred when trying to save training ticket. ${e.message}`)
+        console.log(e)
+        await log("CREATE", "TRAINING_SESSION", `An error occurred when trying to save training ticket.`)
         //fetch latest session to return
         return {};
     }
