@@ -1,23 +1,9 @@
 import React from 'react';
-import {Badge, Card, CardContent, List, ListItemButton, ListItemIcon, ListItemText, Typography} from "@mui/material";
+import {Card, CardContent, List, ListItemButton, ListItemIcon, ListItemText, Typography} from "@mui/material";
 import Link from "next/link";
 import {
-    AccessTime,
-    AddModerator,
-    AirplanemodeActive,
-    Badge as BadgeIcon,
-    BarChart,
-    CalendarMonth,
-    DeleteSweep,
-    Feedback,
-    Folder,
     Home,
-    ListAlt,
-    MilitaryTech,
-    QuestionAnswer,
-    Report,
-    Send,
-    Task
+    ListAlt
 } from "@mui/icons-material";
 import prisma from "@/lib/db";
 
