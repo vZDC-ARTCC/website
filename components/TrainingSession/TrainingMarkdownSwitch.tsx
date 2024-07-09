@@ -25,7 +25,7 @@ export default function TrainingMarkdownSwitch({trainingSession, trainerView}: {
                     <Typography variant="h6">Comments</Typography>
                     {/* <Markdown>{trainingSession.additionalComments || 'N/A'}</Markdown> */}
                     {/* {document.querySelector('.PraivateSwitchBase-input').checked } */}
-                    {enableMarkdown ? <Markdown>{trainingSession.additionalComments || 'N/A'}</Markdown> : <Typography variant="body1" sx={{marginTop:"16px",marginBottom:"16px"}}>{trainingSession.additionalComments || 'N/A'}</Typography>}
+                    {enableMarkdown ? <Markdown>{trainingSession.additionalComments || 'N/A'}</Markdown> : <Typography variant="body1" sx={{marginTop:"16px",marginBottom:"16px", whiteSpace:"pre-wrap"}}>{trainingSession.additionalComments || 'N/A'}</Typography>}
                 </CardContent>
             </Card>
             {trainerView &&
@@ -33,7 +33,7 @@ export default function TrainingMarkdownSwitch({trainingSession, trainerView}: {
                     <CardContent>
                         <Typography variant="h6">Trainer Comments</Typography>
                         {/* <Markdown>{trainingSession.trainerComments || 'N/A'}</Markdown> */}
-                        {enableMarkdown ? <Markdown>{trainingSession.trainerComments || 'N/A'}</Markdown> : <Typography variant="body1" sx={{marginTop:"16px",marginBottom:"16px"}}>{trainingSession.trainerComments || 'N/A'}</Typography>}
+                        {enableMarkdown ? <Markdown>{trainingSession.trainerComments || 'N/A'}</Markdown> : <Typography variant="body1" sx={{marginTop:"16px",marginBottom:"16px", whiteSpace:"pre-wrap"}}>{trainingSession.trainerComments || 'N/A'}</Typography>}
                     </CardContent>
                 </Card>
             }
