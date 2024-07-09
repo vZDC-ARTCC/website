@@ -7,6 +7,8 @@ import FormSaveButton from "@/components/Form/FormSaveButton";
 import {toast} from "react-toastify";
 import {saveRoles} from "@/actions/role";
 import {authOptions} from "@/auth/auth";
+import checkIfWebmaster from "@/components/Webmaster/checkIfWebmaster"
+
 
 export default function RoleForm({user}: { user: User, }) {
 
@@ -46,7 +48,10 @@ export default function RoleForm({user}: { user: User, }) {
                                 </Box>
                             )}
                         >
-                            {Object.keys(Role).map((role) => (
+                            {Object.keys(Role).filter((role)=>{
+                                if (role === "WEBMASTER" && !user.staffPositions.includes("WM")) return false;
+                                return true;
+                            }).map((role) => (
                                 <MenuItem key={role} value={role}>{role}</MenuItem>
                             ))}
                         </Select>

@@ -63,6 +63,8 @@ export const saveRoles = async (formData: FormData) => {
         dossier: z.string().min(1, 'Dossier entry is required'),
     });
 
+    console.log(rolesZ.safeParse)
+
     const result = rolesZ.safeParse({
         userId: formData.get('userId') as string,
         roles: typeof formData.get('roles') === 'string' ? (formData.get('roles') as string)?.split(',') : formData.get('roles'),
