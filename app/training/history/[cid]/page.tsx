@@ -14,6 +14,6 @@ export default async function Page({params}: { params: { cid: string, }, }) {
     });
  
     return (
-        <TrainingSessionHistory onlyUser={controller as User}/>
+        <TrainingSessionHistory admin onlyUser={controller as User}/>
     );
 }

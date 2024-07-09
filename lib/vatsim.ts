@@ -72,9 +72,9 @@ export const getSubtitle = (user: User, shortStaffRoles?: boolean): string => {
     let result: string[] = [];
 
     if (user.roles.includes("INSTRUCTOR")) {
-        result.push(getLongRole("INSTRUCTOR"));
+        result.push(getLongRole("INSTRUCTOR")!);
     } else if (user.roles.includes("MENTOR")) {
-        result.push(getLongRole("MENTOR"));
+        result.push(getLongRole("MENTOR")!);
     }
 
     if (user.roles.includes("STAFF")) {
