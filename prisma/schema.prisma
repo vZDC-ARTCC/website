@@ -448,7 +448,7 @@ model TrainingSession {
   trainerComments    String?
   vatusaId           String?
   tickets            TrainingTicket[]
-  // enableMarkdown     Boolean
+  enableMarkdown     Boolean          @default(false)
 }
 
 model TrainingTicket {
