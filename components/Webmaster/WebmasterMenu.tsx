@@ -5,7 +5,7 @@ import {
     AddModerator,
     Home,
     ListAlt,
-    Badge
+    Badge, QueryStats
 } from "@mui/icons-material";
 import prisma from "@/lib/db";
 
@@ -33,6 +33,14 @@ export default async function WebmasterMenu() {
                                 <Home/>
                             </ListItemIcon>
                             <ListItemText primary="Overview"/>
+                        </ListItemButton>
+                    </Link>
+                    <Link href="/webmaster/website/statistics" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <QueryStats/>
+                            </ListItemIcon>
+                            <ListItemText primary="Website Statistics"/>
                         </ListItemButton>
                     </Link>
                     <Link href="/webmaster/controller" style={{textDecoration: 'none', color: 'inherit',}}>
