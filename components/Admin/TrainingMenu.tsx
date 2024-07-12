@@ -1,7 +1,17 @@
 import React from 'react';
 import {Badge, Card, CardContent, List, ListItemButton, ListItemIcon, ListItemText, Typography} from "@mui/material";
 import Link from "next/link";
-import {Class, FmdBad, Home, ListAlt, LocalActivity, MilitaryTech, WorkspacePremium, ManageSearch,} from "@mui/icons-material";
+import {
+    Class,
+    FmdBad,
+    Home,
+    ListAlt,
+    LocalActivity,
+    MilitaryTech,
+    WorkspacePremium,
+    ManageSearch,
+    QueryStats,
+} from "@mui/icons-material";
 import prisma from "@/lib/db";
 
 export default async function TrainingMenu() {
@@ -29,6 +39,14 @@ export default async function TrainingMenu() {
                                 <Home/>
                             </ListItemIcon>
                             <ListItemText primary="Overview"/>
+                        </ListItemButton>
+                    </Link>
+                    <Link href="/training/statistics" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <QueryStats/>
+                            </ListItemIcon>
+                            <ListItemText primary="Training Statistics"/>
                         </ListItemButton>
                     </Link>
                     <Link href="/training/sessions" style={{textDecoration: 'none', color: 'inherit',}}>
