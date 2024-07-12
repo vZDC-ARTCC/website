@@ -1,9 +1,12 @@
 import React from 'react';
-import TrainingSessionHistory from '@/components/TrainingSession/TrainingSessionHistory';
+import TrainingSessionTable from '@/components/TrainingSession/TrainingSessionTable';
 import prisma from '@/lib/db';
-import { User } from "next-auth";
+import { User, getServerSession } from "next-auth";
+import {authOptions} from "@/auth/auth";
 
 export default async function Page({params}: { params: { cid: string, }, }) {
+
+    const session = await getServerSession(authOptions);
 
     const {cid} = params;
 
@@ -12,8 +15,15 @@ export default async function Page({params}: { params: { cid: string, }, }) {
             cid: cid
         },
     });
+
+    let isInstructor = false;
+    const mentorCID = session!.user.cid;
+
+    if (session!.user.roles.includes("INSTRUCTOR") || session!.user.roles.includes("STAFF")){
+        isInstructor = true;
+    }
  
     return (
-        <TrainingSessionHistory onlyUser={controller as User}/>
+        <TrainingSessionTable admin isInstructor={isInstructor} mentorCID={mentorCID} onlyUser={controller as User}/>
     );
 }
