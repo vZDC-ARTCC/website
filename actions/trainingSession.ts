@@ -305,7 +305,7 @@ const getWhere = (filter?: GridFilterItem, onlyUser?: User): Prisma.TrainingSess
                     ],
                 },
             };
-        case 'trainer':
+        case 'instructor':
             return {
                 instructor: {
                     OR: [

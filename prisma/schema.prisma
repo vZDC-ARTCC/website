@@ -419,7 +419,7 @@ model LessonRubricCriteria {
 
 model LessonRubricCell {
   id         String               @id @default(cuid())
-  criteria   LessonRubricCriteria @relation(fields: [criteriaId], references: [id])
+  criteria   LessonRubricCriteria @relation(fields: [criteriaId], references: [id], onDelete: Cascade)
   criteriaId String
 
   points      Int

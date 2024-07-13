@@ -64,8 +64,9 @@
 ### 1.0.15
 - Removed enable markdown switch on trainee side 
 - Markdown/non-markdown view is now synced to trainer's selection when creating a ticket
-- Widened the markdown editor in the training ticket creation page
+- Widened the markdown/non-markdown editor in the training ticket creation page
 - Fixed bug with admin mode not being enabled in the Training History tab
 
 ### 1.0.16
 - Added separate tabs for Home/Visiting controllers in the Roster Purge Tab
+- Fixed bug with sorting Training Sessions by instructor
