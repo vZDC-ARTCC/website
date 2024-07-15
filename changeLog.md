@@ -70,3 +70,4 @@
 ### 1.0.16
 - Added separate tabs for Home/Visiting controllers in the Roster Purge Tab
 - Fixed bug with sorting Training Sessions by instructor
+- Fixed bug with deleting criteria from lessons
