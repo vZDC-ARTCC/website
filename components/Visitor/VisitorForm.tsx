@@ -55,13 +55,13 @@ export default function VisitorForm({user}: { user: User, }) {
                     <Stack direction="column" spacing={1}>
                         <Typography>Before submitting your application, you agree that:</Typography>
                         <FormControlLabel control={<Checkbox name="meetUsaReqs"/>}
-                                          label="you meet the VATUSA visiting requirements"/>
+                                          label="You meet the VATUSA visiting requirements"/>
                         <FormControlLabel control={<Checkbox name="meetZdcReqs"/>}
-                                          label="you agree to our visiting policy"/>
+                                          label="You agree to our visiting policy"/>
                         <FormControlLabel control={<Checkbox name="goodStanding"/>}
-                                          label="you are in good standing with your home ARTCC"/>
+                                          label="You are in good standing with your home ARTCC"/>
                         <FormControlLabel control={<Checkbox name="notRealWorld"/>}
-                                          label="you understand that we are not the real world FAA nor do we have any affiliation with them"/>
+                                          label="You understand that we are not the real world FAA nor do we have any affiliation with them"/>
                         <VisitorFormSubmitButton />
                     </Stack>
                 </Grid>
