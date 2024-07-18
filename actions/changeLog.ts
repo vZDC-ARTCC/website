@@ -2,6 +2,7 @@
 import prisma from "@/lib/db";
 import {z} from "zod";
 import {revalidatePath} from "next/cache";
+import { Prisma } from '@prisma/client'
 
 export async function createChangeLog(versionNumber: string, changeLogDetails: string, id?: string) {
 
@@ -28,30 +29,40 @@ export async function createChangeLog(versionNumber: string, changeLogDetails: s
                 changeDetails: true,
             }
         })
-
-        const editChangeLog = await prisma.version.update({
-            where: {id},
-            data: {
-                versionNumber: result.data.versionNumber,
-                changeDetails: {
-                    update: {
-                        where: {
-                            id: changeLog.changeDetails[0].id
-                        },
-                        data: {
-                            detail: result.data.changeLogDetails,
+        try {
+            const editChangeLog = await prisma.version.update({
+                where: {id},
+                data: {
+                    versionNumber: result.data.versionNumber,
+                    changeDetails: {
+                        update: {
+                            where: {
+                                id: changeLog.changeDetails[0].id
+                            },
+                            data: {
+                                detail: result.data.changeLogDetails,
+                            }
                         }
                     }
+                },
+                include: {
+                    changeDetails: true,
                 }
-            },
-            include: {
-                changeDetails: true,
-            }
-        })
+            })
 
-        revalidatePath('/changelog', "layout");
-        
-        return editChangeLog
+            revalidatePath('/changelog', "layout");
+            return editChangeLog
+        }catch (e){
+            if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                // The .code property can be accessed in a type-safe manner
+                if (e.code === 'P2002') {
+                  return {errors: `There is a unique constraint violation in ${e.meta.target[0]}`, stringError: true}
+                }
+            }
+
+            return {errors: "Error in updating change log", stringError: true}
+        }
+
     }
     else {
         const addChangeLog = await prisma.version.create({

@@ -30,6 +30,9 @@ export default async function ChangeLogOverview() {
     const version = await prisma.version.findMany({
         include : {
             changeDetails : true
+        },
+        orderBy: {
+            versionNumber: 'asc',
         }
     });
 
@@ -38,9 +41,6 @@ export default async function ChangeLogOverview() {
             createdAt: 'desc',
         },
     })
-
-    console.log(findFirst)
-
     // console.log(version)
     // console.log(version[0].changeDetails)
 

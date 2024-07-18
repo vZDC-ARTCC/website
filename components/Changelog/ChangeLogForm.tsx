@@ -44,11 +44,17 @@ export default function ChangeLogForm({changeLog,}: { changeLog?: Version, }) {
 
 
         const {
-            errors
+            errors,
+            stringError
         } = await createChangeLog(versionNumber, changeLogDetails, changeLog?.id);
 
         if (errors) {
-            toast(errors.map((e) => e.message).join(".  "), {type: 'error'});
+            if (stringError){
+                toast(errors,{type: 'error'});
+            }else{
+                toast(errors.map((e) => e.message).join(".  "), {type: 'error'});
+            }
+
             return;
         }
 
