@@ -15,11 +15,41 @@ import {getMonth, getTimeAgo} from "@/lib/date";
 import prisma from "@/lib/db";
 import {TRAINING_ONLY_LOG_MODELS} from "@/lib/log";
 import {Info} from "@mui/icons-material";
+import TrainingStagePieChart from '@/components/TrainingStatistics/TrainingStagePieChart';
+import TrainingRecentLineChart from '@/components/TrainingStatistics/TrainingRecentLineChart';
+import TrainingByMentor from '@/components/TrainingStatistics/TrainingByMentor';
 
 export default async function Page() {
 
+    const trainingSessions = await prisma.trainingSession.findMany({
+       where: {
+            start: {
+                gte: new Date(new Date().setDate(new Date().getDate() - 30)),
+                lte: new Date(),
+            }
+       },
+       include : {
+            tickets: {
+                include: {
+                    lesson: true,
+                }
+            }
+       }
+    });
+
     const now = new Date();
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+        include: {
+            trainingSessionsGiven: {
+                where: {
+                    start: {
+                        gte: new Date(new Date().setDate(new Date().getDate() - 30)),
+                        lte: new Date(),
+                    }
+                }
+            }
+        }
+    });
 
     const mentors = users.filter(user => user.roles.includes('MENTOR'));
     const instructors = users.filter(user => user.roles.includes('INSTRUCTOR'));
@@ -90,13 +120,22 @@ export default async function Page() {
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={2}>
                 <Card>
                     <CardContent>
-                        <Typography variant="h5">Recent Training Activity Graph</Typography>
-                        <Stack direction="row" spacing={1} alignItems="center">
-                            <Info color="info"/>
-                            <Typography>This page is under development!</Typography>
+                        <Stack spacing={1} alignItems="center">
+                            <Typography variant="h5">Sessions in the Last 30 Days</Typography>
+                            <TrainingRecentLineChart trainingSessions={trainingSessions}/>
+                        </Stack>
+                    </CardContent>
+                </Card>
+            </Grid>
+            <Grid item xs={2}>
+                <Card>
+                    <CardContent>
+                        <Stack spacing={1} alignItems="center">
+                            <Typography variant="h5">Stages Taught in the Last 30 Days</Typography>
+                            <TrainingStagePieChart trainingSessions={trainingSessions}/>
                         </Stack>
                     </CardContent>
                 </Card>
@@ -106,8 +145,7 @@ export default async function Page() {
                     <CardContent>
                         <Typography variant="h5"> INS/MTR Activity</Typography>
                         <Stack direction="row" spacing={1} alignItems="center">
-                            <Info color="info"/>
-                            <Typography>This page is under development!</Typography>
+                            <TrainingByMentor mentstructors={mentors.concat(instructors)}/>
                         </Stack>
                     </CardContent>
                 </Card>
