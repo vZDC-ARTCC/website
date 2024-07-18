@@ -1,7 +1,7 @@
 import React from 'react';
 import ChangeLogOverview from "@/components/Changelog/ChangeLogOverview";
 
-export default async function Page({params}: { params: { id: string } }) {
+export default async function Page() {
 
     return (
         <ChangeLogOverview/>

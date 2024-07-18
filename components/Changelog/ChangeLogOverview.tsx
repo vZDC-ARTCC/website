@@ -13,26 +13,45 @@ import {
 import {AddModerator, ChangeCircle, ExpandMore} from "@mui/icons-material";
 import LessonRubricGrid from "@/components/Lesson/LessonRubricGrid";
 import Markdown from "react-markdown";
+import prisma from "@/lib/db";
+import {notFound} from "next/navigation";
+import {formatZuluDate} from "@/lib/date";
 
 
 const VATUSA_FACILITY = process.env.VATUSA_FACILITY;
 
 export default async function ChangeLogOverview() {
 
+    const version = await prisma.version.findMany({
+        include : {
+            changeDetails : true
+        }
+    });
+
+    const findFirst = await prisma.version.findMany({
+        orderBy: {
+            createdAt: 'desc',
+        },
+    })
+
+    console.log(version)
+    console.log(version[0].changeDetails)
+
     return (
         <Stack direction="column" spacing={2}>
             <Box>
                 <Typography variant="h3">vZDC Website Changelog</Typography>
-                <Typography variant="subtitle1">Latest Version: </Typography>
-                <Typography variant="subtitle2">Last Updated: </Typography>
+                <Typography variant="subtitle1">Latest Version: {findFirst[0].versionNumber}</Typography>
+                <Typography variant="subtitle2">Last Updated: {formatZuluDate(findFirst[0].createdAt)}</Typography>
             </Box>
             <Card variant="outlined">
                 <CardContent>
                     <Typography variant="h6" sx={{mb: 1,}}>Versions</Typography>
-                        <Accordion>
+                    {version.map((version) => (
+                        <Accordion key={version.id}>
                             <AccordionSummary expandIcon={<ExpandMore/>}>
                                 <Stack direction="row" spacing={1} alignItems="center">
-                                    <Typography>Version Id - Heading Title</Typography>
+                                    <Typography>{version.versionNumber}</Typography>
                                 </Stack>
                             </AccordionSummary>
                             <AccordionDetails>
@@ -40,17 +59,14 @@ export default async function ChangeLogOverview() {
                                     <CardContent>
                                         <Stack direction="column" spacing={2}>
                                             <Box>
-                                                <Typography variant="h6">Version Overview</Typography>
-                                            </Box>
-                                            <Box>
-                                                <Typography variant="h6" sx={{mb: 1,}}>Version Details</Typography>
+                                                <Markdown>{version.changeDetails[0].detail}</Markdown>
                                             </Box>
                                         </Stack>
                                     </CardContent>
                                 </Card>
                             </AccordionDetails>
                         </Accordion>
-
+                    ))}
                 </CardContent>
             </Card>
         </Stack>

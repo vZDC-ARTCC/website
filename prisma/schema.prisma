@@ -520,24 +520,15 @@ model StatisticsPrefixes {
 
 // additionChangeLog
 model Version {
-  id          String    @id @default(cuid())
+  id            String    @id @default(cuid())
   versionNumber String  @unique
-  createdAt   DateTime  @default(now())
-  headings    Heading[]
-}
-
-model Heading {
-  id          String    @id @default(cuid())
-  title       String
-  description String
-  versionId   String
-  version     Version   @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
   changeDetails ChangeDetail[]
 }
 
 model ChangeDetail {
   id          String    @id @default(cuid())
   detail      String
-  headingId   String
-  heading     Heading   @relation(fields: [headingId], references: [id], onDelete: Cascade)
+  versionId   String
+  version     Version   @relation(fields: [versionId], references: [id], onDelete: Cascade)
 }

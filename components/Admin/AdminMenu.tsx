@@ -7,7 +7,7 @@ import {
     AirplanemodeActive,
     Badge as BadgeIcon,
     BarChart,
-    CalendarMonth,
+    CalendarMonth, ChangeCircle,
     DeleteSweep,
     Feedback,
     Folder,
@@ -202,6 +202,14 @@ export default async function AdminMenu() {
                                 <BarChart/>
                             </ListItemIcon>
                             <ListItemText primary="Statistics Prefixes"/>
+                        </ListItemButton>
+                    </Link>
+                    <Link href="/admin/changelog" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <ChangeCircle/>
+                            </ListItemIcon>
+                            <ListItemText primary="Changelog"/>
                         </ListItemButton>
                     </Link>
                     <Link href="/admin/logs" style={{textDecoration: 'none', color: 'inherit',}}>
