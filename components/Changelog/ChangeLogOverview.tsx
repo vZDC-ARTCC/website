@@ -34,15 +34,19 @@ export default async function ChangeLogOverview() {
         },
     })
 
-    console.log(version)
-    console.log(version[0].changeDetails)
+    // console.log(version)
+    // console.log(version[0].changeDetails)
 
     return (
         <Stack direction="column" spacing={2}>
             <Box>
                 <Typography variant="h3">vZDC Website Changelog</Typography>
-                <Typography variant="subtitle1">Latest Version: {findFirst[0].versionNumber}</Typography>
-                <Typography variant="subtitle2">Last Updated: {formatZuluDate(findFirst[0].createdAt)}</Typography>
+                {findFirst.map((item)=>(
+                <>
+                    <Typography variant="subtitle1">Latest Version: {item.versionNumber}</Typography>
+                    <Typography variant="subtitle2">Last Updated: {formatZuluDate(item.createdAt)}</Typography>
+                </>
+                ))}
             </Box>
             <Card variant="outlined">
                 <CardContent>
