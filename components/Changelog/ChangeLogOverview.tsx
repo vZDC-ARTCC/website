@@ -36,11 +36,6 @@ export default async function ChangeLogOverview() {
         }
     });
 
-    const findFirst = await prisma.version.findMany({
-        orderBy: {
-            createdAt: 'desc',
-        },
-    })
     // console.log(version)
     // console.log(version[0].changeDetails)
 
@@ -48,10 +43,10 @@ export default async function ChangeLogOverview() {
         <Stack direction="column" spacing={2}>
             <Box>
                 <Typography variant="h3">vZDC Website Changelog</Typography>
-            { findFirst.length!==0 ?       
+            { version.length!==0 ?       
                 <>      
-                    <Typography variant="subtitle1">Latest Version: {findFirst[0].versionNumber}</Typography>
-                    <Typography variant="subtitle2">Last Updated: {formatZuluDate(findFirst[0].createdAt)}</Typography>
+                    <Typography variant="subtitle1">Latest Version: {version[version.length-1].versionNumber}</Typography>
+                    <Typography variant="subtitle2">Last Updated: {formatZuluDate(version[version.length-1].createdAt)}</Typography>
                 </>   
                     :
                 <></>
