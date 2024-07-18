@@ -1,19 +1,7 @@
 'use server'
 import prisma from "@/lib/db";
-import {log} from "@/actions/log";
-import {revalidatePath} from "next/cache";
 import {z} from "zod";
-import {CommonMistake, Lesson, Prisma, RubricCriteraScore} from "@prisma/client";
-import {getServerSession, User} from "next-auth";
-import {authOptions} from "@/auth/auth";
-import {
-    createVatusaTrainingSession,
-    deleteVatusaTrainingSession,
-    editVatusaTrainingSession
-} from "@/actions/vatusa/training";
-import {getDuration} from "@/lib/date";
-import {sendInstructorsTrainingSessionCreatedEmail, sendTrainingSessionCreatedEmail} from "@/actions/mail/training";
-import {GridFilterItem, GridPaginationModel, GridSortModel} from "@mui/x-data-grid";
+
 
 export async function createChangeLog(versionNumber: string, changeLogDetails: string) {
 

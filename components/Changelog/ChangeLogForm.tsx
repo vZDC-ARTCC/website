@@ -16,8 +16,8 @@ export default function ChangeLogForm() {
 
     const handleSubmit = async () => {
 
+
         const {
-            addChangeLog,
             errors
         } = await createChangeLog(versionNumber, changeLogDetails);
 

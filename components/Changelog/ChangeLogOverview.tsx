@@ -5,16 +5,12 @@ import {
     Box,
     Card,
     CardContent,
-    Chip,
-    ListItemIcon,
     Stack,
     Typography
 } from "@mui/material";
-import {AddModerator, ChangeCircle, ExpandMore} from "@mui/icons-material";
-import LessonRubricGrid from "@/components/Lesson/LessonRubricGrid";
+import {ExpandMore} from "@mui/icons-material";
 import Markdown from "react-markdown";
 import prisma from "@/lib/db";
-import {notFound} from "next/navigation";
 import {formatZuluDate} from "@/lib/date";
 
 
