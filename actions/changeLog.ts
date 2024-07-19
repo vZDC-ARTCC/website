@@ -17,7 +17,7 @@ export async function createChangeLog(versionNumber: string, changeLogDetails: s
     });
 
     if (!result.success) {
-        return {errors: result.error.errors};
+        return {errors: result.error};
     }
 
     if (id) {
@@ -37,7 +37,7 @@ export async function createChangeLog(versionNumber: string, changeLogDetails: s
                     changeDetails: {
                         update: {
                             where: {
-                                id: changeLog.changeDetails[0].id
+                                id: changeLog!.changeDetails[0].id
                             },
                             data: {
                                 detail: result.data.changeLogDetails,
@@ -51,16 +51,15 @@ export async function createChangeLog(versionNumber: string, changeLogDetails: s
             })
 
             revalidatePath('/changelog', "layout");
-            return editChangeLog
+            return {};
         }catch (e){
-            if (e instanceof Prisma.PrismaClientKnownRequestError) {
-                // The .code property can be accessed in a type-safe manner
-                if (e.code === 'P2002') {
-                  return {errors: `There is a unique constraint violation in ${e.meta.target[0]}`, stringError: true}
-                }
-            }
-
-            return {errors: "Error in updating change log", stringError: true}
+            // if (e instanceof Prisma.PrismaClientKnownRequestError) {
+            //     // The .code property can be accessed in a type-safe manner
+            //     if (e.code === 'P2002') {
+            //       return {errors: `There is a unique constraint violation in ${e.meta!.target[0]}`, stringError: true}
+            //     }
+            // }
+            return {errors: "Error in updating change log"}
         }
 
     }
@@ -78,7 +77,7 @@ export async function createChangeLog(versionNumber: string, changeLogDetails: s
 
         revalidatePath('/changelog', "layout");
 
-        return addChangeLog
+        return {};
     }
 
 }
@@ -93,7 +92,7 @@ export async function deleteChangeLog(id: string){
 
     revalidatePath('/changelog', "layout");
 
-    return changeLog;
+    return {};
 }
 
 export async function getChangeLog(id: string){

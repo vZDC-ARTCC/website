@@ -6,9 +6,9 @@ import {toast} from "react-toastify";
 import FormSaveButton from "@/components/Form/FormSaveButton";
 import { createChangeLog, getChangeLog } from "@/actions/changeLog";
 import {useRouter, useSearchParams} from "next/navigation";
-import {Version} from "@prisma/client";
+import {z} from "zod";
 
-export default function ChangeLogForm({changeLog,}: { changeLog?: Version, }) {
+export default function ChangeLogForm({changeLog,}: { changeLog?: { changeDetails: { id: string; detail: string; versionId: string; }[]; } & { id: string; versionNumber: string; createdAt: Date; }, }) {
 
     const router = useRouter();
     const theme = useTheme();
@@ -44,20 +44,17 @@ export default function ChangeLogForm({changeLog,}: { changeLog?: Version, }) {
 
 
         const {
-            errors,
-            stringError
+            errors
         } = await createChangeLog(versionNumber, changeLogDetails, changeLog?.id);
 
-        if (errors) {
-            if (stringError){
-                toast(errors,{type: 'error'});
-            }else{
-                toast(errors.map((e) => e.message).join(".  "), {type: 'error'});
-            }
-
+        if (errors instanceof String) {
+            toast(errors,{type: 'error'});
+            return;
+        }else if(errors instanceof z.ZodError){
+            toast(errors.issues.map((e) => e.message).join(".  "), {type: 'error'});
             return;
         }
-
+            
         router.replace(`/changelog`)
 
         // if (!trainingSession?.id) {

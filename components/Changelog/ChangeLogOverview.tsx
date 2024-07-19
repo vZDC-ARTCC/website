@@ -52,7 +52,7 @@ export default async function ChangeLogOverview() {
                 <></>
             }
             </Box>
-            {session.user.roles.includes("STAFF") ? 
+            {session!.user.roles.includes("STAFF") ? 
                 <Link href="/changelog/new">
                     <Button variant="contained" size="large" startIcon={<Add/>}>New Change Log</Button>
                 </Link>
@@ -72,7 +72,7 @@ export default async function ChangeLogOverview() {
                             <AccordionDetails>
                                 <Card variant="outlined">
                                     <CardContent>
-                                        {session.user.roles.includes("STAFF") ? 
+                                        {session!.user.roles.includes("STAFF") ? 
                                             <>
                                                 <Link href={`/changelog/${version.id}`} passHref>
                                                     <IconButton size="small">
