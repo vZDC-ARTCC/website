@@ -74,11 +74,17 @@ export default async function Page({searchParams,}: {
             const duration = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60); // Convert milliseconds to hours
             return sum + duration;
         }, 0).toPrecision(3) || 'N/A';
+        
+        let homeController = false;
+        if (controller.controllerStatus === "HOME"){
+            homeController = true;
+        }
 
         return {
             controller: controller as User,
             totalHours,
             totalTrainingHours,
+            homeController,
         };
     });
 

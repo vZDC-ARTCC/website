@@ -1,4 +1,4 @@
-FROM node:current-alpine AS base
+FROM node:22.4.1-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -17,8 +17,6 @@ RUN \
 
 COPY prisma/ .
 
-RUN npx prisma generate
-
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
@@ -30,6 +28,8 @@ COPY . .
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN npx prisma generate
 
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
