@@ -516,3 +516,19 @@ model StatisticsPrefixes {
   id       String   @id @default(cuid())
   prefixes String[]
 }
+
+
+// additionChangeLog
+model Version {
+  id            String    @id @default(cuid())
+  versionNumber String  @unique
+  createdAt     DateTime  @default(now())
+  changeDetails ChangeDetail[]
+}
+
+model ChangeDetail {
+  id          String    @id @default(cuid())
+  detail      String
+  versionId   String
+  version     Version   @relation(fields: [versionId], references: [id], onDelete: Cascade)
+}
