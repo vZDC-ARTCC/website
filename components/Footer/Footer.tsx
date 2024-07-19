@@ -39,11 +39,9 @@ export default function Footer() {
                     </Stack>
                     <Tooltip title={`Developed by ${publicRuntimeConfig?.author}`}>
                         <Box sx={{mt: 2, textAlign: 'center',}}>
-                            <Link href="/webmaster/overview/">
-                                {DEV_MODE &&
-                                    <Typography variant="subtitle2" color="limegreen">Development Build</Typography>}
-                                {!DEV_MODE && <Typography>v{publicRuntimeConfig?.version}</Typography>}
-                            </Link>
+                            {DEV_MODE &&
+                                <Typography variant="subtitle2" color="limegreen">Development Build</Typography>}
+                            {!DEV_MODE && <Typography>v{publicRuntimeConfig?.version}</Typography>}
                         </Box>
                     </Tooltip>
                     <Stack direction="row" spacing={1} sx={{mt: 2,}} justifyContent="center">
