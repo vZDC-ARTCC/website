@@ -14,7 +14,7 @@ export const revalidate = 300;
 export default function Layout({children}: { children: React.ReactNode }) {
 
     return (
-        <Container maxWidth="lg">
+        <Container maxWidth="xl">
             <Stack direction="column" spacing={2} sx={{overflow:{md: 'hidden', lg: 'initial'}}}>
                 <RosterSearch/>
                 <RosterTabs/>
