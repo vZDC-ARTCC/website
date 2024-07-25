@@ -166,16 +166,16 @@ export default async function RosterTable({membership, search}: {
     });
 
     return (
-        <Card variant="outlined">
+        <Card variant="outlined" sx={{overflow:{lg: 'initial'}}}>
             <CardContent>
-                <TableContainer sx={{}}>
-                    <Table stickyHeader size="small">
+                <TableContainer sx={{maxHeight: {md:'800px', lg:''}, overflowX:{lg: 'initial'}}}>
+                    <Table stickyHeader size="small" sx={{tableLayout:{lg: "fixed"}}}>
                         <TableHead>
                             <TableRow>
-                                <TableCell>Controller</TableCell>
-                                <TableCell>Operating Initials</TableCell>
+                                <TableCell sx={{width:'155px'}}>Controller</TableCell>
+                                <TableCell sx={{width:'95px'}}>Operating Initials</TableCell>
                                 {certificationTypes.map((certificationType) => (
-                                    <TableCell key={certificationType.id}>{certificationType.name}</TableCell>
+                                    <TableCell sx={certificationType.name.length > 8 ? {width:'120px'} : certificationType.name === 'Center' ? {width:'75px'} : {width:'auto'}} key={certificationType.id}>{certificationType.name}</TableCell>
                                 ))}
                             </TableRow>
                         </TableHead>

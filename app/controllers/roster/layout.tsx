@@ -15,7 +15,7 @@ export default function Layout({children}: { children: React.ReactNode }) {
 
     return (
         <Container maxWidth="lg">
-            <Stack direction="column" spacing={2} sx={{overflow: 'hidden',}}>
+            <Stack direction="column" spacing={2} sx={{overflow:{md: 'hidden', lg: 'initial'}}}>
                 <RosterSearch/>
                 <RosterTabs/>
                 {children}
