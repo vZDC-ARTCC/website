@@ -52,32 +52,42 @@ export async function createChangeLog(versionNumber: string, changeLogDetails: s
 
             revalidatePath('/changelog', "layout");
             return {};
-        }catch (e){
-            // if (e instanceof Prisma.PrismaClientKnownRequestError) {
-            //     // The .code property can be accessed in a type-safe manner
-            //     if (e.code === 'P2002') {
-            //       return {errors: `There is a unique constraint violation in ${e.meta!.target[0]}`, stringError: true}
-            //     }
-            // }
+        }catch (e: any){
+            if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                // The .code property can be accessed in a type-safe manner
+                if (e.code === 'P2002') {
+                  return {errors: `There is a unique constraint violation in versionNumber`}
+                }
+            }
             return {errors: "Error in updating change log"}
         }
 
     }
     else {
-        const addChangeLog = await prisma.version.create({
-            data: {
-                versionNumber: result.data.versionNumber,
-                changeDetails: {
-                    create: {
-                        detail: result.data.changeLogDetails,
+        try {
+            const addChangeLog = await prisma.version.create({
+                data: {
+                    versionNumber: result.data.versionNumber,
+                    changeDetails: {
+                        create: {
+                            detail: result.data.changeLogDetails,
+                        }
                     }
                 }
+            })
+
+            revalidatePath('/changelog', "layout");
+
+            return {};
+        }catch (e: any) {
+            if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                // The .code property can be accessed in a type-safe manner
+                if (e.code === 'P2002') {
+                  return {errors: `There is a unique constraint violation in versionNumber`}
+                }
             }
-        })
-
-        revalidatePath('/changelog', "layout");
-
-        return {};
+            return {errors: "Error in updating change log"}
+        }
     }
 
 }
