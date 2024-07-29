@@ -36,8 +36,7 @@ export default async function ChangeLogOverview() {
         }
     });
 
-    // console.log(version)
-    // console.log(version[0].changeDetails)
+    version.sort((a,b)=>{return a.versionNumber.localeCompare(b.versionNumber, undefined, { numeric: true, sensitivity: 'base' });})
 
     return (
         <Stack direction="column" spacing={2}>
