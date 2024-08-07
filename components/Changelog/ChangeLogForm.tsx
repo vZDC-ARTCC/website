@@ -47,10 +47,10 @@ export default function ChangeLogForm({changeLog,}: { changeLog?: { changeDetail
             errors
         } = await createChangeLog(versionNumber, changeLogDetails, changeLog?.id);
 
-        if(errors instanceof z.ZodError){
-            toast(errors.issues.map((e) => e.message).join(".  "), {type: 'error'});
+        if(typeof errors === "object"){
+            toast(errors.map((e) => e.message).join(". "), {type: 'error'});
             return;
-        }else{
+        }else if(errors){
             toast(errors,{type: 'error'});
             return;
         }

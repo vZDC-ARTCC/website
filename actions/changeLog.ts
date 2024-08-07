@@ -17,7 +17,7 @@ export async function createChangeLog(versionNumber: string, changeLogDetails: s
     });
 
     if (!result.success) {
-        return {errors: result.error};
+        return {errors: result.error.errors};
     }
 
     if (id) {
