@@ -1,7 +1,7 @@
 'use client';
 import React, {useCallback, useEffect} from 'react';
 import {CommonMistake, Lesson, LessonRubricCell, LessonRubricCriteria, RubricCriteraScore} from "@prisma/client";
-import {Alert, Autocomplete, Button, CircularProgress, Grid, TextField, Tooltip} from "@mui/material";
+import {Alert, Autocomplete, Button, CircularProgress, Grid, TextField, Tooltip, Chip, Typography} from "@mui/material";
 import LessonRubricGridInteractive from "@/components/Lesson/LessonRubricGridInteractive";
 import {getCriteriaForLesson} from "@/actions/trainingSessionFormHelper";
 import {toast} from "react-toastify";
@@ -85,12 +85,30 @@ export default function TrainingTicketForm({
                     multiple
                     disableCloseOnSelect
                     options={allCommonMistakes}
-                    getOptionLabel={(option) => <Tooltip placement="top-start" title={<h2><Markdown>{option.description}</Markdown></h2>}>{option.facility ? option.facility + ' - ' : ''}{option.name}</Tooltip>}
+                    getOptionLabel={(option) => `${option.facility ? option.facility + ' - ' : ''}${option.name}`}
                     value={selectedMistakes}
                     onChange={(event, newValue) => {
                         setSelectedMistakes(newValue);
                     }}
                     renderInput={(params) => <TextField {...params} label="Common Mistakes (search name or facility)"/>}
+                    renderOption = {(props, option) => {
+                        return(
+                            <li {...props}>                        
+                                <>
+                                    <Tooltip placement="top-start" title={<h2><Markdown>{option.description}</Markdown></h2>}>
+                                        <Typography>{option.facility ? option.facility + ' - ' + option.name: option.name}</Typography>
+                                    </Tooltip>
+                                </>
+                            </li>
+                        )}
+                    }
+                    renderTags={(value, props)=>{
+                        return value.map((option, index) => (
+                            <Tooltip key={index} placement="top-start" title={<h2><Markdown>{option.description}</Markdown></h2>}>
+                                <Chip {...props({index})} key={index+1000} label={option.facility ? option.facility + ' - ' + option.name : option.name}/>
+                            </Tooltip>
+                        ))
+                    }}
                 />
             </Grid>
             <Grid item xs={2}>
