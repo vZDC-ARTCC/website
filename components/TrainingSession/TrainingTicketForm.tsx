@@ -1,11 +1,12 @@
 'use client';
 import React, {useCallback, useEffect} from 'react';
 import {CommonMistake, Lesson, LessonRubricCell, LessonRubricCriteria, RubricCriteraScore} from "@prisma/client";
-import {Alert, Autocomplete, Button, CircularProgress, Grid, TextField} from "@mui/material";
+import {Alert, Autocomplete, Button, CircularProgress, Grid, TextField, Tooltip} from "@mui/material";
 import LessonRubricGridInteractive from "@/components/Lesson/LessonRubricGridInteractive";
 import {getCriteriaForLesson} from "@/actions/trainingSessionFormHelper";
 import {toast} from "react-toastify";
 import {Check} from "@mui/icons-material";
+import Markdown from "react-markdown";
 
 export default function TrainingTicketForm({
                                                allLessons,
@@ -84,7 +85,7 @@ export default function TrainingTicketForm({
                     multiple
                     disableCloseOnSelect
                     options={allCommonMistakes}
-                    getOptionLabel={(option) => `${option.facility ? option.facility + ' - ' : ''}${option.name}`}
+                    getOptionLabel={(option) => <Tooltip placement="top-start" title={<h2><Markdown>{option.description}</Markdown></h2>}>{option.facility ? option.facility + ' - ' : ''}{option.name}</Tooltip>}
                     value={selectedMistakes}
                     onChange={(event, newValue) => {
                         setSelectedMistakes(newValue);
