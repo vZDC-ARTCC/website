@@ -95,7 +95,7 @@ export default function TrainingTicketForm({
                         return(
                             <li {...props}>                        
                                 <>
-                                    <Tooltip placement="top-start" title={<h2><Markdown>{option.description}</Markdown></h2>}>
+                                    <Tooltip placement="left" title={<h2><Markdown>{option.description}</Markdown></h2>}>
                                         <Typography>{option.facility ? option.facility + ' - ' + option.name: option.name}</Typography>
                                     </Tooltip>
                                 </>
