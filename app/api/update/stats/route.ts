@@ -1,5 +1,6 @@
 import prisma from "@/lib/db";
 import {revalidatePath} from "next/cache";
+
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
@@ -121,7 +122,7 @@ export async function GET() {
         const year = now.getFullYear();
         const log = controller.log?.months.find((controllerMonth) => controllerMonth.month === month && controllerMonth.year === year);
 
-        const onlineTimeSinceLastUpdate = getHoursControlledSinceLastUpdate(new Date(vatsimUser.last_updated), vatsimUpdate?.timestamp || new Date());
+        const onlineTimeSinceLastUpdate = getHoursControlledSinceLastUpdate(new Date(), vatsimUpdate?.timestamp || new Date());
 
         await prisma.controllerLogMonth.upsert({
             create: {
