@@ -131,7 +131,7 @@ export async function createOrUpdateTrainingSession(
                             passed: t.passed,
                         })),
                     },
-                    // enableMarkdown,
+                    enableMarkdown: result.data.enableMarkdown,
                 },
                 include: {
                     student: true,
@@ -199,7 +199,7 @@ export async function createOrUpdateTrainingSession(
                             passed: t.passed,
                         })),
                     },
-                    // enableMarkdown,
+                    enableMarkdown: result.data.enableMarkdown,
                 },
                 include: {
                     student: true,
@@ -305,7 +305,7 @@ const getWhere = (filter?: GridFilterItem, onlyUser?: User): Prisma.TrainingSess
                     ],
                 },
             };
-        case 'trainer':
+        case 'instructor':
             return {
                 instructor: {
                     OR: [

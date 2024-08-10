@@ -203,7 +203,7 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
                         </Card>
                     </Grid>
                     <Grid item xs={2}>
-                        <Box sx={{maxWidth: '700px',}} data-color-mode={theme.palette.mode}>
+                        <Box sx={{}} data-color-mode={theme.palette.mode}>
                         <FormControlLabel control={<Switch onChange={()=>setEnableMarkdown(!enableMarkdown)}/>} label="Enable Markdown Editor" />
                             <Typography variant="subtitle1" sx={{mb: 1,}}>Additional Comments</Typography>
                             {enableMarkdown ? 
@@ -227,7 +227,7 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
                         </Box>
                     </Grid>
                     <Grid item xs={2}>
-                        <Box sx={{maxWidth: '700px',}} data-color-mode={theme.palette.mode}>
+                        <Box sx={{}} data-color-mode={theme.palette.mode}>
                             <Typography variant="subtitle1" sx={{mb: 1,}}>Trainer Comments</Typography>
                             {enableMarkdown ?
                                 <MarkdownEditor
