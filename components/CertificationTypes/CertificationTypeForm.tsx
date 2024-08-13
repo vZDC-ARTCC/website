@@ -12,10 +12,10 @@ export default function CertificationTypeForm({certificationType}: { certificati
 
     const handleSubmit = async (formData: FormData) => {
 
-        formData.set('certificationOptions', ["NONE", "MAJOR",] as any);
+        formData.set('certificationOptions', ["NONE", "TIER_1",] as any);
 
-        if (formData.get('canMinorCert') === 'on') {
-            formData.set('certificationOptions', ["NONE", "MAJOR", "MINOR"] as any);
+        if (formData.get('splitCertification') === 'on') {
+            formData.set('certificationOptions', ["NONE", "TIER_1", "UNRESTRICTED"] as any);
         }
 
         const {certificationType, errors} = await createOrUpdateCertificationType(formData);
@@ -42,7 +42,7 @@ export default function CertificationTypeForm({certificationType}: { certificati
                 <FormControlLabel name="canSoloCert"
                                   control={<Switch defaultChecked={certificationType?.canSoloCert}/>}
                                   label="Can get solo certified?"/>
-                <FormControlLabel name="canMinorCert"
+                <FormControlLabel name="splitCertification"
                                   control={<Switch defaultChecked={splitCertification}/>}
                                   label="Split certification?"/>
                 <FormSaveButton />

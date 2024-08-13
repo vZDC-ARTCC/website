@@ -1,27 +1,25 @@
 import React from 'react';
 import {
-    Accordion, AccordionDetails,
+    Accordion,
+    AccordionDetails,
     AccordionSummary,
     Box,
+    Button,
     Card,
     CardContent,
-    Stack,
-    Typography,
     IconButton,
-    Button
+    Stack,
+    Typography
 } from "@mui/material";
-import {ExpandMore} from "@mui/icons-material";
+import {Add, Edit, ExpandMore} from "@mui/icons-material";
 import Markdown from "react-markdown";
 import prisma from "@/lib/db";
 import {formatZuluDate} from "@/lib/date";
-import {Edit, Add} from "@mui/icons-material";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/auth/auth";
 import Link from "next/link";
 import ChangeLogDeleteButton from "@/components/Changelog/ChangeLogDeleteButton";
 
-
-const VATUSA_FACILITY = process.env.VATUSA_FACILITY;
 
 export default async function ChangeLogOverview() {
 
@@ -40,25 +38,32 @@ export default async function ChangeLogOverview() {
 
     return (
         <Stack direction="column" spacing={2}>
-            <Box>
-                <Typography variant="h3">vZDC Website Changelog</Typography>
-            { version.length!==0 ?       
-                <>      
-                    <Typography variant="subtitle1">Latest Version: {version[version.length-1].versionNumber}</Typography>
-                    <Typography variant="subtitle2">Last Updated: {formatZuluDate(version[version.length-1].createdAt)}</Typography>
-                </>   
-                    :
-                <></>
-            }
-            </Box>
-            {session!.user.roles.includes("STAFF") ? 
-                <Link href="/changelog/new">
-                    <Button variant="contained" size="large" startIcon={<Add/>}>New Change Log</Button>
-                </Link>
-                :
-                <></>
-            }
-            <Card variant="outlined">
+            <Card>
+                <CardContent>
+                    <Stack direction="row" spacing={1} justifyContent="space-between">
+                        <Typography variant="h5">Website Changelog</Typography>
+                        {session!.user.roles.includes("STAFF") ?
+                            <Link href="/changelog/new">
+                                <Button variant="contained" startIcon={<Add/>}>New Change Log</Button>
+                            </Link>
+                            :
+                            <></>
+                        }
+                    </Stack>
+                    {version.length !== 0 ?
+                        <>
+                            <Typography variant="subtitle1">Latest Documented
+                                Version: <b>{version[version.length - 1].versionNumber}</b></Typography>
+                            <Typography variant="subtitle2">Last
+                                Updated: {formatZuluDate(version[version.length - 1].createdAt)}</Typography>
+                        </>
+                        :
+                        <></>
+                    }
+                </CardContent>
+            </Card>
+
+            <Card>
                 <CardContent>
                     <Typography variant="h6" sx={{mb: 1,}}>Versions</Typography>
                     {version.map((version) => (

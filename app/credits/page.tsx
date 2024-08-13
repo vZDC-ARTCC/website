@@ -1,8 +1,6 @@
-
-import {Roboto} from "next/font/google";
-import {Card, CardContent, Grid, Typography, Link, Button} from "@mui/material";
-import {SettingsSuggest, BugReportSharp, Info} from '@mui/icons-material'
-const headingFont = Roboto({subsets: ['latin'], weight: '400',});
+import {Card, CardContent, Grid, Typography} from "@mui/material";
+import {BugReportSharp, Info, SettingsSuggest} from '@mui/icons-material'
+import Link from "next/link";
 
 export default async function Home() {
 
@@ -11,35 +9,39 @@ export default async function Home() {
             <Grid item xs={9}>
                 <Card>
                     <CardContent>
-                        <Typography {...headingFont.style} variant="h3">Virtual Washington ARTCC</Typography>
-                        <Typography {...headingFont.style} variant="h5">Credit Information</Typography>
-                        <Typography {...headingFont.style} variant="body2">
-                            <Link href="https://github.com/vZDC-ARTCC/website" style={{color: '#29B6F6',textDecoration: 'none'}}>
-                                Full Commit History can be found on our public GitHub</Link></Typography>
+                        <Typography variant="h4">Credit Information</Typography>
+                        <Typography variant="body2">Full Commit History can be found on <Link
+                            href="https://github.com/vZDC-ARTCC/website" target="_blank"
+                            style={{color: '#29B6F6', textDecoration: 'none',}}>our public GitHub.</Link></Typography>
                     </CardContent>
                 </Card>
             </Grid>
             <Grid item xs={3}>
                 <Card>
                     <CardContent>
-                        <Typography {...headingFont.style} variant="h4">Main Contributors</Typography>
-                        <Typography {...headingFont.style} variant="body1" color="#29B6F6">Aneesh Reddy</Typography>
-                        <Typography {...headingFont.style} variant="body1" color="#29B6F6">Carson Berget</Typography>
-                        <Typography {...headingFont.style} variant="body1" color="#29B6F6">Leo Roberts</Typography>
-                        <Typography {...headingFont.style} variant="body1" color="#29B6F6">Harry Xu</Typography>
+                        <Typography variant="h5" sx={{mb: 1,}}>Main Contributors</Typography>
+                        <Typography variant="h6" color="#29B6F6" fontWeight="bold">Aneesh Reddy</Typography>
+                        <Typography variant="h6" color="#29B6F6" fontWeight="bold">Carson Berget</Typography>
+                        <Typography variant="h6" color="#29B6F6" fontWeight="bold">Leo Roberts</Typography>
+                        <Typography variant="h6" color="#29B6F6" fontWeight="bold">Harry Xu</Typography>
                     </CardContent>
                 </Card>
             </Grid>
             <Grid item xs={3}>
                 <Card>
                     <CardContent>
-                        <Typography {...headingFont.style} variant="h4">Bug/Suggestion Report</Typography>
-                        <Typography {...headingFont.style} variant="body1" color="#F44336"><BugReportSharp/><SettingsSuggest/> Leo Roberts</Typography>
-                        <Typography {...headingFont.style} variant="body1" color="#F44336"><SettingsSuggest/> Cameron D.</Typography>
-                        <Typography {...headingFont.style} variant="body1" color="#F44336"><BugReportSharp/> James Martin</Typography>
-                        <Typography {...headingFont.style} variant="body1" color="#F44336"><SettingsSuggest/> Junzhe Yan</Typography>
-                        <Typography {...headingFont.style} variant="body1" color="#F44336"><SettingsSuggest/> Geoff Burns</Typography>
-                        <Typography {...headingFont.style} variant="body1" color="#F44336"><BugReportSharp/> John Man</Typography>
+                        <Typography variant="h5" sx={{mb: 1,}}>Bug/Suggestion Report</Typography>
+                        <Typography variant="body1" color="#F44336"
+                                    sx={{display: 'flex', gap: 1, alignItems: 'center',}}><SettingsSuggest/> Cameron D.</Typography>
+                        <Typography variant="body1" color="#F44336"
+                                    sx={{display: 'flex', gap: 1, alignItems: 'center',}}><BugReportSharp/> James Martin</Typography>
+                        <Typography variant="body1" color="#F44336"
+                                    sx={{display: 'flex', gap: 1, alignItems: 'center',}}><SettingsSuggest/> Junzhe Yan</Typography>
+                        <Typography variant="body1" color="#F44336"
+                                    sx={{display: 'flex', gap: 1, alignItems: 'center',}}><SettingsSuggest/> Geoff Burns</Typography>
+                        <Typography variant="body1" color="#F44336"
+                                    sx={{display: 'flex', gap: 1, alignItems: 'center',}}><BugReportSharp/> John
+                            Man</Typography>
 
                     </CardContent>
                 </Card>
@@ -47,8 +49,10 @@ export default async function Home() {
             <Grid item xs={3}>
                 <Card>
                     <CardContent>
-                        <Typography {...headingFont.style} variant="h4">Easter Egg</Typography>
-                        <Typography {...headingFont.style} variant="body1" color="#CE93D8"><Info/>Coming Soon</Typography>
+                        <Typography variant="h5" sx={{mb: 1,}}>Easter Egg</Typography>
+                        <Typography variant="body1" color="#CE93D8"
+                                    sx={{display: 'flex', gap: 1, alignItems: 'center',}}><Info/>Coming
+                            Soon</Typography>
                     </CardContent>
                 </Card>
             </Grid>

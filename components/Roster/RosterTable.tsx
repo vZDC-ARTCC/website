@@ -3,8 +3,6 @@ import prisma from "@/lib/db";
 import {User} from "next-auth";
 import {
     Box,
-    Card,
-    CardContent,
     Chip,
     Stack,
     Table,
@@ -26,16 +24,13 @@ import {LOA} from "@prisma/client";
 const VATUSA_FACILITY = process.env.VATUSA_FACILITY || 'ZDC';
 const DEV_MODE = process.env.DEV_MODE === 'true';
 
-export default async function RosterTable({membership, search}: {
+export default async function RosterTable({membership, search, includeVatusa,}: {
     membership: 'home' | 'visit' | 'both',
     search?: string,
+    includeVatusa?: boolean,
 }) {
-    const res = await fetch(`https://api.vatusa.net/v2/facility/${VATUSA_FACILITY}/roster/${membership}`, {
-        next: {
-            revalidate: 3600,
-        }
-    });
-    const data: {
+
+    let data: {
         cid: number,
         fname: string,
         lname: string,
@@ -46,8 +41,16 @@ export default async function RosterTable({membership, search}: {
             facility: string,
             role: string,
         }[],
-    }[] = (await res.json()).data;
+    }[] = [];
 
+    if (includeVatusa) {
+        const res = await fetch(`https://api.vatusa.net/v2/facility/${VATUSA_FACILITY}/roster/${membership}`, {
+            next: {
+                revalidate: 3600,
+            }
+        });
+        data = (await res.json()).data;
+    }
 
     const users = await prisma.user.findMany({
         include: {
@@ -166,134 +169,129 @@ export default async function RosterTable({membership, search}: {
     });
 
     return (
-        <Card variant="outlined">
-            <CardContent>
-                <TableContainer sx={{}}>
-                    <Table stickyHeader size="small">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Controller</TableCell>
-                                <TableCell>Operating Initials</TableCell>
-                                {certificationTypes.map((certificationType) => (
-                                    <TableCell key={certificationType.id}>{certificationType.name}</TableCell>
-                                ))}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {controllers.length + users.length === 0 &&
-                                <Typography>No results found for {search}</Typography>}
-                            {DEV_MODE && users.map((user) => (
-                                <TableRow key={user.cid}>
+        <TableContainer sx={{maxHeight: '100vh',}}>
+            <Table stickyHeader size="small">
+                <TableHead>
+                    <TableRow>
+                        <TableCell>Controller</TableCell>
+                        <TableCell>Operating Initials</TableCell>
+                        {certificationTypes.map((certificationType) => (
+                            <TableCell key={certificationType.id}>{certificationType.name}</TableCell>
+                        ))}
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {controllers.length + users.length === 0 &&
+                        <Typography>No results found for {search}</Typography>}
+                    {DEV_MODE && users.map((user) => (
+                        <TableRow key={user.cid}>
+                            <TableCell>
+                                <Link href={`/controllers/${user.cid}`}
+                                      style={{color: 'inherit', textDecoration: 'none',}}>
+                                    <Typography
+                                        variant="h6">{user.preferredName || `${user.firstName} ${user.lastName}`}
+                                        {user.loas.filter((loa: LOA) => loa.status === "APPROVED")[0] &&
+                                            <Chip label="LOA" color="primary" size="small" sx={{ml: 1,}}/>}
+                                        <Chip label="DEV MODE"/></Typography>
+                                </Link>
+                                <Typography
+                                    variant="body2">{user.preferredName && `${user.firstName} ${user.lastName}`}</Typography>
+                                <Typography variant="body1">{getRating(user.rating)} • {user.cid}</Typography>
+                                {getChips(user as User)}
+                            </TableCell>
+                            <TableCell>
+                                <Typography variant="h5">{user.operatingInitials}</Typography>
+                            </TableCell>
+                            {certificationTypes.map((certificationType) => (
+                                <TableCell key={certificationType.id}>
+                                    <Box>
+                                        <Stack direction="column" spacing={0.5}>
+                                            {getIconForCertificationOption(user.certifications.find((certification: any) => certification.certificationType.id === certificationType.id)?.certificationOption || "NONE")}
+                                            {user.soloCertifications.filter((soloCertification: any) => soloCertification.certificationType.id === certificationType.id).map((soloCertification: any) => (
+                                                <>
+                                                    <Typography
+                                                        fontSize={12}>{soloCertification.position}*</Typography>
+                                                    <Typography fontSize={12}
+                                                                variant="subtitle2">{getDaysLeft(soloCertification.expires)}</Typography>
+                                                </>
+                                            ))}
+                                        </Stack>
+                                    </Box>
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    ))}
+                    {controllers.map((user) => {
+                        if (user.user) {
+
+                            const approvedLoas = user.user.loas.filter((loa: LOA) => loa.status === "APPROVED");
+
+                            return (
+                                <TableRow key={user.user.cid}>
                                     <TableCell>
-                                        <Link href={`/controllers/${user.cid}`}
+                                        <Link href={`/controllers/${user.user.cid}`}
                                               style={{color: 'inherit', textDecoration: 'none',}}>
                                             <Typography
-                                                variant="h6">{user.preferredName || `${user.firstName} ${user.lastName}`}
-                                                {user.loas.filter((loa: LOA) => loa.status === "APPROVED")[0] &&
+                                                variant="h6">{user.user.preferredName || `${user.user.firstName} ${user.user.lastName}`}
+                                                {approvedLoas.length > 0 &&
                                                     <Chip label="LOA" color="primary" size="small" sx={{ml: 1,}}/>}
-                                                <Chip label="DEV MODE"/></Typography>
+                                            </Typography>
                                         </Link>
                                         <Typography
-                                            variant="body2">{user.preferredName && `${user.firstName} ${user.lastName}`}</Typography>
-                                        <Typography variant="body1">{getRating(user.rating)} • {user.cid}</Typography>
-                                        {getChips(user as User)}
+                                            variant="body2">{user.user.preferredName && `${user.user.firstName} ${user.user.lastName}`}</Typography>
+                                        <Typography
+                                            variant="body1">{getRating(user.user.rating)} • {user.user.cid}</Typography>
+                                        {user.user.controllerStatus === "HOME" && getChips(user.user as User)}
+                                        {user.user.controllerStatus === "VISITOR" &&
+                                            <Typography>{user.user.artcc}</Typography>}
                                     </TableCell>
                                     <TableCell>
-                                        <Typography variant="h5">{user.operatingInitials}</Typography>
+                                        <Typography variant="h5">{user.user.operatingInitials}</Typography>
                                     </TableCell>
                                     {certificationTypes.map((certificationType) => (
                                         <TableCell key={certificationType.id}>
-                                            <Box>
-                                                <Stack direction="column" spacing={0.5}>
-                                                    {getIconForCertificationOption(user.certifications.find((certification: any) => certification.certificationType.id === certificationType.id)?.certificationOption || "NONE")}
-                                                    {user.soloCertifications.filter((soloCertification: any) => soloCertification.certificationType.id === certificationType.id).map((soloCertification: any) => (
-                                                        <>
-                                                            <Typography
-                                                                fontSize={12}>{soloCertification.position}*</Typography>
-                                                            <Typography fontSize={12}
-                                                                        variant="subtitle2">{getDaysLeft(soloCertification.expires)}</Typography>
-                                                        </>
-                                                    ))}
-                                                </Stack>
-                                            </Box>
+                                            {getIconForCertificationOption(user.user.certifications.find((certification: any) => certification.certificationType.id === certificationType.id)?.certificationOption || "NONE")}
+                                            {user.user.soloCertifications.filter((soloCertification: any) => soloCertification.certificationType.id === certificationType.id).map((soloCertification: any) => (
+                                                <Tooltip key={soloCertification.id} title="Solo Certified">
+                                                    <Box>
+                                                        <Typography
+                                                            textAlign="center">{soloCertification.position}*</Typography>
+                                                        <Typography
+                                                            variant="subtitle2"
+                                                            textAlign="center">{getDaysLeft(soloCertification.expires)}</Typography>
+                                                    </Box>
+                                                </Tooltip>
+                                            ))}
                                         </TableCell>
                                     ))}
                                 </TableRow>
-                            ))}
-                            {controllers.map((user) => {
-                                if (user.user) {
+                            )
+                        } else {
+                            return (
+                                <TableRow key={user.vatusa.cid}>
+                                    <TableCell>
+                                        <Typography
+                                            variant="h6">{user.vatusa.fname} {user.vatusa.lname}</Typography>
+                                        <Typography
+                                            variant="body1">{getRating(user.vatusa.rating)} • {user.vatusa.cid}</Typography>
+                                        <Typography
+                                            variant="subtitle2">{user.vatusa.membership === 'home' ? 'Home Controller' : `Visiting Controller (${user.vatusa.facility})`}</Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Typography variant="h5">-</Typography>
+                                    </TableCell>
+                                    {certificationTypes.map((certificationType) => (
+                                        <TableCell key={certificationType.id}>
+                                            {getIconForCertificationOption("NONE")}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            )
+                        }
 
-                                    const approvedLoas = user.user.loas.filter((loa: LOA) => loa.status === "APPROVED");
-
-                                    return (
-                                        <TableRow key={user.user.cid}>
-                                            <TableCell>
-                                                <Link href={`/controllers/${user.user.cid}`}
-                                                      style={{color: 'inherit', textDecoration: 'none',}}>
-                                                    <Typography
-                                                        variant="h6">{user.user.preferredName || `${user.user.firstName} ${user.user.lastName}`}
-                                                    {approvedLoas.length > 0 &&
-                                                        <Chip label="LOA" color="primary" size="small" sx={{ml: 1,}}/>}
-                                                    </Typography>
-                                                </Link>
-                                                <Typography
-                                                    variant="body2">{user.user.preferredName && `${user.user.firstName} ${user.user.lastName}`}</Typography>
-                                                <Typography
-                                                    variant="body1">{getRating(user.user.rating)} • {user.user.cid}</Typography>
-                                                {user.user.controllerStatus === "HOME" && getChips(user.user as User)}
-                                                {user.user.controllerStatus === "VISITOR" &&
-                                                    <Typography>{user.user.artcc}</Typography>}
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography variant="h5">{user.user.operatingInitials}</Typography>
-                                            </TableCell>
-                                            {certificationTypes.map((certificationType) => (
-                                                <TableCell key={certificationType.id}>
-                                                    {getIconForCertificationOption(user.user.certifications.find((certification: any) => certification.certificationType.id === certificationType.id)?.certificationOption || "NONE")}
-                                                    {user.user.soloCertifications.filter((soloCertification: any) => soloCertification.certificationType.id === certificationType.id).map((soloCertification: any) => (
-                                                        <Tooltip key={soloCertification.id} title="Solo Certified">
-                                                            <Box>
-                                                                <Typography
-                                                                    textAlign="center">{soloCertification.position}*</Typography>
-                                                                <Typography
-                                                                    variant="subtitle2"
-                                                                    textAlign="center">{getDaysLeft(soloCertification.expires)}</Typography>
-                                                            </Box>
-                                                        </Tooltip>
-                                                    ))}
-                                                </TableCell>
-                                            ))}
-                                        </TableRow>
-                                    )
-                                } else {
-                                    return (
-                                        <TableRow key={user.vatusa.cid}>
-                                            <TableCell>
-                                                <Typography
-                                                    variant="h6">{user.vatusa.fname} {user.vatusa.lname}</Typography>
-                                                <Typography
-                                                    variant="body1">{getRating(user.vatusa.rating)} • {user.vatusa.cid}</Typography>
-                                                <Typography
-                                                    variant="subtitle2">{user.vatusa.membership === 'home' ? 'Home Controller' : `Visiting Controller (${user.vatusa.facility})`}</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography variant="h5">-</Typography>
-                                            </TableCell>
-                                            {certificationTypes.map((certificationType) => (
-                                                <TableCell key={certificationType.id}>
-                                                    {getIconForCertificationOption("NONE")}
-                                                </TableCell>
-                                            ))}
-                                        </TableRow>
-                                    )
-                                }
-
-                            })}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </CardContent>
-        </Card>
-
+                    })}
+                </TableBody>
+            </Table>
+        </TableContainer>
     );
 }

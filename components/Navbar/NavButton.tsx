@@ -18,7 +18,6 @@ export default function NavButton({icon, text, onClick, isDropdown, dropdownOpen
             startIcon={icon}
             endIcon={isDropdown && getDropdownIcon(dropdownOpen)}
             onClick={onClick}
-            sx={{display: {xs: 'none', xl: 'flex',},}}
         >
             {text}
         </Button>

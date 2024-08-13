@@ -173,8 +173,8 @@ model DossierEntry {
 
 enum CertificationOption {
   NONE
-  MINOR
-  MAJOR
+  UNRESTRICTED
+  TIER_1
   SOLO
 }
 
@@ -448,7 +448,7 @@ model TrainingSession {
   trainerComments    String?
   vatusaId           String?
   tickets            TrainingTicket[]
-  enableMarkdown     Boolean?          @default(false)
+  enableMarkdown     Boolean?         @default(false)
 }
 
 model TrainingTicket {
@@ -517,18 +517,17 @@ model StatisticsPrefixes {
   prefixes String[]
 }
 
-
 // additionChangeLog
 model Version {
-  id            String    @id @default(cuid())
-  versionNumber String  @unique
-  createdAt     DateTime  @default(now())
+  id            String         @id @default(cuid())
+  versionNumber String         @unique
+  createdAt     DateTime       @default(now())
   changeDetails ChangeDetail[]
 }
 
 model ChangeDetail {
-  id          String    @id @default(cuid())
-  detail      String
-  versionId   String
-  version     Version   @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  id        String  @id @default(cuid())
+  detail    String
+  versionId String
+  version   Version @relation(fields: [versionId], references: [id], onDelete: Cascade)
 }
