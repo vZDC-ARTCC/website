@@ -47,7 +47,12 @@ export default async function Page() {
                         lte: new Date(),
                     }
                 }
-            }
+            },
+            trainingSessions: {
+                include: {
+                    tickets: true
+                }
+            },
         }
     });
 
