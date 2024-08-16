@@ -10,9 +10,11 @@ export const updateCurrentProfile = async (user: User) => {
         preferredName: z.string().max(40, "Preferred name must not be over 40 characters").optional(),
         bio: z.string().max(400, "Bio must not be over 400 characters").optional(),
         operatingInitials: z.string().length(2, "Operating Initials must be 2 characters").toUpperCase(),
+        receiveEmail: z.string().transform((value) => value === "on"),
     });
 
     const result = User.parse(user);
+
 
     const operatingInitials = await prisma.user.findMany({
         where: {
