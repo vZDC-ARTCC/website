@@ -21,7 +21,7 @@ export default async function Page({params}: { params: { id: string } }) {
 
     return (
         <>
-            <Typography variant="h5" sx={{mb: 2,}}>Edit Training Session</Typography>
+            <Typography variant="h5" sx={{mb: 2,}}>Edit Changelog</Typography>
             <ChangeLogForm changeLog={changeLog}/>
         </>
     );

@@ -20,8 +20,9 @@ export default async function TrainingCard({user}: { user: User, }) {
         <Card>
             <CardContent>
                 <Typography variant="h6">Training Tickets</Typography>
-                <Typography sx={{my: 1,}}>All times in GMT</Typography>
-                <TrainingSessionStudentTable user={user} take={5}/>
+                {numSessions === 0 && <Typography sx={{mt: 1,}}>You do not have any training sessions.</Typography>}
+                {numSessions > 0 && <Typography sx={{my: 1,}}>All times in GMT</Typography>}
+                {numSessions > 0 && <TrainingSessionStudentTable user={user} take={5}/>}
                 {numSessions > 5 && <Stack direction="row" justifyContent="flex-end" sx={{mt: 1,}}>
                     <Link href="/profile/training" style={{color: 'inherit', textDecoration: 'none',}}>
                         <Button color="inherit" endIcon={<KeyboardArrowRight/>}>View all Training</Button>

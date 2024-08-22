@@ -25,9 +25,11 @@ export default async function Layout({children}: { children: React.ReactNode, })
                     </Box>
                 </CardContent>
             </Card>
-            <Box>
-                {children}
-            </Box>
+            <Card>
+                <CardContent>
+                    {children}
+                </CardContent>
+            </Card>
         </Stack>
     );
 }

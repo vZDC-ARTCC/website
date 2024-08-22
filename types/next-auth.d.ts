@@ -58,6 +58,8 @@ declare module "next-auth" {
         avatarUrl?: string,
         updatedAt: Date,
         noRequestLoas: boolean,
+        noRequestTrainingAssignments: boolean,
+        noRequestTrainerRelease: boolean,
         noEventSignup: boolean,
         noEditProfile: boolean,
         excludedFromVatusaRosterUpdate: boolean,

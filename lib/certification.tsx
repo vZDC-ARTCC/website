@@ -7,10 +7,10 @@ export const getIconForCertificationOption = (certificationOption: Certification
     switch (certificationOption) {
         case "NONE":
             return <Tooltip title="Not Certified"><Clear fontSize="large" color="error"/></Tooltip>;
-        case "MINOR":
-            return <Tooltip title="Minor Certified"><Circle fontSize="large" color="warning"/></Tooltip>;
-        case "MAJOR":
-            return <Tooltip title="Major Certified"><Check fontSize="large" color="success"/></Tooltip>;
+        case "UNRESTRICTED":
+            return <Tooltip title="Unrestricted Certification"><Circle fontSize="large" color="warning"/></Tooltip>;
+        case "TIER_1":
+            return <Tooltip title="Tier 1 Certified"><Check fontSize="large" color="success"/></Tooltip>;
         case "SOLO":
             return <Tooltip title="Solo Certified"><Circle fontSize="large" color="info"/></Tooltip>;
         default:

@@ -1,19 +1,20 @@
 import React from 'react';
-import {Typography, Card, CardContent} from "@mui/material";
-import ZuluTime from '@/components/TrainingSession/TrainingTicketZuluClock';
+import {Card, CardContent, Typography} from "@mui/material";
 import ChangeLogForm from "@/components/Changelog/ChangeLogForm";
+import getConfig from "next/config";
 
 
 export default async function Page() {
 
+    const {publicRuntimeConfig} = getConfig();
+
     return (
-        <>
-            <div style={{display:"flex"}}>
+        <Card>
+            <CardContent>
                 <Typography variant="h5" sx={{mb: 2,}}>New Changelog Version</Typography>
-                <ZuluTime/>
-            </div>
-            <ChangeLogForm/>
-        </>
+                <ChangeLogForm latestVersion={publicRuntimeConfig.version}/>
+            </CardContent>
+        </Card>
     );
 
 }

@@ -67,29 +67,39 @@ export default async function Page({params}: { params: { id: string } }) {
 
     return (
         <Container maxWidth="md">
-            <Card>
-                <CardContent>
-                    <Grid container columns={2} spacing={2}>
-                        <Grid item xs={2}>
-                            <Box sx={{position: 'relative', width: '100%', minHeight: 400,}}>
-                                <Image src={['png','jpeg','jpg','gif'].indexOf(imageUrl.split('.').at(-1)!) > -1 ?imageUrl:Placeholder} alt={event.name} priority fill style={{objectFit: 'contain'}}/>
-                            </Box>
-                        </Grid>
-                        <Grid item xs={2}>
-                            <Stack direction="column" spacing={1} sx={{mb: 4,}}>
-                                <Typography variant="h5">{event.name}</Typography>
-                                <Typography variant="subtitle1">
-                                    {format(new Date(event.start), 'M/d/yy HHmm')}z
-                                    - {format(new Date(event.end), 'M/d/yy HHmm')}z
-                                </Typography>
-                                <Typography variant="subtitle2">{event.featuredFields.join(" • ") || 'No fields'}</Typography>
-                            </Stack>
-                            <Markdown>{event.description}</Markdown>
-                        </Grid>
-                        { session && session.user &&
+            <Stack direction="column" spacing={2}>
+                <Card>
+                    <CardContent>
+                        <Grid container columns={2} spacing={2}>
                             <Grid item xs={2}>
-                                <Typography variant="h6">Event Positions</Typography>
-                                <TableContainer>
+                                <Box sx={{position: 'relative', width: '100%', minHeight: 400,}}>
+                                    <Image
+                                        src={['png', 'jpeg', 'jpg', 'gif'].indexOf(imageUrl.split('.').at(-1)!) > -1 ? imageUrl : Placeholder}
+                                        alt={event.name} priority fill style={{objectFit: 'contain'}}/>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={2}>
+                                <Stack direction="column" spacing={1} sx={{mb: 4,}}>
+                                    <Typography variant="h5">{event.name}</Typography>
+                                    <Typography variant="subtitle1">
+                                        {format(new Date(event.start), 'M/d/yy HHmm')}z
+                                        - {format(new Date(event.end), 'M/d/yy HHmm')}z
+                                    </Typography>
+                                    <Typography
+                                        variant="subtitle2">{event.featuredFields.join(" • ") || 'No fields'}</Typography>
+                                </Stack>
+                                <Markdown>{event.description}</Markdown>
+                            </Grid>
+                        </Grid>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardContent>
+                        { session && session.user &&
+                            <>
+                                <Typography variant="h6" sx={{mb: 1,}}>Event Positions</Typography>
+                                {event.positions.length === 0 && <Typography>No positions available</Typography>}
+                                {event.positions.length > 0 && <TableContainer>
                                     <Table size="small">
                                         <TableHead>
                                             <TableRow>
@@ -122,13 +132,12 @@ export default async function Page({params}: { params: { id: string } }) {
                                             ))}
                                         </TableBody>
                                     </Table>
-                                </TableContainer>
-                            </Grid>
+                                </TableContainer>}
+                            </>
                         }
-                    </Grid>
-                </CardContent>
-            </Card>
-
+                    </CardContent>
+                </Card>
+            </Stack>
         </Container>
     );
 }

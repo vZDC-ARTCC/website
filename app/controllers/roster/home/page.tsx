@@ -7,8 +7,9 @@ export const metadata: Metadata = {
     description: 'vZDC home roster page',
 };
 
-export default function Page({searchParams}: { searchParams: { search?: string, } }) {
+export default function Page({searchParams}: { searchParams: { search?: string, includeVatusa?: string, } }) {
     return (
-        <RosterTable membership="home" search={searchParams.search}/>
+        <RosterTable membership="home" search={searchParams.search}
+                     includeVatusa={searchParams.includeVatusa === 'true'}/>
     );
 }
