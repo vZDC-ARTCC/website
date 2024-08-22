@@ -26,7 +26,6 @@ export default async function Page() {
                         <Button variant="contained" size="large" startIcon={<Add/>}>New Training Session</Button>
                     </Link>
             </Stack>
-            <Typography sx={{my: 1,}}>All times in GMT</Typography>
             <TrainingSessionTable admin isInstructor={isInstructor} mentorCID={mentorCID}/>
         </>
     );

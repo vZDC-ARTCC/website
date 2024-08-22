@@ -3,6 +3,7 @@ import TrainingSessionTable from '@/components/TrainingSession/TrainingSessionTa
 import prisma from '@/lib/db';
 import { User, getServerSession } from "next-auth";
 import {authOptions} from "@/auth/auth";
+import {Box, Typography} from "@mui/material";
 
 export default async function Page({params}: { params: { cid: string, }, }) {
 
@@ -24,6 +25,10 @@ export default async function Page({params}: { params: { cid: string, }, }) {
     }
  
     return (
-        <TrainingSessionTable admin isInstructor={isInstructor} mentorCID={mentorCID} onlyUser={controller as User}/>
+        <Box>
+            <Typography variant="h5" sx={{mb: 1,}}>Training Sessions</Typography>
+            <TrainingSessionTable admin isInstructor={isInstructor} mentorCID={mentorCID}
+                                  onlyUser={controller as User}/>
+        </Box>
     );
 }

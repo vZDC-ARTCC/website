@@ -1,0 +1,85 @@
+import React from 'react';
+import prisma from "@/lib/db";
+import {notFound} from "next/navigation";
+import {getServerSession, User} from "next-auth";
+import {authOptions} from "@/auth/auth";
+import {Button, Card, CardActions, CardContent, Stack, Typography} from "@mui/material";
+import {formatZuluDate} from "@/lib/date";
+import TrainerAssignmentRequestDeleteButton
+    from "@/components/TrainerAssignmentRequest/TrainerAssignmentRequestDeleteButton";
+import TrainingAssignmentForm from "@/components/TrainingAssignment/TrainingAssignmentForm";
+import {getRating} from "@/lib/vatsim";
+import TrainingAssignmentToggleExpressInterestButton
+    from "@/components/TrainingAssignment/TrainingAssignmentToggleExpressInterestButton";
+
+export default async function Page({params}: { params: { id: string, } }) {
+
+    const {id} = params;
+
+    const request = await prisma.trainingAssignmentRequest.findUnique({
+        where: {
+            id,
+        },
+        include: {
+            student: true,
+            interestedTrainers: true,
+        }
+    });
+
+    if (!request) {
+        notFound();
+    }
+
+    const session = await getServerSession(authOptions);
+
+    const isInstructorOrStaff = session?.user.roles.includes('STAFF') || session?.user.roles.includes('INSTRUCTOR');
+
+    const allUsers = await prisma.user.findMany({
+        where: {
+            controllerStatus: {
+                not: 'NONE',
+            },
+        },
+    });
+
+    return session && (
+        <Stack direction="column" spacing={2}>
+            <Card>
+                <CardContent>
+                    <Stack direction="row" justifyContent="space-between" spacing={1}>
+                        <Typography variant="h5">Training Request - {request.student.fullName}</Typography>
+                        {isInstructorOrStaff && <TrainerAssignmentRequestDeleteButton request={request}/>}
+                    </Stack>
+                    <Typography
+                        variant="subtitle2">Student: {request.student.fullName} ({request.student.cid})</Typography>
+                    <Typography variant="subtitle2">Submitted: {formatZuluDate(request.submittedAt)}</Typography>
+                </CardContent>
+            </Card>
+            <Card>
+                <CardContent>
+                    <Typography variant="h6">Interested Trainers</Typography>
+                    {request.interestedTrainers.length === 0 &&
+                        <Typography>No trainers have shown interest yet.</Typography>}
+                    <Stack direction="column" spacing={1}>
+                        {request.interestedTrainers.map(trainer => (
+                            <Typography key={trainer.id} variant="subtitle1">{trainer.fullName} ({trainer.cid})
+                                - {getRating(trainer.rating)}</Typography>
+                        ))}
+                    </Stack>
+                </CardContent>
+                <CardActions>
+                    <TrainingAssignmentToggleExpressInterestButton user={session.user} request={request}
+                                                                   hasAlreadyExpressedInterest={request.interestedTrainers.map(it => it.id).includes(session.user.id)}/>
+                </CardActions>
+            </Card>
+            {isInstructorOrStaff && <Card>
+                <CardContent>
+                    <Typography variant="h6" sx={{mb: 2,}}>Training Assignment</Typography>
+                    <TrainingAssignmentForm allUsers={allUsers as User[]} trainingRequest={request}
+                                            requestStudent={request.student as User}/>
+                </CardContent>
+            </Card>}
+        </Stack>
+
+    );
+}

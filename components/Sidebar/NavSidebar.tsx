@@ -1,6 +1,6 @@
 'use client';
 import React, {ReactNode} from 'react';
-import {Drawer, IconButton, List, Stack, Tooltip, Typography} from "@mui/material";
+import {Box, Drawer, IconButton, List, Stack, Tooltip, Typography} from "@mui/material";
 import {Close, Menu} from "@mui/icons-material";
 import Logo from "@/components/Logo/Logo";
 
@@ -20,7 +20,7 @@ export default function NavSidebar({children, title, open, openButton, onOpen, o
     return (
         <>
             {openButton && <Tooltip title="Open Sidebar">
-                <IconButton color="inherit" onClick={onOpen} sx={{display: {xl: 'flex',},}}>
+                <IconButton color="inherit" onClick={onOpen} sx={{display: {xs: 'inline-block', xl: 'none',},}}>
                     <Menu/>
                 </IconButton>
             </Tooltip>}

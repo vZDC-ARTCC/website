@@ -32,6 +32,7 @@ import {toast} from "react-toastify";
 import MarkdownEditor from "@uiw/react-markdown-editor";
 import FormSaveButton from "@/components/Form/FormSaveButton";
 import {createOrUpdateTrainingSession} from "@/actions/trainingSession"
+import utc from "dayjs/plugin/utc";
 
 export default function TrainingSessionForm({trainingSession,}: { trainingSession?: TrainingSession, }) {
 
@@ -43,8 +44,8 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
     const [allUsers, setAllUsers] = useState<User[]>([]);
     const [allLoading, setAllLoading] = useState<boolean>(true);
     const [student, setStudent] = useState<string>(trainingSession?.studentId || searchParams.get('student') || '');
-    const [start, setStart] = useState<Date | null>(trainingSession?.start || new Date());
-    const [end, setEnd] = useState<Date | null>(trainingSession?.end || new Date());
+    const [start, setStart] = useState<Date | string>(trainingSession?.start || new Date());
+    const [end, setEnd] = useState<Date | string>(trainingSession?.end || new Date());
     const [trainingTickets, setTrainingTickets] = useState<{
         passed: boolean,
         lesson: Lesson,
@@ -106,6 +107,8 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
         return <CircularProgress/>;
     }
 
+    dayjs.extend(utc);
+
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
             <form action={handleSubmit}>
@@ -123,12 +126,12 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
                         />
                     </Grid>
                     <Grid item xs={2} md={1}>
-                        <DateTimePicker  ampm={false} label="Start" value={dayjs(start)}
-                                        onChange={(d) => setStart(d?.toDate() || null)}/>
+                        <DateTimePicker ampm={false} label="Start" value={dayjs.utc(start)}
+                                        onChange={(d) => setStart(d?.toDate() || new Date())}/>
                     </Grid>
                     <Grid item xs={2} md={1}>
-                        <DateTimePicker  ampm={false} label="End" value={dayjs(end)}
-                                        onChange={(d) => setEnd(d?.toDate() || null)}/>
+                        <DateTimePicker ampm={false} label="End" value={dayjs.utc(end)}
+                                        onChange={(d) => setEnd(d?.toDate() || new Date())}/>
                     </Grid>
                     <Grid item xs={2}>
                         {trainingTickets.length > 0 && <Card variant="outlined">

@@ -1,6 +1,6 @@
 'use client';
-import React, {useState} from 'react';
-import {useRouter} from "next/navigation";
+import React, {useCallback, useEffect, useState} from 'react';
+import {useParams, useRouter} from "next/navigation";
 import {z} from "zod";
 import {toast} from "react-toastify";
 import {Autocomplete, Button, Stack, TextField} from "@mui/material";
@@ -13,9 +13,10 @@ export default function CidForm({basePath, controllers, initialCid}: {
 }) {
 
     const router = useRouter();
-    const [controller, setController] = useState(initialCid);
+    const params = useParams();
+    const [controller, setController] = useState(params.cid || initialCid);
 
-    const handleSubmit = () => {
+    const handleSubmit = useCallback(() => {
         if (!controller) {
             router.push(`${basePath}`, {
                 scroll: true,
@@ -32,10 +33,14 @@ export default function CidForm({basePath, controllers, initialCid}: {
                 scroll: true,
             });
         }
-    }
+    }, [basePath, controller, router]);
+
+    useEffect(() => {
+        handleSubmit();
+    }, [controller, handleSubmit, initialCid])
 
     return (
-        <form action={handleSubmit} style={{width: '100%',}}>
+        // <form action={handleSubmit} style={{width: '100%',}}>
             <Stack direction={{xs: 'column', md: 'row',}} spacing={2}>
                 <Autocomplete
                     fullWidth
@@ -47,8 +52,8 @@ export default function CidForm({basePath, controllers, initialCid}: {
                     }}
                     renderInput={(params) => <TextField {...params} variant="filled" label="Controller"/>}
                 />
-                <Button type="submit" variant="contained" size="large">Search</Button>
+                {/*<Button type="submit" variant="contained" size="large">Search</Button>*/}
             </Stack>
-        </form>
+        // </form>
     );
 }

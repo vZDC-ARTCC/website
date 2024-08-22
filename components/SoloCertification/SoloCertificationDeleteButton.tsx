@@ -6,7 +6,7 @@ import {IconButton} from "@mui/material";
 import {Delete} from "@mui/icons-material";
 import {deleteSolo} from "@/actions/solo";
 
-function SoloCertificationDeleteButton({soloCertification,}: { soloCertification: SoloCertification }) {
+export default function SoloCertificationDeleteButton({soloCertification,}: { soloCertification: SoloCertification }) {
     const [clicked, setClicked] = useState(false);
 
     const handleClick = async () => {
@@ -26,5 +26,3 @@ function SoloCertificationDeleteButton({soloCertification,}: { soloCertification
         </IconButton>
     );
 }
-
-export default SoloCertificationDeleteButton;
