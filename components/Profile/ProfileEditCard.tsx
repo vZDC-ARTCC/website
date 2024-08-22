@@ -25,14 +25,14 @@ export default function ProfileEditCard({user, sessionUser, admin = false}: {
             preferredName: z.string().max(40, "Preferred name must not be over 40 characters").optional(),
             bio: z.string().max(400, "Bio must not be over 400 characters").optional(),
             operatingInitials: z.string().length(2, "Operating Initials must be 2 characters").toUpperCase(),
-            receiveEmail: z.string(),
+            receiveEmail: z.boolean(),
         });
 
         const result = User.safeParse({
             preferredName: formData.get('preferredName') as string,
             bio: formData.get('bio') as string,
             operatingInitials: formData.get('operatingInitials') as string || user.operatingInitials,
-            receiveEmail: formData.get('receiveEmailSwitch') as string || 'off',
+            receiveEmail: formData.get('receiveEmailSwitch') === 'on',
         });
 
         if (!result.success) {

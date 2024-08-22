@@ -64,6 +64,7 @@ declare module "next-auth" {
         noEditProfile: boolean,
         excludedFromVatusaRosterUpdate: boolean,
         hiddenFromRoster: boolean,
+        receiveEmail:   boolean
     }
 
     interface AdapterUser extends User {
