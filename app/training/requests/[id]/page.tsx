@@ -3,7 +3,7 @@ import prisma from "@/lib/db";
 import {notFound} from "next/navigation";
 import {getServerSession, User} from "next-auth";
 import {authOptions} from "@/auth/auth";
-import {Button, Card, CardActions, CardContent, Stack, Typography} from "@mui/material";
+import {Card, CardActions, CardContent, Stack, Typography} from "@mui/material";
 import {formatZuluDate} from "@/lib/date";
 import TrainerAssignmentRequestDeleteButton
     from "@/components/TrainerAssignmentRequest/TrainerAssignmentRequestDeleteButton";

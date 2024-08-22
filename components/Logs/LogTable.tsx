@@ -1,18 +1,7 @@
 'use client';
-import React, {useCallback, useEffect, useState} from 'react';
-import {
-    DataGrid,
-    getGridSingleSelectOperators,
-    getGridStringOperators,
-    GridColDef,
-    GridFilterItem,
-    GridFilterModel,
-    GridPaginationModel,
-    GridSortModel,
-    GridToolbar
-} from "@mui/x-data-grid";
+import React from 'react';
+import {getGridSingleSelectOperators, GridColDef} from "@mui/x-data-grid";
 import {fetchLogs} from "@/actions/log";
-import {toast} from "react-toastify";
 import {LogModel, LogType} from "@prisma/client";
 import DataTable, {containsOnlyFilterOperator, equalsOnlyFilterOperator} from "@/components/DataTable/DataTable";
 

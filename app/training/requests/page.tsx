@@ -3,7 +3,6 @@ import {Card, CardContent, Typography} from "@mui/material";
 import TrainerAssignmentRequestsTable from "@/components/TrainerAssignmentRequest/TrainerAssignmentRequestsTable";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/auth/auth";
-import {permanentRedirect} from "next/navigation";
 
 export default async function Page() {
 

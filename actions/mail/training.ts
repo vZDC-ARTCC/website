@@ -1,6 +1,6 @@
 'use server';
 
-import {Lesson, TrainerReleaseRequest, TrainingAssignmentRequest, TrainingSession} from "@prisma/client";
+import {Lesson, TrainingSession} from "@prisma/client";
 import {User} from "next-auth";
 import {FROM_EMAIL, mailTransport} from "@/lib/email";
 import emailFooter from "@/actions/mail/footer";

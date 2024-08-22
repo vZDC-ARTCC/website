@@ -1,8 +1,7 @@
 'use client';
 import React from 'react';
 import DataTable, {containsOnlyFilterOperator, equalsOnlyFilterOperator} from "@/components/DataTable/DataTable";
-import {formatZuluDate} from "@/lib/date";
-import {GridColDef, GridFilterItem, GridPaginationModel, GridSortModel} from "@mui/x-data-grid";
+import {GridColDef} from "@mui/x-data-grid";
 import {Chip, IconButton, Stack} from "@mui/material";
 import {User} from "next-auth";
 import {fetchTrainingAssignments} from "@/actions/trainingAssignment";

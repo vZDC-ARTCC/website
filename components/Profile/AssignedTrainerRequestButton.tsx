@@ -11,7 +11,7 @@ export default function AssignedTrainerRequestButton() {
     const submit = async () => {
         setLoading(true);
 
-        const {request, errors,} = await submitTrainingAssignmentRequest();
+        const {errors,} = await submitTrainingAssignmentRequest();
 
         if (errors) {
             toast(errors.join(' '), {type: 'error',});

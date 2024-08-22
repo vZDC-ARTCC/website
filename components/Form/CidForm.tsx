@@ -3,7 +3,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {useParams, useRouter} from "next/navigation";
 import {z} from "zod";
 import {toast} from "react-toastify";
-import {Autocomplete, Button, Stack, TextField} from "@mui/material";
+import {Autocomplete, Stack, TextField} from "@mui/material";
 import {User} from "next-auth";
 
 export default function CidForm({basePath, controllers, initialCid}: {

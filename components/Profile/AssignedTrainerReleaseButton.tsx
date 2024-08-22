@@ -1,9 +1,7 @@
 'use client';
 import React, {useState} from 'react';
-import {TrainingAssignment} from "@prisma/client";
 import {Button} from "@mui/material";
 import {toast} from "react-toastify";
-import {cancelTrainingAssignmentRequest} from "@/actions/trainingAssignmentRequest";
 import {releaseTrainingAssignment} from "@/actions/trainingAssignmentRelease";
 
 export default function AssignedTrainerReleaseButton() {

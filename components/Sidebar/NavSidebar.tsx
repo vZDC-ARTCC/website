@@ -1,6 +1,6 @@
 'use client';
 import React, {ReactNode} from 'react';
-import {Box, Drawer, IconButton, List, Stack, Tooltip, Typography} from "@mui/material";
+import {Drawer, IconButton, List, Stack, Tooltip, Typography} from "@mui/material";
 import {Close, Menu} from "@mui/icons-material";
 import Logo from "@/components/Logo/Logo";
 

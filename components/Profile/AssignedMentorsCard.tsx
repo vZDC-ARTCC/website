@@ -1,6 +1,6 @@
 import React from 'react';
 import {User} from "next-auth";
-import {Box, Button, Card, CardActions, CardContent, Chip, Stack, Tooltip, Typography} from "@mui/material";
+import {Box, Card, CardActions, CardContent, Chip, Stack, Tooltip, Typography} from "@mui/material";
 import {InfoOutlined} from "@mui/icons-material";
 import prisma from "@/lib/db";
 import {getRating} from "@/lib/vatsim";

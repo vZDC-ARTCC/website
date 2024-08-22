@@ -1,8 +1,7 @@
 import React, {useState} from 'react';
-import {IconButton, Tooltip} from "@mui/material";
+import {IconButton} from "@mui/material";
 import {Delete} from "@mui/icons-material";
 import {useRouter} from "next/navigation";
-import {deleteTrainingAssignment} from "@/actions/trainingAssignment";
 import {toast} from "react-toastify";
 import {deleteTrainingRelease} from "@/actions/trainingAssignmentRelease";
 

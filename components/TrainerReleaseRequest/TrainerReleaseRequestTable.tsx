@@ -4,11 +4,6 @@ import {GridColDef} from "@mui/x-data-grid";
 import DataTable, {containsOnlyFilterOperator, equalsOnlyFilterOperator} from "@/components/DataTable/DataTable";
 import {formatZuluDate} from "@/lib/date";
 import {fetchTrainerReleases} from "@/actions/trainingAssignmentRelease";
-import Link from "next/link";
-import {IconButton} from "@mui/material";
-import {Visibility} from "@mui/icons-material";
-import TrainerAssignmentRequestDeleteButton
-    from "@/components/TrainerAssignmentRequest/TrainerAssignmentRequestDeleteButton";
 import TrainerReleaseRequestApproveButton from "@/components/TrainerReleaseRequest/TrainerReleaseRequestApproveButton";
 import TrainerReleaseDeleteButton from "@/components/TrainerReleaseRequest/TrainerReleaseDeleteButton";
 

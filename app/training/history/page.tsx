@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card, CardContent, Stack, Typography} from "@mui/material";
+import {Stack, Typography} from "@mui/material";
 import {Info} from "@mui/icons-material";
 
 export default async function Page() {

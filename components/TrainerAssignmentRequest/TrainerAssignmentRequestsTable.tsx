@@ -1,9 +1,9 @@
 'use client';
-import React, {useState} from 'react';
+import React from 'react';
 import {User} from "next-auth";
-import {GridColDef, GridFilterItem, GridSortModel} from "@mui/x-data-grid";
+import {GridColDef} from "@mui/x-data-grid";
 import {IconButton} from "@mui/material";
-import {Delete, Edit, Visibility} from "@mui/icons-material";
+import {Visibility} from "@mui/icons-material";
 import DataTable, {containsOnlyFilterOperator, equalsOnlyFilterOperator} from "@/components/DataTable/DataTable";
 import {fetchRequests} from "@/actions/trainingAssignmentRequest";
 import {formatZuluDate} from "@/lib/date";

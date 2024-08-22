@@ -3,14 +3,17 @@ import {Badge, Card, CardContent, List, ListItemButton, ListItemIcon, ListItemTe
 import Link from "next/link";
 import {
     Class,
+    Clear,
     FmdBad,
     Home,
     ListAlt,
     LocalActivity,
-    MilitaryTech,
-    WorkspacePremium,
     ManageSearch,
-    Hail, People, PersonAdd, Clear, School,
+    MilitaryTech,
+    People,
+    PersonAdd,
+    School,
+    WorkspacePremium,
 } from "@mui/icons-material";
 import prisma from "@/lib/db";
 

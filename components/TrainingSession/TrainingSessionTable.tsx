@@ -1,25 +1,14 @@
 'use client';
-import React, {useCallback, useEffect, useState} from 'react';
+import React from 'react';
 import {User} from "next-auth";
 import {CommonMistake, Lesson} from "@prisma/client";
-import {
-    DataGrid,
-    getGridStringOperators,
-    GridColDef,
-    GridFilterItem,
-    GridFilterModel,
-    GridPaginationModel,
-    GridSortModel,
-    GridToolbar
-} from "@mui/x-data-grid";
-import {toast} from "react-toastify";
+import {GridColDef} from "@mui/x-data-grid";
 import {fetchTrainingSessions} from "@/actions/trainingSession";
 import {Chip, IconButton} from "@mui/material";
 import Link from "next/link";
 import {Edit, Visibility} from "@mui/icons-material";
 import TrainingSessionDeleteButton from "@/components/TrainingSession/TrainingSessionDeleteButton";
 import {formatZuluDate, getDuration} from "@/lib/date";
-import { arrayBuffer } from 'stream/consumers';
 import DataTable, {containsOnlyFilterOperator, equalsOnlyFilterOperator} from "@/components/DataTable/DataTable";
 
 type TrainingTicketTableProps = {
