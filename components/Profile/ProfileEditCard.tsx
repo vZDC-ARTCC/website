@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import {User} from "next-auth";
-import {Card, CardContent, Divider, Stack, TextField, Switch} from "@mui/material";
+import {Card, CardContent, Divider, Stack, TextField, Switch, Tooltip} from "@mui/material";
 import {getRating} from "@/lib/vatsim";
 import {z} from "zod";
 import {toast} from "react-toastify";
@@ -83,7 +83,9 @@ export default function ProfileEditCard({user, sessionUser, admin = false}: {
                                    defaultValue={user.bio || ''}/>
                         {admin && <TextField variant="filled" name="operatingInitials" label="Operating Initials"
                                              defaultValue={user.operatingInitials || ''}/>}
-                        <FormControlLabel name="receiveEmailSwitch" onClick={() => setSwitchState(!switchState)} checked={switchState} control={<Switch />} label="Receive Emails" />
+                        <Tooltip  title={'Toggling this off will remove you from any email notifications send from this site.'}  placement="top-start">
+                            <FormControlLabel name="receiveEmailSwitch" onClick={() => setSwitchState(!switchState)} checked={switchState} control={<Switch />} label="Receive Emails" />
+                        </Tooltip>
                         <FormSaveButton />
                     </Stack>
                 </form>

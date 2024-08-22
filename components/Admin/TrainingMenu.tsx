@@ -41,14 +41,6 @@ export default async function TrainingMenu() {
                             <ListItemText primary="Overview"/>
                         </ListItemButton>
                     </Link>
-                    <Link href="/training/statistics" style={{textDecoration: 'none', color: 'inherit',}}>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <QueryStats/>
-                            </ListItemIcon>
-                            <ListItemText primary="Training Statistics"/>
-                        </ListItemButton>
-                    </Link>
                     <Link href="/training/sessions" style={{textDecoration: 'none', color: 'inherit',}}>
                         <ListItemButton>
                             <ListItemIcon>
@@ -112,3 +104,16 @@ export default async function TrainingMenu() {
         </Card>
     );
 }
+
+/* this is for training stats
+
+<Link href="/training/statistics" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <QueryStats/>
+                            </ListItemIcon>
+                            <ListItemText primary="Training Statistics"/>
+                        </ListItemButton>
+                    </Link>
+
+ */
