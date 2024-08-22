@@ -84,7 +84,7 @@ export default function ProfileEditCard({user, sessionUser, admin = false}: {
                         {admin && <TextField variant="filled" name="operatingInitials" label="Operating Initials"
                                              defaultValue={user.operatingInitials || ''}/>}
                         <Tooltip  title={'As of now, this feature is DISABLED! Once implemented, toggling this off will remove you from any email notifications send from this site.'}  placement="top-start">
-                            <FormControlLabel name="receiveEmailSwitch" onClick={() => setSwitchState(!switchState)} checked={switchState} disabled control={<Switch />} label="Receive Emails" />
+                            <FormControlLabel name="receiveEmailSwitch" onChange={() => setSwitchState(!switchState)} checked={switchState} disabled control={<Switch />} label="Receive Emails" />
                         </Tooltip>
                         <FormSaveButton />
                     </Stack>
