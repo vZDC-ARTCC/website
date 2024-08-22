@@ -86,6 +86,7 @@ export const createOrUpdateEvent = async (formData: FormData) => {
                 return formData.get('id') || ALLOWED_FILE_TYPES.includes(file?.type || '');
             }, 'File must be a PNG, JPEG, or GIF')
             ),
+        bannerUrl: z.any().optional()
     });
 
     const result = eventZ.safeParse({
@@ -98,6 +99,7 @@ export const createOrUpdateEvent = async (formData: FormData) => {
         start: new Date(formData.get('start') as unknown as string),
         end: new Date(formData.get('end') as unknown as string),
         bannerImage: formData.get('bannerImage') as File,
+        bannerUrl: formData.get('bannerUrl') as string
     });
 
     if (!result.success) {
@@ -114,27 +116,48 @@ export const createOrUpdateEvent = async (formData: FormData) => {
             },
     });
 
-    if (!eventExists && !result.data.bannerImage) {
+    if (!eventExists && !result.data.bannerImage && !result.data.bannerUrl) {
         return {errors: [{message: "Banner image is required",}]};
     }
 
     let bannerKey = eventExists?.bannerKey || '';
     if (!eventExists) {
-        const res = await ut.uploadFiles(result.data.bannerImage);
-        if (!res.data) {
-            throw new Error("Failed to upload banner image");
+        if (result.data.bannerUrl) {
+            const res = await ut.uploadFilesFromUrl(result.data.bannerUrl)
+
+            if (!res.data) {
+                throw new Error("Failed to upload banner image");
+            }
+            bannerKey = res.data?.key;
+        }else{
+            const res = await ut.uploadFiles(result.data.bannerImage);
+
+            if (!res.data) {
+                throw new Error("Failed to upload banner image");
+            }
+            bannerKey = res.data?.key;
         }
-        bannerKey = res.data?.key;
-    } else if ((result.data.bannerImage as File).size > 0) {
+    } else if ((result.data.bannerImage as File) !== null && (result.data.bannerImage as File).size > 0 || result.data.bannerUrl) {
         const deletion = await ut.deleteFiles(eventExists.bannerKey);
         if (!deletion.success) {
             throw new Error("Failed to delete old banner image");
         }
-        const res = await ut.uploadFiles(result.data.bannerImage);
-        if (!res.data) {
-            throw new Error("Failed to upload banner image");
+
+        if (result.data.bannerUrl) {
+            const res = await ut.uploadFilesFromUrl(result.data.bannerUrl)
+
+            if (!res.data) {
+                throw new Error("Failed to upload banner image");
+            }
+            bannerKey = res.data?.key;
+        }else{
+            const res = await ut.uploadFiles(result.data.bannerImage);
+
+            if (!res.data) {
+                throw new Error("Failed to upload banner image");
+            }
+            bannerKey = res.data?.key;
         }
-        bannerKey = res.data.key;
     }
 
     const event = await prisma.event.upsert({

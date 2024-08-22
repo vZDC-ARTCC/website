@@ -12,6 +12,7 @@ export default async function ProfileCard({user, admin, viewOnly}: {
     viewOnly?: boolean,
 }) {
 
+    // @ts-ignore
     return (
         <Card sx={{height: '100%',}}>
             <CardContent>
@@ -52,6 +53,10 @@ export default async function ProfileCard({user, admin, viewOnly}: {
                     <Grid item xs={2} sm={1}>
                         <Typography variant="subtitle2">Rating</Typography>
                         <Typography variant="body2">{getRating(user.rating)}</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                        <Typography variant="subtitle2">Receive Email</Typography>
+                        <Typography variant="body2">{user.receiveEmail ? "Yes" : "No"}</Typography>
                     </Grid>
                     <Grid item xs={2}>
                         <Typography variant="subtitle2">Bio</Typography>

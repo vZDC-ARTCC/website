@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import {Event, EventType} from "@prisma/client";
-import {Box, Grid, MenuItem, TextField, Typography, useTheme} from "@mui/material";
+import {Box, Grid, MenuItem, TextField, Typography, useTheme, ToggleButton, ToggleButtonGroup, Stack} from "@mui/material";
 import {DateTimePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
@@ -24,6 +24,7 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
 
     const theme = useTheme();
     const [description, setDescription] = React.useState<string>(event?.description || '');
+    const [alignment, setAlignment] = React.useState('File');
     const router = useRouter();
     dayjs.extend(utc);
 
@@ -37,6 +38,13 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
         router.push('/admin/events');
         toast(`Event '${event.name}' saved successfully!`, {type: 'success'});
     }
+
+    const handleChange = (
+        event: React.MouseEvent<HTMLElement>,
+        newAlignment: string,
+      ) => {
+        setAlignment(newAlignment);
+      };
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -84,7 +92,20 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
                     </Grid>
                     <Grid item xs={2} md={1}>
                         <Typography variant="h6" sx={{mb: 2,}}>Upload Banner Image</Typography>
-                        <input type="file" name="bannerImage" accept="image/*"/>
+                        <Stack spacing={2}>
+                            <ToggleButtonGroup
+                                color="primary"
+                                value={alignment}
+                                exclusive
+                                onChange={handleChange}
+                                aria-label="Platform"
+                            >
+                                <ToggleButton value="File">File</ToggleButton>
+                                <ToggleButton value="URL">URL</ToggleButton>
+                            </ToggleButtonGroup>
+
+                            {alignment==="File" ? <input type="file" name="bannerImage" accept="image/*"/> : <input type="url" id="bannerUrl" name="bannerUrl"/>}
+                        </Stack>
                     </Grid>
                     {imageUrl &&
                         <Grid item xs={2} md={1}>

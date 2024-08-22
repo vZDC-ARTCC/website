@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import {User} from "next-auth";
-import {Card, CardContent, Divider, Stack, TextField} from "@mui/material";
+import {Card, CardContent, Divider, Stack, TextField, Switch, Tooltip} from "@mui/material";
 import {getRating} from "@/lib/vatsim";
 import {z} from "zod";
 import {toast} from "react-toastify";
@@ -9,6 +9,7 @@ import {updateCurrentProfile} from "@/actions/profile";
 import {useRouter} from "next/navigation";
 import {writeDossier} from "@/actions/dossier";
 import FormSaveButton from "@/components/Form/FormSaveButton";
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 export default function ProfileEditCard({user, sessionUser, admin = false}: {
     user: User,
@@ -17,18 +18,21 @@ export default function ProfileEditCard({user, sessionUser, admin = false}: {
 }) {
 
     const router = useRouter();
+    const [switchState, setSwitchState] = React.useState(user.receiveEmail)
 
     const handleSubmit = async (formData: FormData) => {
         const User = z.object({
             preferredName: z.string().max(40, "Preferred name must not be over 40 characters").optional(),
             bio: z.string().max(400, "Bio must not be over 400 characters").optional(),
             operatingInitials: z.string().length(2, "Operating Initials must be 2 characters").toUpperCase(),
+            receiveEmail: z.string(),
         });
 
         const result = User.safeParse({
             preferredName: formData.get('preferredName') as string,
             bio: formData.get('bio') as string,
             operatingInitials: formData.get('operatingInitials') as string || user.operatingInitials,
+            receiveEmail: formData.get('receiveEmailSwitch') as string || 'off',
         });
 
         if (!result.success) {
@@ -79,6 +83,9 @@ export default function ProfileEditCard({user, sessionUser, admin = false}: {
                                    defaultValue={user.bio || ''}/>
                         {admin && <TextField variant="filled" name="operatingInitials" label="Operating Initials"
                                              defaultValue={user.operatingInitials || ''}/>}
+                        <Tooltip  title={'As of now, this feature is DISABLED! Once implemented, toggling this off will remove you from any email notifications send from this site.'}  placement="top-start">
+                            <FormControlLabel name="receiveEmailSwitch" onClick={() => setSwitchState(!switchState)} checked={switchState} disabled control={<Switch />} label="Receive Emails" />
+                        </Tooltip>
                         <FormSaveButton />
                     </Stack>
                 </form>
