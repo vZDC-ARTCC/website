@@ -9,7 +9,7 @@ import {Edit} from "@mui/icons-material";
 import TrainingAssignmentDeleteButton from "@/components/TrainingAssignment/TrainingAssignmentDeleteButton";
 import {useRouter} from "next/navigation";
 
-export default function TrainingAssignmentTable({isInstructorOrStaff}: { isInstructorOrStaff: boolean }) {
+export default function TrainingAssignmentTable({manageMode}: { manageMode: boolean }) {
 
     const router = useRouter();
 
@@ -48,7 +48,7 @@ export default function TrainingAssignmentTable({isInstructorOrStaff}: { isInstr
             field: 'actions',
             headerName: 'Actions',
             type: 'actions',
-            getActions: (params) => isInstructorOrStaff ? [
+            getActions: (params) => manageMode ? [
                 <GridActionsCellItem
                     icon={<Edit/>}
                     label="Edit Assignment"

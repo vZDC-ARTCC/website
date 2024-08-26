@@ -10,7 +10,7 @@ import TrainerAssignmentRequestDeleteButton
     from "@/components/TrainerAssignmentRequest/TrainerAssignmentRequestDeleteButton";
 import {useRouter} from "next/navigation";
 
-export default function TrainerAssignmentRequestsTable({isInstructorOrStaff}: { isInstructorOrStaff: boolean }) {
+export default function TrainerAssignmentRequestsTable({manageMode}: { manageMode: boolean }) {
 
     const router = useRouter();
 
@@ -42,7 +42,7 @@ export default function TrainerAssignmentRequestsTable({isInstructorOrStaff}: { 
             field: 'actions',
             type: 'actions',
             headerName: 'Actions',
-            getActions: (params) => isInstructorOrStaff ? [
+            getActions: (params) => manageMode ? [
                 <GridActionsCellItem
                     icon={<Visibility/>}
                     label="View Request"

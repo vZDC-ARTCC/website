@@ -32,7 +32,7 @@ export default async function Page({params}: { params: { id: string, } }) {
 
     const session = await getServerSession(authOptions);
 
-    const isInstructorOrStaff = session?.user.roles.includes('STAFF') || session?.user.roles.includes('INSTRUCTOR');
+    const isTaOrAta = session?.user.staffPositions.includes('TA') || session?.user.staffPositions.includes('ATA');
 
     const allUsers = await prisma.user.findMany({
         where: {
@@ -48,7 +48,7 @@ export default async function Page({params}: { params: { id: string, } }) {
                 <CardContent>
                     <Stack direction="row" justifyContent="space-between" spacing={1}>
                         <Typography variant="h5">Training Request - {request.student.fullName}</Typography>
-                        {isInstructorOrStaff && <TrainerAssignmentRequestDeleteButton request={request} noTable/>}
+                        {isTaOrAta && <TrainerAssignmentRequestDeleteButton request={request} noTable/>}
                     </Stack>
                     <Typography
                         variant="subtitle2">Student: {request.student.fullName} ({request.student.cid})</Typography>
@@ -72,7 +72,7 @@ export default async function Page({params}: { params: { id: string, } }) {
                                                                    hasAlreadyExpressedInterest={request.interestedTrainers.map(it => it.id).includes(session.user.id)}/>
                 </CardActions>
             </Card>
-            {isInstructorOrStaff && <Card>
+            {isTaOrAta && <Card>
                 <CardContent>
                     <Typography variant="h6" sx={{mb: 2,}}>Training Assignment</Typography>
                     <TrainingAssignmentForm allUsers={allUsers as User[]} trainingRequest={request}

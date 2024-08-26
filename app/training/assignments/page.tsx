@@ -10,18 +10,18 @@ export default async function Page() {
 
     const session = await getServerSession(authOptions);
 
-    const isInstructorOrStaff = session?.user?.roles.includes('INSTRUCTOR') || session?.user?.roles.includes('STAFF');
+    const isTaOrAta = session?.user?.staffPositions.includes('TA') || session?.user?.staffPositions.includes('ATA');
 
     return (
         <Card>
             <CardContent>
                 <Stack direction="row" justifyContent="space-between" spacing={1}>
                     <Typography variant="h5">Trainer Assignments</Typography>
-                    {isInstructorOrStaff && <Link href="/training/assignments/new" passHref>
+                    {isTaOrAta && <Link href="/training/assignments/new" passHref>
                         <Button variant="contained" startIcon={<Add/>}>Manual Training Assignment</Button>
                     </Link>}
                 </Stack>
-                <TrainingAssignmentTable isInstructorOrStaff={!!isInstructorOrStaff}/>
+                <TrainingAssignmentTable manageMode={!!isTaOrAta}/>
             </CardContent>
         </Card>
     );

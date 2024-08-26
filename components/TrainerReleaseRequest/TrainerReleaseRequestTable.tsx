@@ -7,7 +7,7 @@ import {fetchTrainerReleases} from "@/actions/trainingAssignmentRelease";
 import TrainerReleaseRequestApproveButton from "@/components/TrainerReleaseRequest/TrainerReleaseRequestApproveButton";
 import TrainerReleaseDeleteButton from "@/components/TrainerReleaseRequest/TrainerReleaseDeleteButton";
 
-export default function TrainerReleaseRequestTable({isInstructorOrStaff}: { isInstructorOrStaff: boolean }) {
+export default function TrainerReleaseRequestTable({manageMode}: { manageMode: boolean }) {
 
     const columns: GridColDef[] = [
         {
@@ -29,7 +29,7 @@ export default function TrainerReleaseRequestTable({isInstructorOrStaff}: { isIn
             field: 'actions',
             type: 'actions',
             headerName: 'Actions',
-            getActions: (params) => isInstructorOrStaff ? [
+            getActions: (params) => manageMode ? [
                 <TrainerReleaseRequestApproveButton studentId={params.row.student.id}/>,
                 <TrainerReleaseDeleteButton studentId={params.row.student.id}/>,
             ] : [],

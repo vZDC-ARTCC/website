@@ -7,13 +7,13 @@ import TrainerReleaseRequestTable from "@/components/TrainerReleaseRequest/Train
 export default async function Page() {
 
     const session = await getServerSession(authOptions);
-    const isInstructorOrStaff = session?.user?.roles.includes('INSTRUCTOR') || session?.user?.roles.includes('STAFF');
+    const isInstructorOrStaff = session?.user?.roles.includes('STAFF') || session?.user?.roles.includes('INSTRUCTOR');
 
     return (
         <Card>
             <CardContent>
                 <Typography variant="h5">Trainer Release Requests</Typography>
-                <TrainerReleaseRequestTable isInstructorOrStaff={!!isInstructorOrStaff}/>
+                <TrainerReleaseRequestTable manageMode={!!isInstructorOrStaff}/>
             </CardContent>
         </Card>
     );

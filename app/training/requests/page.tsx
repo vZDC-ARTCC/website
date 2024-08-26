@@ -8,13 +8,13 @@ export default async function Page() {
 
     const session = await getServerSession(authOptions);
 
-    const isInstructorOrStaff = session?.user?.roles.includes('INSTRUCTOR') || session?.user?.roles.includes('STAFF');
+    const isTaOrAta = session?.user?.staffPositions.includes('TA') || session?.user?.staffPositions.includes('ATA');
 
     return (
         <Card>
             <CardContent>
                 <Typography variant="h5" sx={{mb: 1,}}>Trainer Assignment Requests</Typography>
-                <TrainerAssignmentRequestsTable isInstructorOrStaff={!!isInstructorOrStaff}/>
+                <TrainerAssignmentRequestsTable manageMode={!!isTaOrAta}/>
             </CardContent>
         </Card>
     );

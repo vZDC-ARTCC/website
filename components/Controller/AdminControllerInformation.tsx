@@ -58,7 +58,9 @@ export default async function AdminControllerInformation({cid}: { cid: string, }
                 <Card>
                     <CardContent>
                         <Typography variant="h6" sx={{mb: 2,}}>User Settings</Typography>
-                        <UserSettingsForm user={controller as User}/>
+                        {!session.user.roles.includes("STAFF") &&
+                            <Typography>You are not allowed to view user settings.</Typography>}
+                        {session.user.roles.includes("STAFF") && <UserSettingsForm user={controller as User}/>}
                     </CardContent>
                 </Card>
             </Grid>
