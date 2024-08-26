@@ -1,13 +1,17 @@
 'use client';
 import React, {useState} from 'react';
 import {toast} from "react-toastify";
-import {IconButton} from "@mui/material";
+import {IconButton, Tooltip} from "@mui/material";
 import {Delete} from "@mui/icons-material";
 import {TrainingAssignmentRequest} from "@prisma/client";
 import {deleteTrainingAssignmentRequest} from "@/actions/trainingAssignmentRequest";
 import {useRouter} from "next/navigation";
+import {GridActionsCellItem} from "@mui/x-data-grid";
 
-export default function TrainerAssignmentRequestDeleteButton({request}: { request: TrainingAssignmentRequest, }) {
+export default function TrainerAssignmentRequestDeleteButton({request, noTable = false,}: {
+    request: TrainingAssignmentRequest,
+    noTable?: boolean,
+}) {
 
     const [clicked, setClicked] = useState(false);
     const router = useRouter();
@@ -24,9 +28,23 @@ export default function TrainerAssignmentRequestDeleteButton({request}: { reques
 
     }
 
+    if (noTable) {
+        return (
+            <Tooltip title="Delete Trainer Request">
+                <IconButton onClick={handleClick}>
+                    <Delete color={clicked ? "warning" : "inherit"}/>
+                </IconButton>
+            </Tooltip>
+        );
+    }
+
     return (
-        <IconButton onClick={handleClick}>
-            {clicked ? <Delete color="warning"/> : <Delete/>}
-        </IconButton>
+        <Tooltip title="Delete Trainer Request">
+            <GridActionsCellItem
+                icon={<Delete color={clicked ? "warning" : "inherit"}/>}
+                label="Delete Trainer Request"
+                onClick={handleClick}
+            />
+        </Tooltip>
     );
 }

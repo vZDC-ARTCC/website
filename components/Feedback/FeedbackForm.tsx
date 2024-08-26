@@ -1,3 +1,4 @@
+// components/Feedback/FeedbackForm.tsx
 "use client";
 import React, {useState} from 'react';
 import {User} from "next-auth";
@@ -9,11 +10,70 @@ import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 import FeedbackFormSubmitButton from "@/components/Feedback/FeedbackFormSubmitButton";
 import {checkCaptcha} from "@/lib/captcha";
 
+const groupedPositions = [
+    {
+        group: 'Center', options: [
+            'DC_32_CTR',
+            'DC_12_CTR',
+            'DC_19_CTR',
+            'DC_CTR',
+        ]
+    },
+    {
+        group: 'Approach/Departure', options:
+            ['PCT_APP',
+                'IAD_APP',
+                'DCA_APP',
+                'BWI_APP',
+                'ORF_APP',
+                'RIC_APP',
+                'RDU_APP',
+                'IAD_DEP',
+                'DCA_DEP',
+                'BWI_DEP',
+                'ORF_DEP',
+                'RIC_DEP',
+                'RDU_DEP',
+            ]
+    },
+    {
+        group: 'Tower', options: [
+            'IAD_TWR',
+            'DCA_TWR',
+            'BWI_TWR',
+            'ORF_TWR',
+            'RIC_TWR',
+            'RDU_TWR',
+        ]
+    },
+    {
+        group: 'Ground', options: [
+            'IAD_GND',
+            'DCA_GND',
+            'BWI_GND',
+            'ORF_GND',
+            'RIC_GND',
+            'RDG_GND',
+        ]
+    },
+    {
+        group: 'Delivery', options: [
+            'IAD_DEL',
+            'DCA_DEL',
+            'BWI_DEL',
+            'ORF_DEL',
+            'RIC_DEL',
+            'RDU_DEL',
+        ]
+    },
+];
+
 export default function FeedbackForm({controllers, user}: { controllers: User[], user: User }) {
 
     const router = useRouter();
     const {executeRecaptcha,} = useGoogleReCaptcha();
     const [controller, setController] = useState('');
+    const [controllerPosition, setControllerPosition] = useState('');
 
     const handleSubmit = async (formData: FormData) => {
 
@@ -33,6 +93,7 @@ export default function FeedbackForm({controllers, user}: { controllers: User[],
             <form action={handleSubmit}>
                 <input type="hidden" name="pilotId" value={user.id}/>
                 <input type="hidden" name="controllerId" value={controller}/>
+                <input type="hidden" name="controllerPosition" value={controllerPosition}/>
                 <Grid container columns={2} spacing={2}>
                     <Grid item xs={2} sm={1}>
                         <TextField fullWidth variant="filled" name="pilotName" label="Your Name"
@@ -58,11 +119,26 @@ export default function FeedbackForm({controllers, user}: { controllers: User[],
                             onChange={(event, newValue) => {
                                 setController(newValue ? newValue.id : '');
                             }}
-                            renderInput={(params) => <TextField {...params} label="Controller"/>}
+                            renderInput={(params) => <TextField {...params} required label="Controller"/>}
                         />
                     </Grid>
                     <Grid item xs={2} sm={1}>
-                        <TextField fullWidth variant="filled" name="controllerPosition" label="Position Staffed*"/>
+                        <Autocomplete
+                            freeSolo
+                            fullWidth
+                            options={groupedPositions.flatMap(group => group.options)}
+                            groupBy={(option) => groupedPositions.find(group => group.options.includes(option))?.group || ''}
+                            value={controllerPosition}
+                            onChange={(event, newValue) => {
+                                setControllerPosition(newValue || '');
+                            }}
+                            onInputChange={(event, newInputValue) => {
+                                setControllerPosition(newInputValue);
+                            }}
+                            renderInput={(params) => <TextField {...params}
+                                                                helperText="You can pick from the selections OR type in a custom position."
+                                                                label="Position Staffed" required/>}
+                        />
                     </Grid>
                     <Grid item xs={2}>
                         <Typography component="legend">Rating*</Typography>
@@ -76,12 +152,10 @@ export default function FeedbackForm({controllers, user}: { controllers: User[],
                                    label="Additional Comments"/>
                     </Grid>
                     <Grid item xs={2}>
-                       <FeedbackFormSubmitButton />
+                        <FeedbackFormSubmitButton/>
                     </Grid>
                 </Grid>
             </form>
         </Box>
-
     );
-
 }

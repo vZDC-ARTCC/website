@@ -391,7 +391,8 @@ model Event {
 
 enum EventType {
   HOME
-  SUPPORT
+  SUPPORT_REQUIRED
+  SUPPORT_OPTIONAL
   GROUP_FLIGHT
   TRAINING
 }

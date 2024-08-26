@@ -1,10 +1,11 @@
 'use client';
 import React, {useState} from 'react';
-import {LOA} from "@prisma/client";
+import {LOA, LOAStatus} from "@prisma/client";
 import {toast} from "react-toastify";
 import {Button, IconButton, Tooltip} from "@mui/material";
 import {Delete, Storage} from "@mui/icons-material";
 import {deleteLoa} from "@/actions/loa";
+import {GridActionsCellItem} from "@mui/x-data-grid";
 
 export default function LoaDeleteButton({loa, icon}: { loa: LOA, icon?: boolean, }) {
     const [clicked, setClicked] = useState(false);
@@ -23,9 +24,12 @@ export default function LoaDeleteButton({loa, icon}: { loa: LOA, icon?: boolean,
     if (icon) {
         return (
             <Tooltip title="Close LOA">
-                <IconButton color="inherit" onClick={handleClick}>
-                    {clicked ? <Storage color="warning"/> : <Storage/>}
-                </IconButton>
+                <GridActionsCellItem
+                    disabled={loa.status === LOAStatus.INACTIVE}
+                    icon={clicked ? <Storage color="warning"/> : <Storage/>}
+                    label="Close LOA"
+                    onClick={handleClick}
+                />
             </Tooltip>
         );
     }

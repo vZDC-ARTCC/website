@@ -160,6 +160,13 @@ export async function GET() {
             },
         });
 
+        await prisma.lOA.deleteMany({
+            where: {
+                userId: controller.id,
+                status: 'APPROVED',
+            },
+        });
+
     }
 
     await prisma.vatsimUpdateMetadata.upsert({

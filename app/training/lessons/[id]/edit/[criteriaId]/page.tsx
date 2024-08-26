@@ -17,13 +17,13 @@ import {
 import LessonRubricCriteriaForm from "@/components/Lesson/LessonRubricCriteriaForm";
 import {LessonRubricCriteria} from "@prisma/client";
 import Link from "next/link";
-import {Edit} from "@mui/icons-material";
+import {ArrowBack, Edit} from "@mui/icons-material";
 import LessonCriteriaCellDeleteButton from "@/components/Lesson/LessonCriteriaCellDeleteButton";
 import LessonCriteriaCellForm from "@/components/Lesson/LessonCriteriaCellForm";
 
 export default async function Page({params}: { params: { id: string, criteriaId: string } }) {
 
-    const {criteriaId} = params;
+    const {id, criteriaId} = params;
 
     const criteria = await prisma.lessonRubricCriteria.findUnique({
         where: {
@@ -50,7 +50,14 @@ export default async function Page({params}: { params: { id: string, criteriaId:
     return criteria.rubric.Lesson && (
         <Card>
             <CardContent>
-                <Typography variant="h5">{criteria.criteria}</Typography>
+                <Stack direction="row" spacing={1} alignItems="center">
+                    <Link href={`/training/lessons/${id}/edit`}>
+                        <IconButton size="large">
+                            <ArrowBack/>
+                        </IconButton>
+                    </Link>
+                    <Typography variant="h5">{criteria.criteria}</Typography>
+                </Stack>
                 <Typography variant="subtitle2"
                             sx={{mb: 2,}}>{criteria.rubric.Lesson.identifier} - {criteria.rubric.Lesson.name}</Typography>
                 <LessonRubricCriteriaForm lesson={criteria.rubric.Lesson} criteria={criteria as LessonRubricCriteria}/>
@@ -58,8 +65,10 @@ export default async function Page({params}: { params: { id: string, criteriaId:
                     <Card variant="outlined">
                         <CardContent>
                             <Typography variant="h6" sx={{mb: 2,}}>Criteria Cells</Typography>
-                            <TableContainer>
-                                <Table>
+                            {criteria.cells.length === 0 &&
+                                <Typography>No criteria cells found; create one below.</Typography>}
+                            {criteria.cells.length > 0 && <TableContainer>
+                                <Table size="small">
                                     <TableHead>
                                         <TableRow>
                                             <TableCell>Description</TableCell>
@@ -85,7 +94,7 @@ export default async function Page({params}: { params: { id: string, criteriaId:
                                         ))}
                                     </TableBody>
                                 </Table>
-                            </TableContainer>
+                            </TableContainer>}
                         </CardContent>
                     </Card>
                     <Card variant="outlined">

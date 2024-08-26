@@ -1,10 +1,11 @@
 'use server';
-import {Event, EventType} from "@prisma/client";
+import {Event, EventType, Prisma} from "@prisma/client";
 import {revalidatePath} from "next/cache";
 import prisma from "@/lib/db";
 import {log} from "@/actions/log";
 import {z} from "zod";
 import {UTApi} from "uploadthing/server";
+import {GridFilterItem, GridPaginationModel, GridSortModel} from "@mui/x-data-grid";
 
 const MAX_FILE_SIZE = 1024 * 1024 * 4;
 const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
@@ -219,3 +220,53 @@ export const setPositionsLock = async (event: Event, lock: boolean) => {
     revalidatePath(`/admin/events`);
     return data;
 }
+
+export const fetchEvents = async (pagination: GridPaginationModel, sort: GridSortModel, filter?: GridFilterItem) => {
+    const orderBy: Prisma.EventOrderByWithRelationInput = {};
+    if (sort.length > 0) {
+        const sortField = sort[0].field as keyof Prisma.EventOrderByWithRelationInput;
+        orderBy[sortField] = sort[0].sort === 'asc' ? 'asc' : 'desc';
+    }
+
+    return prisma.$transaction([
+        prisma.event.count({
+            where: getWhere(filter),
+        }),
+        prisma.event.findMany({
+            orderBy,
+            where: getWhere(filter),
+            take: pagination.pageSize,
+            skip: pagination.page * pagination.pageSize,
+        })
+    ]);
+};
+
+const getWhere = (filter?: GridFilterItem): Prisma.EventWhereInput => {
+    if (!filter) {
+        return {};
+    }
+    switch (filter?.field) {
+        case 'name':
+            return {
+                name: {
+                    [filter.operator]: filter.value as string,
+                    mode: 'insensitive',
+                },
+            };
+        case 'type':
+            return {
+                type: {
+                    [filter.operator]: filter.value as string,
+                },
+            };
+        case 'host':
+            return {
+                host: {
+                    [filter.operator]: filter.value as string,
+                    mode: 'insensitive',
+                },
+            };
+        default:
+            return {};
+    }
+};

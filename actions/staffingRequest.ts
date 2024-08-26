@@ -1,10 +1,11 @@
 'use server';
 
 import prisma from "@/lib/db";
-import {StaffingRequest} from "@prisma/client";
+import {Prisma, StaffingRequest} from "@prisma/client";
 import {log} from "@/actions/log";
 import {revalidatePath} from "next/cache";
 import {z} from "zod";
+import {GridFilterItem, GridPaginationModel, GridSortModel} from "@mui/x-data-grid";
 
 export const createStaffingRequest = async (formData: FormData) => {
 
@@ -51,3 +52,80 @@ export const closeStaffingRequest = async (staffingRequest: StaffingRequest) => 
     revalidatePath("/admin/staffing-requests");
     return deletedStaffingRequest;
 }
+
+export const fetchStaffingRequests = async (pagination: GridPaginationModel, sort: GridSortModel, filter?: GridFilterItem) => {
+    const orderBy: Prisma.StaffingRequestOrderByWithRelationInput = {};
+    if (sort.length > 0) {
+        const sortField = sort[0].field as keyof Prisma.StaffingRequestOrderByWithRelationInput;
+        orderBy[sortField] = sort[0].sort === 'asc' ? 'asc' : 'desc';
+    }
+
+    return prisma.$transaction([
+        prisma.staffingRequest.count({
+            where: getWhere(filter),
+        }),
+        prisma.staffingRequest.findMany({
+            orderBy,
+            where: getWhere(filter),
+            take: pagination.pageSize,
+            skip: pagination.page * pagination.pageSize,
+            include: {
+                user: true,
+            },
+        })
+    ]);
+};
+
+const getWhere = (filter?: GridFilterItem): Prisma.StaffingRequestWhereInput => {
+    if (!filter) {
+        return {};
+    }
+    switch (filter?.field) {
+        case 'user':
+            return {
+                user: {
+                    OR: [
+                        {
+                            cid: {
+                                [filter.operator]: filter.value as string,
+                                mode: 'insensitive',
+                            }
+                        },
+                        {
+                            fullName: {
+                                [filter.operator]: filter.value as string,
+                                mode: 'insensitive',
+                            }
+                        },
+                    ],
+                },
+            };
+        case 'cid':
+            return {
+                user: {
+                    cid: {
+                        [filter.operator]: filter.value as string,
+                        mode: 'insensitive',
+                    }
+                }
+            };
+        case 'email':
+            return {
+                user: {
+                    email: {
+                        [filter.operator]: filter.value as string,
+                        mode: 'insensitive',
+                    }
+                }
+            };
+        case 'name':
+            return {
+                name: {
+                    [filter.operator]: filter.value as string,
+                    mode: 'insensitive',
+                },
+            };
+        default:
+            return {};
+    }
+};

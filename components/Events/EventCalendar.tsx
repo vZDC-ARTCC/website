@@ -35,8 +35,10 @@ const getEventColor = (eventType: EventType) => {
     switch (eventType) {
         case EventType.HOME:
             return '#f44336';
-        case EventType.SUPPORT:
-            return '#ce93d8';
+        case EventType.SUPPORT_REQUIRED:
+            return '#834091';
+        case EventType.SUPPORT_OPTIONAL:
+            return '#cd8dd8';
         case EventType.GROUP_FLIGHT:
             return '#66bb6a';
         case EventType.TRAINING:

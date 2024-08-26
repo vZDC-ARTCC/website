@@ -7,6 +7,8 @@ import {revalidatePath} from "next/cache";
 import {addVatusaSolo, deleteVatusaSolo} from "@/actions/vatusa/controller";
 import {sendSoloAddedEmail, sendSoloDeletedEmail, sendSoloExpiredEmail} from "@/actions/mail/solo";
 import {User} from "next-auth";
+import {Prisma} from "@prisma/client";
+import {GridFilterItem, GridPaginationModel, GridSortModel} from "@mui/x-data-grid";
 
 export const addSolo = async (formData: FormData) => {
 
@@ -125,3 +127,72 @@ export const deleteExpiredSolos = async () => {
     revalidatePath('/training/solos');
     revalidatePath('/controllers/roster');
 }
+
+export const fetchSoloCertifications = async (pagination: GridPaginationModel, sort: GridSortModel, filter?: GridFilterItem) => {
+    const orderBy: Prisma.SoloCertificationOrderByWithRelationInput = {};
+    if (sort.length > 0) {
+        const sortField = sort[0].field as keyof Prisma.SoloCertificationOrderByWithRelationInput;
+        orderBy[sortField] = sort[0].sort === 'asc' ? 'asc' : 'desc';
+    }
+
+    return prisma.$transaction([
+        prisma.soloCertification.count({
+            where: getWhere(filter),
+        }),
+        prisma.soloCertification.findMany({
+            orderBy,
+            where: getWhere(filter),
+            take: pagination.pageSize,
+            skip: pagination.page * pagination.pageSize,
+            include: {
+                controller: true,
+                certificationType: true,
+            },
+        })
+    ]);
+};
+
+const getWhere = (filter?: GridFilterItem): Prisma.SoloCertificationWhereInput => {
+    if (!filter) {
+        return {};
+    }
+    switch (filter?.field) {
+        case 'controller':
+            return {
+                controller: {
+                    OR: [
+                        {
+                            cid: {
+                                [filter.operator]: filter.value as string,
+                                mode: 'insensitive',
+                            }
+                        },
+                        {
+                            fullName: {
+                                [filter.operator]: filter.value as string,
+                                mode: 'insensitive',
+                            }
+                        },
+                    ],
+                },
+            };
+        case 'certification':
+            return {
+                certificationType: {
+                    name: {
+                        [filter.operator]: filter.value as string,
+                        mode: 'insensitive',
+                    },
+                },
+            };
+        case 'position':
+            return {
+                position: {
+                    [filter.operator]: filter.value as string,
+                    mode: 'insensitive',
+                },
+            };
+        default:
+            return {};
+    }
+};

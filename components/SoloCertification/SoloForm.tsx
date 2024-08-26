@@ -54,7 +54,8 @@ export default function SoloForm({controllers, certificationTypes,}: {
                                 id="ct-select"
                                 label="Certification Type"
                                 name="certificationType"
-                            >
+                                required
+                                variant="filled">
                                 {certificationTypes.map((certificationType) => (
                                     <MenuItem key={certificationType.id}
                                               value={certificationType.id}>{certificationType.name}</MenuItem>
@@ -66,7 +67,7 @@ export default function SoloForm({controllers, certificationTypes,}: {
                         <TextField fullWidth variant="filled" name="position" label="Position" required/>
                     </Grid>
                     <Grid item xs={2} md={1}>
-                        <DateTimePicker  ampm={false} name="expires" defaultValue={dayjs(new Date()).add(1, "month")}/>
+                        <DateTimePicker ampm={false} name="expires" defaultValue={dayjs(new Date()).add(1, "month")}/>
                     </Grid>
                     <Grid item xs={2}>
                         <FormSaveButton/>

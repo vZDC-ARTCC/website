@@ -65,16 +65,7 @@ export default async function CertificationsCard({cid}: { cid: string, }) {
                                 <TableRow key={certificationType.id}>
                                     <TableCell>{certificationType.name}</TableCell>
                                     <TableCell>
-                                        {getIconForCertificationOption(controller.certifications.find((certification) => certification.certificationType.id === certificationType.id)?.certificationOption || "NONE")}
-                                        {controller.soloCertifications.filter((soloCertification) => soloCertification.certificationType.id === certificationType.id).map((soloCertification) => (
-                                            <Tooltip key={soloCertification.id} title="Solo Certified">
-                                                <Box>
-                                                    <Typography>{soloCertification.position}*</Typography>
-                                                    <Typography
-                                                        variant="subtitle2">{getDaysLeft(soloCertification.expires)}</Typography>
-                                                </Box>
-                                            </Tooltip>
-                                        ))}
+                                        {getIconForCertificationOption(controller.certifications.find((certification) => certification.certificationType.id === certificationType.id)?.certificationOption || "NONE", controller.soloCertifications.find((soloCertification) => soloCertification.certificationType.id === certificationType.id))}
                                     </TableCell>
                                 </TableRow>
                             ))}

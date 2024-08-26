@@ -3,11 +3,15 @@ import React, {useState} from 'react';
 import {TrainingAssignment} from "@prisma/client";
 import {useRouter} from "next/navigation";
 import {toast} from "react-toastify";
-import {IconButton} from "@mui/material";
+import {IconButton, Tooltip} from "@mui/material";
 import {Delete} from "@mui/icons-material";
 import {deleteTrainingAssignment} from "@/actions/trainingAssignment";
+import {GridActionsCellItem} from "@mui/x-data-grid";
 
-export default function TrainingAssignmentDeleteButton({assignment}: { assignment: TrainingAssignment, }) {
+export default function TrainingAssignmentDeleteButton({assignment, noTable = false,}: {
+    assignment: TrainingAssignment,
+    noTable?: boolean,
+}) {
     const [clicked, setClicked] = useState(false);
     const router = useRouter();
 
@@ -23,9 +27,23 @@ export default function TrainingAssignmentDeleteButton({assignment}: { assignmen
 
     }
 
+    if (noTable) {
+        return (
+            <Tooltip title="Delete Training Assignment">
+                <IconButton onClick={handleClick}>
+                    <Delete color={clicked ? "warning" : "inherit"}/>
+                </IconButton>
+            </Tooltip>
+        );
+    }
+
     return (
-        <IconButton onClick={handleClick}>
-            {clicked ? <Delete color="warning"/> : <Delete/>}
-        </IconButton>
+        <Tooltip title="Delete Training Assignment">
+            <GridActionsCellItem
+                icon={<Delete color={clicked ? "warning" : "inherit"}/>}
+                label="Delete Training Assignment"
+                onClick={handleClick}
+            />
+        </Tooltip>
     );
 }

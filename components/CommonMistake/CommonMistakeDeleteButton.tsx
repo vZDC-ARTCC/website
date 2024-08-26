@@ -1,28 +1,32 @@
 'use client';
 import React, {useState} from 'react';
-import {toast} from "react-toastify";
-import {IconButton} from "@mui/material";
+import {GridActionsCellItem} from "@mui/x-data-grid";
 import {Delete} from "@mui/icons-material";
-import {CommonMistake} from "@prisma/client";
+import {toast} from "react-toastify";
 import {deleteMistake} from "@/actions/mistake";
+import {Tooltip} from "@mui/material";
+import {CommonMistake} from "@prisma/client";
 
-export default function CommonMistakeDeleteButton({mistake}: { mistake: CommonMistake, }) {
+export default function CommonMistakeDeleteButton({mistake}: { mistake: CommonMistake }) {
     const [clicked, setClicked] = useState(false);
 
-    const handleClick = async () => {
+    const handleDelete = async () => {
         if (clicked) {
             await deleteMistake(mistake.id);
-            toast(`Mistake deleted successfully!`, {type: 'success'});
+            toast(`'${mistake.name}' deleted successfully!`, {type: 'success'});
         } else {
-            toast(`Deleting this remove the common mistake from every training ticket.  Click again to confirm.`, {type: 'warning'});
+            toast(`Deleting '${mistake.name}' will remove this mistake. Click again to confirm.`, {type: 'warning'});
             setClicked(true);
         }
-
     }
 
     return (
-        <IconButton onClick={handleClick}>
-            {clicked ? <Delete color="warning"/> : <Delete/>}
-        </IconButton>
+        <Tooltip title="Delete Mistake">
+            <GridActionsCellItem
+                icon={<Delete color={clicked ? "warning" : "inherit"}/>}
+                label="Delete Mistake"
+                onClick={handleDelete}
+            />
+        </Tooltip>
     );
 }

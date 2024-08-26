@@ -11,6 +11,7 @@ import {
 } from "@mui/x-data-grid";
 import {toast} from "react-toastify";
 import {Box} from "@mui/material";
+import {useSearchParams, useRouter} from "next/navigation";
 
 export const equalsOnlyFilterOperator = getGridStringOperators().filter((operator) => operator.value === 'equals');
 export const containsOnlyFilterOperator = getGridStringOperators().filter((operator) => operator.value === 'contains');
@@ -37,11 +38,41 @@ export default function DataTable<T>(
         }
 ) {
 
+    const searchParams = useSearchParams();
+    const router = useRouter();
     const [data, setData] = useState<T[]>();
-    const [pagination, setPagination] = useState(initialPagination);
+    const [pagination, setPagination] = useState<GridPaginationModel>(() => {
+        const page = Number(searchParams.get('page')) || initialPagination.page;
+        const pageSize = Number(searchParams.get('pageSize')) || initialPagination.pageSize;
+        return {page, pageSize};
+    });
     const [rowCount, setRowCount] = useState(0);
-    const [filter, setFilter] = useState(initialFilter);
-    const [sortModel, setSortModel] = useState(initialSort || []);
+    const [filter, setFilter] = useState<GridFilterItem | undefined>(() => {
+        const filterField = searchParams.get('filterField');
+        const filterValue = searchParams.get('filterValue');
+        const filterOperator = searchParams.get('filterOperator');
+        return filterField && filterValue && filterOperator ? {
+            field: filterField,
+            value: filterValue,
+            operator: filterOperator
+        } : initialFilter;
+    });
+    const [sortModel, setSortModel] = useState<GridSortModel>(() => {
+        const sortField = searchParams.get('sortField');
+        const sortDirection = searchParams.get('sortDirection');
+        return sortField && sortDirection ? [{
+            field: sortField,
+            sort: sortDirection as 'asc' | 'desc'
+        }] : initialSort || [];
+    });
+
+    const updateQueryParams = (params: Record<string, string>) => {
+        const newParams = new URLSearchParams(searchParams.toString());
+        Object.entries(params).forEach(([key, value]) => {
+            newParams.set(key, value);
+        });
+        router.push(`?${newParams.toString()}`);
+    };
 
     const getData = useCallback(async () => {
         try {
@@ -58,18 +89,36 @@ export default function DataTable<T>(
     }, [getData]);
 
     const handleFilterChange = (newFilters: GridFilterModel) => {
-        setFilter(newFilters.items[0]);
-    }
+        const newFilter = newFilters.items[0];
+        setFilter(newFilter);
+        updateQueryParams({
+            filterField: newFilter?.field || '',
+            filterValue: newFilter?.value?.toString() || '',
+            filterOperator: newFilter?.operator || ''
+        });
+    };
 
     const handlePaginationModelChange = (newPagination: GridPaginationModel) => {
-        setPagination((prevPagination) => ({
-            ...prevPagination,
-            ...newPagination,
-        }));
-    }
+        setPagination(newPagination);
+        updateQueryParams({
+            page: newPagination.page.toString(),
+            pageSize: newPagination.pageSize.toString()
+        });
+    };
 
     const handleSortChange = (newSortModel: GridSortModel) => {
         setSortModel(newSortModel);
+        if (newSortModel.length > 0) {
+            updateQueryParams({
+                sortField: newSortModel[0].field,
+                sortDirection: newSortModel[0].sort || 'asc'
+            });
+        } else {
+            updateQueryParams({
+                sortField: '',
+                sortDirection: ''
+            });
+        }
     };
 
     return (
@@ -97,7 +146,5 @@ export default function DataTable<T>(
                 disableRowSelectionOnClick
             />
         </Box>
-
     );
-
 }

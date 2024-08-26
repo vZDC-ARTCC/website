@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import {User} from "next-auth";
-import {GridColDef} from "@mui/x-data-grid";
+import {GridActionsCellItem, GridColDef} from "@mui/x-data-grid";
 import {IconButton} from "@mui/material";
 import {Visibility} from "@mui/icons-material";
 import DataTable, {containsOnlyFilterOperator, equalsOnlyFilterOperator} from "@/components/DataTable/DataTable";
@@ -10,8 +10,11 @@ import {formatZuluDate} from "@/lib/date";
 import Link from "next/link";
 import TrainerAssignmentRequestDeleteButton
     from "@/components/TrainerAssignmentRequest/TrainerAssignmentRequestDeleteButton";
+import {useRouter} from "next/navigation";
 
 export default function TrainerAssignmentRequestsTable({isInstructorOrStaff}: { isInstructorOrStaff: boolean }) {
+
+    const router = useRouter();
 
     const columns: GridColDef[] = [
         {
@@ -41,18 +44,15 @@ export default function TrainerAssignmentRequestsTable({isInstructorOrStaff}: { 
             field: 'actions',
             type: 'actions',
             headerName: 'Actions',
-            renderCell: (params) => isInstructorOrStaff && (
-                <div>
-                    <Link href={`/training/requests/${params.row.id}`}>
-                        <IconButton>
-                            <Visibility/>
-                        </IconButton>
-                    </Link>
-                    <TrainerAssignmentRequestDeleteButton request={params.row}/>
-                </div>
-            ),
-            sortable: false,
-            filterable: false,
+            getActions: (params) => isInstructorOrStaff ? [
+                <GridActionsCellItem
+                    icon={<Visibility/>}
+                    label="View Request"
+                    onClick={() => router.push(`/training/requests/${params.row.id}`)}
+                />,
+                <TrainerAssignmentRequestDeleteButton request={params.row}/>,
+            ] : [],
+            flex: 1,
         }
     ];
 

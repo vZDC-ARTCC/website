@@ -2,9 +2,10 @@
 import React, {useState} from 'react';
 import {SoloCertification} from "@prisma/client";
 import {toast} from "react-toastify";
-import {IconButton} from "@mui/material";
+import {IconButton, Tooltip} from "@mui/material";
 import {Delete} from "@mui/icons-material";
 import {deleteSolo} from "@/actions/solo";
+import {GridActionsCellItem} from "@mui/x-data-grid";
 
 export default function SoloCertificationDeleteButton({soloCertification,}: { soloCertification: SoloCertification }) {
     const [clicked, setClicked] = useState(false);
@@ -21,8 +22,12 @@ export default function SoloCertificationDeleteButton({soloCertification,}: { so
     }
 
     return (
-        <IconButton onClick={handleClick}>
-            {clicked ? <Delete color="warning"/> : <Delete/>}
-        </IconButton>
+        <Tooltip title="Delete Solo Certification">
+            <GridActionsCellItem
+                icon={<Delete color={clicked ? "warning" : "inherit"}/>}
+                label="Delete Solo Certification"
+                onClick={handleClick}
+            />
+        </Tooltip>
     );
 }

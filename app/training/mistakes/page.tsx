@@ -20,6 +20,7 @@ import {Add, Edit, Visibility} from "@mui/icons-material";
 import CommonMistakeDeleteButton from "@/components/CommonMistake/CommonMistakeDeleteButton";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/auth/auth";
+import CommonMistakeTable from "@/components/CommonMistake/CommonMistakeTable";
 
 export default async function Page({searchParams}: { searchParams: { q?: string, } }) {
 
@@ -49,45 +50,7 @@ export default async function Page({searchParams}: { searchParams: { q?: string,
                         <Button variant="contained" size="large" startIcon={<Add/>}>New Mistake</Button>
                     </Link>}
                 </Stack>
-                <SearchForm label="Search by name or facility" q={q}/>
-                <TableContainer sx={{mt: 2,}}>
-                    <Table size="small">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Name</TableCell>
-                                <TableCell>Facility</TableCell>
-                                <TableCell>Actions</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {mistakes.map((mistake) => (
-                                <TableRow key={mistake.id}>
-                                    <TableCell>{mistake.name}</TableCell>
-                                    <TableCell>{mistake.facility}</TableCell>
-                                    <TableCell>
-                                        <Link href={`/training/mistakes/${mistake.id}`}
-                                              style={{color: 'inherit',}}>
-                                            <IconButton>
-                                                <Visibility/>
-                                            </IconButton>
-                                        </Link>
-                                        {session.user.roles.includes("STAFF") &&
-                                            <>
-                                                <Link href={`/training/mistakes/${mistake.id}/edit`}
-                                                      style={{color: 'inherit',}}>
-                                                    <IconButton>
-                                                        <Edit/>
-                                                    </IconButton>
-                                                </Link>
-                                                <CommonMistakeDeleteButton mistake={mistake}/>
-                                            </>
-                                        }
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                <CommonMistakeTable user={session.user}/>
             </CardContent>
         </Card>
     );

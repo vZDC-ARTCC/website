@@ -2,9 +2,10 @@
 import React, {useState} from 'react';
 import {TrainingSession} from "@prisma/client";
 import {toast} from "react-toastify";
-import {IconButton} from "@mui/material";
+import {IconButton, Tooltip} from "@mui/material";
 import {Delete} from "@mui/icons-material";
 import {deleteTrainingSession} from "@/actions/trainingSession";
+import {GridActionsCellItem} from "@mui/x-data-grid";
 
 export default function TrainingSessionDeleteButton({trainingSession}: { trainingSession: TrainingSession, }) {
     const [clicked, setClicked] = useState(false);
@@ -21,8 +22,12 @@ export default function TrainingSessionDeleteButton({trainingSession}: { trainin
     }
 
     return (
-        <IconButton onClick={handleClick}>
-            {clicked ? <Delete color="warning"/> : <Delete/>}
-        </IconButton>
+        <Tooltip title="Delete Training Session">
+            <GridActionsCellItem
+                icon={<Delete color={clicked ? "warning" : "inherit"}/>}
+                label="Delete Training Session"
+                onClick={handleClick}
+            />
+        </Tooltip>
     );
 }

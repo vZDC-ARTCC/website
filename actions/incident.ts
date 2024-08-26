@@ -5,8 +5,9 @@ import prisma from "@/lib/db";
 import {getServerSession, User} from "next-auth";
 import {authOptions} from "@/auth/auth";
 import {revalidatePath} from "next/cache";
-import {IncidentReport} from "@prisma/client";
+import {FeedbackStatus, IncidentReport, Prisma} from "@prisma/client";
 import {sendIncidentReportClosedEmail} from "@/actions/mail/incident";
+import {GridFilterItem, GridPaginationModel, GridSortModel} from "@mui/x-data-grid";
 
 export const createIncident = async (formData: FormData) => {
     const reportZ = z.object({
@@ -76,3 +77,79 @@ export const closeIncident = async (report: IncidentReport) => {
     revalidatePath(`/admin/incidents/${report.id}`);
 
 }
+
+export const fetchIncidents = async (pagination: GridPaginationModel, sort: GridSortModel, filter?: GridFilterItem) => {
+    const orderBy: Prisma.IncidentReportOrderByWithRelationInput = {};
+    if (sort.length > 0) {
+        const sortField = sort[0].field as keyof Prisma.IncidentReportOrderByWithRelationInput;
+        orderBy[sortField] = sort[0].sort === 'asc' ? 'asc' : 'desc';
+    }
+
+    return prisma.$transaction([
+        prisma.incidentReport.count({
+            where: getWhere(filter),
+        }),
+        prisma.incidentReport.findMany({
+            orderBy,
+            where: getWhere(filter),
+            take: pagination.pageSize,
+            skip: pagination.page * pagination.pageSize,
+            include: {
+                reporter: true,
+                reportee: true,
+            },
+        })
+    ]);
+}
+
+const getWhere = (filter?: GridFilterItem): Prisma.IncidentReportWhereInput => {
+    if (!filter) {
+        return {};
+    }
+    switch (filter?.field) {
+        case 'reporter':
+            return {
+                reporter: {
+                    OR: [
+                        {
+                            cid: {
+                                [filter.operator]: filter.value as string,
+                                mode: 'insensitive',
+                            }
+                        },
+                        {
+                            fullName: {
+                                [filter.operator]: filter.value as string,
+                                mode: 'insensitive',
+                            }
+                        },
+                    ],
+                },
+            };
+        case 'reportee':
+            return {
+                reportee: {
+                    OR: [
+                        {
+                            cid: {
+                                [filter.operator]: filter.value as string,
+                                mode: 'insensitive',
+                            }
+                        },
+                        {
+                            fullName: {
+                                [filter.operator]: filter.value as string,
+                                mode: 'insensitive',
+                            }
+                        },
+                    ],
+                },
+            };
+        case 'closed':
+            return {
+                closed: filter.value === 'true',
+            };
+        default:
+            return {};
+    }
+};

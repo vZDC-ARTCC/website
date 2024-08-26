@@ -1,15 +1,18 @@
 'use client';
 import React from 'react';
 import DataTable, {containsOnlyFilterOperator, equalsOnlyFilterOperator} from "@/components/DataTable/DataTable";
-import {GridColDef} from "@mui/x-data-grid";
+import {GridActionsCellItem, GridColDef} from "@mui/x-data-grid";
 import {Chip, IconButton, Stack} from "@mui/material";
 import {User} from "next-auth";
 import {fetchTrainingAssignments} from "@/actions/trainingAssignment";
 import {Edit} from "@mui/icons-material";
 import Link from "next/link";
 import TrainingAssignmentDeleteButton from "@/components/TrainingAssignment/TrainingAssignmentDeleteButton";
+import {useRouter} from "next/navigation";
 
 export default function TrainingAssignmentTable({isInstructorOrStaff}: { isInstructorOrStaff: boolean }) {
+
+    const router = useRouter();
 
     const columns: GridColDef[] = [
         {
@@ -46,18 +49,14 @@ export default function TrainingAssignmentTable({isInstructorOrStaff}: { isInstr
             field: 'actions',
             headerName: 'Actions',
             type: 'actions',
-            renderCell: (params) => isInstructorOrStaff && (
-                <div>
-                    <Link href={`/training/assignments/${params.row.id}`} passHref>
-                        <IconButton size="small">
-                            <Edit/>
-                        </IconButton>
-                    </Link>
-                    <TrainingAssignmentDeleteButton assignment={params.row}/>
-                </div>
-            ),
-            sortable: false,
-            filterable: false,
+            getActions: (params) => isInstructorOrStaff ? [
+                <GridActionsCellItem
+                    icon={<Edit/>}
+                    label="Edit Assignment"
+                    onClick={() => router.push(`/training/assignments/${params.row.id}`)}
+                />,
+                <TrainingAssignmentDeleteButton assignment={params.row}/>,
+            ] : [],
             flex: 1
         },
     ];

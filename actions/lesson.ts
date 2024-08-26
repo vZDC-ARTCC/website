@@ -3,6 +3,8 @@ import prisma from "@/lib/db";
 import {log} from "@/actions/log";
 import {revalidatePath} from "next/cache";
 import {z} from "zod";
+import {GridFilterItem, GridPaginationModel, GridSortModel} from "@mui/x-data-grid";
+import {Prisma} from "@prisma/client";
 
 export const deleteLesson = async (id: string) => {
     const lesson = await prisma.lesson.delete({
@@ -82,3 +84,69 @@ export const createOrUpdateLessonDetails = async (formData: FormData) => {
 
     return {id: result.data.lessonId, error: null};
 }
+
+export const fetchLessons = async (pagination: GridPaginationModel, sort: GridSortModel, filter?: GridFilterItem) => {
+    const orderBy: Prisma.LessonOrderByWithRelationInput = {};
+    if (sort.length > 0) {
+        const sortField = sort[0].field as keyof Prisma.LessonOrderByWithRelationInput;
+        orderBy[sortField] = sort[0].sort === 'asc' ? 'asc' : 'desc';
+    }
+
+    return prisma.$transaction([
+        prisma.lesson.count({
+            where: getWhere(filter),
+        }),
+        prisma.lesson.findMany({
+            orderBy,
+            where: getWhere(filter),
+            take: pagination.pageSize,
+            skip: pagination.page * pagination.pageSize,
+        })
+    ]);
+};
+
+const getWhere = (filter?: GridFilterItem): Prisma.LessonWhereInput => {
+    if (!filter) {
+        return {};
+    }
+    switch (filter?.field) {
+        case 'name':
+            return {
+                name: {
+                    [filter.operator]: filter.value as string,
+                    mode: 'insensitive',
+                },
+            };
+        case 'identifier':
+            return {
+                identifier: {
+                    [filter.operator]: filter.value as string,
+                    mode: 'insensitive',
+                },
+            };
+        case 'facility':
+            return {
+                facility: {
+                    [filter.operator]: filter.value as string,
+                    mode: 'insensitive',
+                },
+            };
+        case 'position':
+            return {
+                position: {
+                    [filter.operator]: filter.value as string,
+                    mode: 'insensitive',
+                },
+            };
+        case 'instructorOnly':
+            return {
+                instructorOnly: filter.value === 'true',
+            };
+        case 'notifyInstructorOnPass':
+            return {
+                notifyInstructorOnPass: filter.value === 'true',
+            };
+        default:
+            return {};
+    }
+};

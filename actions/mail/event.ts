@@ -16,7 +16,6 @@ export const sendEventPositionEmail = async (controller: User, eventPosition: Ev
     }
 
     const icalContent = `BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//vZDC.org//vZDC Events\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\nBEGIN:VEVENT\r\nSUMMARY:${event.name}\r\nUID:c7614cff-3549-4a00-9152-d25cc1fe077\r\nSTATUS:CONFIRMED\r\nDTSTART:${splitTimeDate(formatZuluDate(event.start))}\r\nDTEND:${splitTimeDate(formatZuluDate(event.end))}\r\nDTSTAMP:${splitTimeDate(formatZuluDate(new Date()))}\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n`
-    console.log(event)
     await mailTransport.sendMail({
         from: FROM_EMAIL,
         to: controller.email,

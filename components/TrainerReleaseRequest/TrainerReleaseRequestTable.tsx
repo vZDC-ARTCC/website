@@ -29,14 +29,10 @@ export default function TrainerReleaseRequestTable({isInstructorOrStaff}: { isIn
             field: 'actions',
             type: 'actions',
             headerName: 'Actions',
-            renderCell: (params) => isInstructorOrStaff && (
-                <div>
-                    <TrainerReleaseRequestApproveButton studentId={params.row.student.id}/>
-                    <TrainerReleaseDeleteButton studentId={params.row.student.id}/>
-                </div>
-            ),
-            sortable: false,
-            filterable: false,
+            getActions: (params) => isInstructorOrStaff ? [
+                <TrainerReleaseRequestApproveButton studentId={params.row.student.id}/>,
+                <TrainerReleaseDeleteButton studentId={params.row.student.id}/>,
+            ] : [],
             flex: 1,
         }
     ];

@@ -45,7 +45,7 @@ export default async function Page({params}: { params: { id: string, } }) {
             <CardContent>
                 <Stack direction="row" justifyContent="space-between" spacing={1}>
                     <Typography variant="h5">Training Assignment</Typography>
-                    <TrainingAssignmentDeleteButton assignment={assignment}/>
+                    <TrainingAssignmentDeleteButton assignment={assignment} noTable/>
                 </Stack>
                 <Typography variant="subtitle2"
                             sx={{mb: 2,}}>{assignment.student.fullName} ({assignment.student.cid})</Typography>

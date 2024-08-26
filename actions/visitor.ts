@@ -1,6 +1,6 @@
 'use server';
 
-import {VisitorApplication} from "@prisma/client";
+import {LOAStatus, Prisma, VisitorApplication, VisitorApplicationStatus} from "@prisma/client";
 import prisma from "@/lib/db";
 import {z} from "zod";
 import {revalidatePath} from "next/cache";
@@ -12,6 +12,7 @@ import {
     sendVisitorApplicationCreatedEmail,
     sendVisitorApplicationRejectedEmail
 } from "@/actions/mail/visitor";
+import {GridFilterItem, GridPaginationModel, GridSortModel} from "@mui/x-data-grid";
 
 export const addVisitingApplication = async (formData: FormData) => {
 
@@ -132,3 +133,71 @@ export const rejectVisitor = async (application: VisitorApplication, user: User)
     revalidatePath(`/admin/visitor-applications/${application.id}`);
     revalidatePath('/visitor/new');
 }
+
+export const fetchVisitorApplications = async (pagination: GridPaginationModel, sort: GridSortModel, filter?: GridFilterItem) => {
+    const orderBy: Prisma.VisitorApplicationOrderByWithRelationInput = {};
+    if (sort.length > 0) {
+        const sortField = sort[0].field as keyof Prisma.VisitorApplicationOrderByWithRelationInput;
+        orderBy[sortField] = sort[0].sort === 'asc' ? 'asc' : 'desc';
+    }
+
+    return prisma.$transaction([
+        prisma.visitorApplication.count({
+            where: getWhere(filter),
+        }),
+        prisma.visitorApplication.findMany({
+            orderBy,
+            where: getWhere(filter),
+            take: pagination.pageSize,
+            skip: pagination.page * pagination.pageSize,
+            include: {
+                user: true,
+            },
+        })
+    ]);
+}
+
+const getWhere = (filter?: GridFilterItem): Prisma.VisitorApplicationWhereInput => {
+    if (!filter) {
+        return {};
+    }
+    switch (filter?.field) {
+        case 'name':
+            return {
+                user: {
+                    fullName: {
+                        [filter.operator]: filter.value as string,
+                        mode: 'insensitive',
+                    },
+                },
+            };
+        case 'email':
+            return {
+                user: {
+                    email: {
+                        [filter.operator]: filter.value as string,
+                        mode: 'insensitive',
+                    },
+                },
+            };
+        case 'cid':
+            return {
+                user: {
+                    cid: filter.value as string,
+                },
+            };
+        case 'homeFacility':
+            return {
+                homeFacility: {
+                    [filter.operator]: filter.value as string,
+                    mode: 'insensitive',
+                },
+            };
+        case 'status':
+            return {
+                status: filter.value as VisitorApplicationStatus,
+            };
+        default:
+            return {};
+    }
+};

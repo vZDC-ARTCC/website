@@ -2,7 +2,7 @@
 import React from 'react';
 import {User} from "next-auth";
 import {CommonMistake, Lesson} from "@prisma/client";
-import {GridColDef} from "@mui/x-data-grid";
+import {GridActionsCellItem, GridColDef} from "@mui/x-data-grid";
 import {fetchTrainingSessions} from "@/actions/trainingSession";
 import {Chip, IconButton} from "@mui/material";
 import Link from "next/link";
@@ -10,6 +10,7 @@ import {Edit, Visibility} from "@mui/icons-material";
 import TrainingSessionDeleteButton from "@/components/TrainingSession/TrainingSessionDeleteButton";
 import {formatZuluDate, getDuration} from "@/lib/date";
 import DataTable, {containsOnlyFilterOperator, equalsOnlyFilterOperator} from "@/components/DataTable/DataTable";
+import {useRouter} from "next/navigation";
 
 type TrainingTicketTableProps = {
     id: string;
@@ -19,7 +20,9 @@ type TrainingTicketTableProps = {
 };
 
 export default function TrainingSessionTable({admin, isInstructor, mentorCID, onlyUser}: { admin?: boolean, isInstructor?: boolean, mentorCID?: string, onlyUser?: User, }) {
-     
+
+    const router = useRouter();
+
     const columns: GridColDef[] = [
         {
             field: 'student',
@@ -96,27 +99,23 @@ export default function TrainingSessionTable({admin, isInstructor, mentorCID, on
             field: 'actions',
             type: 'actions',
             headerName: 'Actions',
-            renderCell: (params) => (
-                <>
-                    <Link href={admin ? `/training/sessions/${params.row.id}` : `/profile/training/${params.row.id}`}
-                          passHref>
-                        <IconButton size="small">
-                            <Visibility/>
-                        </IconButton>
-                    </Link>
-                    {(isInstructor || mentorCID==`${params.row.instructor.cid}`) && <Link href={`/training/sessions/${params.row.id}/edit`} passHref>
+            getActions: (params) => [
+                <GridActionsCellItem
+                    icon={<Visibility/>}
+                    label="View Session"
+                    onClick={() => router.push(admin ? `/training/sessions/${params.row.id}` : `/profile/training/${params.row.id}`)}
+                />,
+                isInstructor || mentorCID == `${params.row.instructor.cid}` ?
+                    <Link href={`/training/sessions/${params.row.id}/edit`} passHref>
                         <IconButton size="small">
                             <Edit/>
                         </IconButton>
-                    </Link>}
-                    {(isInstructor || mentorCID==`${params.row.instructor.cid}`) &&
+                    </Link> : <></>,
+                isInstructor || mentorCID == `${params.row.instructor.cid}` ?
                         <TrainingSessionDeleteButton trainingSession={params.row}/>
-                    }
-                </>
-            ),
+                    : <></>,
+            ],
             flex: 1,
-            sortable: false,
-            filterable: false,
         }
     ];
 

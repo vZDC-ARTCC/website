@@ -48,7 +48,7 @@ export default async function Page({params}: { params: { id: string, } }) {
                 <CardContent>
                     <Stack direction="row" justifyContent="space-between" spacing={1}>
                         <Typography variant="h5">Training Request - {request.student.fullName}</Typography>
-                        {isInstructorOrStaff && <TrainerAssignmentRequestDeleteButton request={request}/>}
+                        {isInstructorOrStaff && <TrainerAssignmentRequestDeleteButton request={request} noTable/>}
                     </Stack>
                     <Typography
                         variant="subtitle2">Student: {request.student.fullName} ({request.student.cid})</Typography>

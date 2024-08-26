@@ -19,18 +19,9 @@ import {getRating} from "@/lib/vatsim";
 import SoloCertificationDeleteButton from "@/components/SoloCertification/SoloCertificationDeleteButton";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/auth/auth";
+import SoloCertificationTable from "@/components/SoloCertification/SoloCertificationTable";
 
 export default async function Page() {
-
-    const solos = await prisma.soloCertification.findMany({
-        orderBy: {
-            expires: 'desc',
-        },
-        include: {
-            certificationType: true,
-            controller: true,
-        },
-    });
 
     const session = await getServerSession(authOptions);
 
@@ -46,37 +37,7 @@ export default async function Page() {
                         <Button variant="contained" size="large" startIcon={<Add/>}>Grant Solo Certification</Button>
                     </Link>}
                 </Stack>
-                <TableContainer>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Controller</TableCell>
-                                <TableCell>Certification</TableCell>
-                                <TableCell>Position</TableCell>
-                                <TableCell>Expires</TableCell>
-                                <TableCell>Actions</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {solos.map((solo) => (
-                                <TableRow key={solo.id}>
-                                    <TableCell>
-                                        <Link href={`/training/controller/${solo.controller.cid}`} target="_blank"
-                                              style={{color: 'inherit'}}>
-                                            <Typography>{solo.controller.firstName} {solo.controller.lastName} - {getRating(solo.controller.rating)}</Typography>
-                                        </Link>
-                                    </TableCell>
-                                    <TableCell>{solo.certificationType.name}</TableCell>
-                                    <TableCell>{solo.position}</TableCell>
-                                    <TableCell>{solo.expires.toUTCString()}</TableCell>
-                                    <TableCell>
-                                        <SoloCertificationDeleteButton soloCertification={solo}/>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                <SoloCertificationTable/>
             </CardContent>
         </Card>
     );
