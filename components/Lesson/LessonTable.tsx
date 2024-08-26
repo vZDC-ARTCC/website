@@ -4,8 +4,7 @@ import DataTable, {containsOnlyFilterOperator, equalsOnlyFilterOperator} from "@
 import {fetchLessons} from "@/actions/lesson";
 import {GridActionsCellItem, GridColDef} from "@mui/x-data-grid";
 import {User} from "next-auth";
-import Link from "next/link";
-import {IconButton, Tooltip} from "@mui/material";
+import {Tooltip} from "@mui/material";
 import {Edit, Visibility} from "@mui/icons-material";
 import LessonDeleteButton from "@/components/Lesson/LessonDeleteButton";
 import {useRouter} from "next/navigation";

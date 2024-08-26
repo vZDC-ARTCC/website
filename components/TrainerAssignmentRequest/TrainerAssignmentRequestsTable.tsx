@@ -2,12 +2,10 @@
 import React from 'react';
 import {User} from "next-auth";
 import {GridActionsCellItem, GridColDef} from "@mui/x-data-grid";
-import {IconButton} from "@mui/material";
 import {Visibility} from "@mui/icons-material";
 import DataTable, {containsOnlyFilterOperator, equalsOnlyFilterOperator} from "@/components/DataTable/DataTable";
 import {fetchRequests} from "@/actions/trainingAssignmentRequest";
 import {formatZuluDate} from "@/lib/date";
-import Link from "next/link";
 import TrainerAssignmentRequestDeleteButton
     from "@/components/TrainerAssignmentRequest/TrainerAssignmentRequestDeleteButton";
 import {useRouter} from "next/navigation";

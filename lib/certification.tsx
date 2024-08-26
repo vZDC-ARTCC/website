@@ -2,7 +2,7 @@ import {ReactNode} from "react";
 import {CertificationOption, SoloCertification} from "@prisma/client";
 import {Check, Circle, Clear} from "@mui/icons-material";
 import {Tooltip} from "@mui/material";
-import {formatZuluDate, getDaysLeft} from "@/lib/date";
+import {getDaysLeft} from "@/lib/date";
 
 export const getIconForCertificationOption = (certificationOption: CertificationOption, soloCertification?: SoloCertification): ReactNode => {
     switch (certificationOption) {

@@ -1,6 +1,6 @@
 'use client';
 import React, {useState} from 'react';
-import {IconButton, Tooltip} from "@mui/material";
+import {Tooltip} from "@mui/material";
 import {Delete} from "@mui/icons-material";
 import {useRouter} from "next/navigation";
 import {toast} from "react-toastify";

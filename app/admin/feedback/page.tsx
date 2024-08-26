@@ -1,8 +1,6 @@
 import React from 'react';
 import {Card, CardContent, Typography} from "@mui/material";
-import FeedbackTabs from "@/components/Feedback/FeedbackTabs";
 import FeedbackTable from "@/components/Feedback/FeedbackTable";
-import {FeedbackStatus} from "@prisma/client";
 
 export default async function Page() {
 

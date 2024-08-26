@@ -1,23 +1,8 @@
 import React from 'react';
-import {
-    Button,
-    Card,
-    CardContent,
-    IconButton,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Typography
-} from "@mui/material";
+import {Button, Card, CardContent, Stack, Typography} from "@mui/material";
 import prisma from "@/lib/db";
-import SearchForm from "@/components/Search/SearchForm";
 import Link from "next/link";
-import {Add, Edit, Visibility} from "@mui/icons-material";
-import CommonMistakeDeleteButton from "@/components/CommonMistake/CommonMistakeDeleteButton";
+import {Add} from "@mui/icons-material";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/auth/auth";
 import CommonMistakeTable from "@/components/CommonMistake/CommonMistakeTable";

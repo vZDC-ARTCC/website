@@ -2,7 +2,7 @@
 import React, {useState} from 'react';
 import {TrainingSession} from "@prisma/client";
 import {toast} from "react-toastify";
-import {IconButton, Tooltip} from "@mui/material";
+import {Tooltip} from "@mui/material";
 import {Delete} from "@mui/icons-material";
 import {deleteTrainingSession} from "@/actions/trainingSession";
 import {GridActionsCellItem} from "@mui/x-data-grid";

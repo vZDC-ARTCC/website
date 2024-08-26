@@ -12,7 +12,7 @@ export const purgeControllers = async (ids: string[]) => {
 
     const session = await getServerSession(authOptions);
 
-    if (!session || !session.user.staffPositions.some((sp) => ["ATM", "DATM"])) {
+    if (!session || !session.user.staffPositions.some((sp) => ["ATM", "DATM"].includes(sp))) {
         return;
     }
 

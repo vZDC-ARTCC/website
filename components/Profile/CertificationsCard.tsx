@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-    Box,
     Card,
     CardContent,
     Table,
@@ -9,13 +8,11 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    Tooltip,
     Typography
 } from "@mui/material";
 import prisma from "@/lib/db";
 import {notFound} from "next/navigation";
 import {getIconForCertificationOption} from "@/lib/certification";
-import {getDaysLeft} from "@/lib/date";
 
 export default async function CertificationsCard({cid}: { cid: string, }) {
 

@@ -1,23 +1,7 @@
 import React from 'react';
-import {
-    Button,
-    Card,
-    CardContent,
-    IconButton,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow, Tooltip,
-    Typography
-} from "@mui/material";
+import {Button, Card, CardContent, Stack, Typography} from "@mui/material";
 import Link from "next/link";
-import {Add, Checklist, Edit} from "@mui/icons-material";
-import prisma from "@/lib/db";
-import EventDeleteButton from "@/components/Events/EventDeleteButton";
-import {format} from "date-fns";
+import {Add} from "@mui/icons-material";
 import {deleteStaleEvents} from "@/actions/event";
 import EventTable from "@/components/Events/EventTable";
 

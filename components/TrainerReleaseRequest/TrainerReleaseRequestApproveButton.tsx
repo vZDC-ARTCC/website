@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
-import {Check, Delete} from "@mui/icons-material";
-import {IconButton, Tooltip} from "@mui/material";
+import {Check} from "@mui/icons-material";
+import {Tooltip} from "@mui/material";
 import {approveReleaseRequest} from "@/actions/trainingAssignmentRelease";
 import {toast} from "react-toastify";
 import {GridActionsCellItem} from "@mui/x-data-grid";

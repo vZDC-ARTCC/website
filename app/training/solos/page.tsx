@@ -1,22 +1,7 @@
 import React from 'react';
-import {
-    Button,
-    Card,
-    CardContent,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Typography
-} from "@mui/material";
-import prisma from "@/lib/db";
+import {Button, Card, CardContent, Stack, Typography} from "@mui/material";
 import Link from "next/link";
 import {Add} from "@mui/icons-material";
-import {getRating} from "@/lib/vatsim";
-import SoloCertificationDeleteButton from "@/components/SoloCertification/SoloCertificationDeleteButton";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/auth/auth";
 import SoloCertificationTable from "@/components/SoloCertification/SoloCertificationTable";

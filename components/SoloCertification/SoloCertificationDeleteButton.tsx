@@ -2,7 +2,7 @@
 import React, {useState} from 'react';
 import {SoloCertification} from "@prisma/client";
 import {toast} from "react-toastify";
-import {IconButton, Tooltip} from "@mui/material";
+import {Tooltip} from "@mui/material";
 import {Delete} from "@mui/icons-material";
 import {deleteSolo} from "@/actions/solo";
 import {GridActionsCellItem} from "@mui/x-data-grid";

@@ -1,22 +1,9 @@
 import React from 'react';
 import prisma from "@/lib/db";
 import {User} from "next-auth";
-import {
-    Box,
-    Chip,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Tooltip,
-    Typography
-} from "@mui/material";
+import {Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography} from "@mui/material";
 import {getRating} from "@/lib/vatsim";
 import {getIconForCertificationOption} from "@/lib/certification";
-import {getDaysLeft} from "@/lib/date";
 import {getChips} from "@/lib/staffPositions";
 import Link from "next/link";
 import {LOA} from "@prisma/client";

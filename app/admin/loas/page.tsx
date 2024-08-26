@@ -1,23 +1,5 @@
 import React from 'react';
-import {
-    Card,
-    CardContent,
-    IconButton,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Tooltip,
-    Typography
-} from "@mui/material";
-import LoaTabs from "@/components/LOA/LOATabs";
-import prisma from "@/lib/db";
-import {LOAStatus} from "@prisma/client";
-import Link from "next/link";
-import {Grading, Info} from "@mui/icons-material";
-import LoaDeleteButton from "@/components/LOA/LoaDeleteButton";
+import {Card, CardContent, Typography} from "@mui/material";
 import LoaTable from "@/components/LOA/LOATable";
 
 export default async function Page() {

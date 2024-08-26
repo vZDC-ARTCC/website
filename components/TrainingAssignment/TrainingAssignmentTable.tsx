@@ -2,11 +2,10 @@
 import React from 'react';
 import DataTable, {containsOnlyFilterOperator, equalsOnlyFilterOperator} from "@/components/DataTable/DataTable";
 import {GridActionsCellItem, GridColDef} from "@mui/x-data-grid";
-import {Chip, IconButton, Stack} from "@mui/material";
+import {Chip, Stack} from "@mui/material";
 import {User} from "next-auth";
 import {fetchTrainingAssignments} from "@/actions/trainingAssignment";
 import {Edit} from "@mui/icons-material";
-import Link from "next/link";
 import TrainingAssignmentDeleteButton from "@/components/TrainingAssignment/TrainingAssignmentDeleteButton";
 import {useRouter} from "next/navigation";
 

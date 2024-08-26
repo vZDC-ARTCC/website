@@ -1,21 +1,5 @@
 import React from 'react';
-import {
-    Card,
-    CardContent,
-    IconButton,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Tooltip,
-    Typography
-} from "@mui/material";
-import IncidentTabs from "@/components/Incident/IncidentTabs";
-import prisma from "@/lib/db";
-import {Grading, Info} from "@mui/icons-material";
-import Link from "next/link";
+import {Card, CardContent, Typography} from "@mui/material";
 import IncidentTable from "@/components/Incident/IncidentTable";
 
 export default async function Page() {
