@@ -1,28 +1,14 @@
 import React from 'react';
 import {Button, Card, CardContent, Stack, Typography} from "@mui/material";
-import prisma from "@/lib/db";
 import Link from "next/link";
 import {Add} from "@mui/icons-material";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/auth/auth";
 import CommonMistakeTable from "@/components/CommonMistake/CommonMistakeTable";
 
-export default async function Page({searchParams}: { searchParams: { q?: string, } }) {
+export default async function Page() {
 
-    const {q} = searchParams;
     const session = await getServerSession(authOptions);
-
-    const mistakes = await prisma.commonMistake.findMany({
-        where: {
-            OR: [
-                {name: {contains: q || '', mode: 'insensitive',}},
-                {facility: {contains: q || '', mode: 'insensitive',}}
-            ]
-        },
-        orderBy: {
-            name: 'asc',
-        },
-    });
 
     return session?.user && (
         <Card>
