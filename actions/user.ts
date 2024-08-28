@@ -62,9 +62,10 @@ export const updateSettings = async (formData: FormData) => {
     return null;
 }
 
-export const refreshAccountData = async (user: User) => {
+export const refreshAccountData = async (user: User, silent?: boolean,) => {
 
     if (user.updatedAt && new Date().getTime() - new Date(user.updatedAt).getTime() < 300000) {
+        if (silent) return;
         return 'Please wait at least 5 minutes before refreshing your account information.';
     }
 

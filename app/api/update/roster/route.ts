@@ -2,6 +2,8 @@ import prisma from "@/lib/db";
 import {getVatusaData} from "@/auth/vatsimProvider";
 import {User} from "next-auth";
 import {revalidatePath} from "next/cache";
+import {refreshAccountData} from "@/actions/user";
+
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
@@ -26,6 +28,7 @@ export async function GET() {
                 },
             });
         }
+        await refreshAccountData(user as User, true);
     }
 
     const now = new Date();
