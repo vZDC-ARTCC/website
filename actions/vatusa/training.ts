@@ -3,7 +3,7 @@
 import {VATUSA_API, VATUSA_API_KEY} from "@/actions/vatusa/config";
 
 export const createVatusaTrainingSession = async (location: number, studentCid: string, instructor_id: string,
-                                                  session_date: Date, position: string, duration: string, notes: string) => {
+                                                  session_date: Date, position: string, duration: string, notes: string, otsStatus: number) => {
 
     const timeSplit = session_date.toISOString().split("T");
 
@@ -16,6 +16,7 @@ export const createVatusaTrainingSession = async (location: number, studentCid: 
         'duration': duration,
         'notes': notes ? notes : "No Notes",
         'location': location,
+        'ots_status': otsStatus,
     };
 
     let ticketForm = [];
@@ -39,7 +40,7 @@ export const createVatusaTrainingSession = async (location: number, studentCid: 
     return ''+data.data.id;
 }
 
-export const editVatusaTrainingSession = async (instructor_id: string, session_date: Date, position: string, duration: string, notes: string, id: string) => {
+export const editVatusaTrainingSession = async (instructor_id: string, session_date: Date, position: string, duration: string, notes: string, otsStatus: number, id: string) => {
     const timeSplit = session_date.toISOString().split("T");
 
     const sessionDate = timeSplit[0]+" "+timeSplit[1].split(":")[0]+":"+timeSplit[1].split(":")[1]
@@ -50,6 +51,7 @@ export const editVatusaTrainingSession = async (instructor_id: string, session_d
         'position': position,
         'duration': duration,
         'notes': notes ? notes : "No Notes",
+        'ots_status': otsStatus,
     };
 
     let ticketForm = [];
