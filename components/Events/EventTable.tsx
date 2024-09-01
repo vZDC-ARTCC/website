@@ -68,7 +68,7 @@ export default function EventTable() {
                         onClick={() => router.push(`/admin/events/edit/${params.row.id}`)}
                     />
                 </Tooltip>,
-                <EventDeleteButton event={params.row}/>
+                <EventDeleteButton key={params.row.id} event={params.row}/>
             ],
         },
     ];

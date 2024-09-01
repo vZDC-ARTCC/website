@@ -38,7 +38,7 @@ export default function SoloCertificationTable() {
             type: 'actions',
             flex: 1,
             getActions: (params) => [
-                <SoloCertificationDeleteButton soloCertification={params.row}/>,
+                <SoloCertificationDeleteButton key={params.row.id} soloCertification={params.row}/>,
             ],
         },
     ];

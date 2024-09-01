@@ -30,8 +30,8 @@ export default function TrainerReleaseRequestTable({manageMode}: { manageMode: b
             type: 'actions',
             headerName: 'Actions',
             getActions: (params) => manageMode ? [
-                <TrainerReleaseRequestApproveButton studentId={params.row.student.id}/>,
-                <TrainerReleaseDeleteButton studentId={params.row.student.id}/>,
+                <TrainerReleaseRequestApproveButton key={params.row.id} studentId={params.row.student.id}/>,
+                <TrainerReleaseDeleteButton key={params.row.id} studentId={params.row.student.id}/>,
             ] : [],
             flex: 1,
         }

@@ -101,6 +101,7 @@ export default function TrainingSessionTable({admin, isInstructor, mentorCID, on
             headerName: 'Actions',
             getActions: (params) => [
                 <GridActionsCellItem
+                    key={params.row.id}
                     icon={<Visibility/>}
                     label="View Session"
                     onClick={() => router.push(admin ? `/training/sessions/${params.row.id}` : `/profile/training/${params.row.id}`)}

@@ -50,11 +50,12 @@ export default function TrainingAssignmentTable({manageMode}: { manageMode: bool
             type: 'actions',
             getActions: (params) => manageMode ? [
                 <GridActionsCellItem
+                    key={params.row.id}
                     icon={<Edit/>}
                     label="Edit Assignment"
                     onClick={() => router.push(`/training/assignments/${params.row.id}`)}
                 />,
-                <TrainingAssignmentDeleteButton assignment={params.row}/>,
+                <TrainingAssignmentDeleteButton key={params.row.id} assignment={params.row}/>,
             ] : [],
             flex: 1
         },

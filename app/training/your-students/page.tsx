@@ -155,6 +155,7 @@ const getTable = (students: Student[]) => (
                         title={formatZuluDate(student.lastSession.start)}><>{getTimeAgo(student.lastSession.start)}</>
                     </Tooltip> : 'N/A'}</TableCell>
                     <TableCell>{student.lastSession ? student.lastSession.tickets.map((ticket) => <Chip size="small"
+                                                                                                        key={ticket.lesson.name}
                                                                                                         label={ticket.lesson.name}
                                                                                                         color={ticket.passed ? 'success' : 'error'}/>) : 'N/A'}</TableCell>
                     <TableCell>
