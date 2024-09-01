@@ -115,38 +115,45 @@ export default async function RosterTable({membership, search, includeVatusa,}: 
                 facility: string,
                 role: string,
             }[],
-        },
+        } | null,
         user?: User | any,
-    }[] =
-        data.map((vatusaUser) => ({
+    }[];
+    if (includeVatusa) {
+        controllers = data.map((vatusaUser) => ({
             vatusa: vatusaUser,
             user: users.find((user) => user.cid === vatusaUser.cid + ''),
-        }))
-            .sort((a, b) => {
-                if (a.user && b.user) {
-                    return (a.user.lastName || '').localeCompare((b.user.lastName || ''));
-                } else if (a.user) {
-                    return -1;
-                } else if (b.user) {
-                    return 1;
-                } else {
-                    return a.vatusa.lname.localeCompare(b.vatusa.lname);
-                }
-            }).filter((controller) => {
-            // filter by the search query here
-            if (search !== undefined && search.length > 0) {
-                if (controller.user) {
-                    return (controller.user.fullName || '').toLowerCase().includes(search.toLowerCase()) ||
-                        controller.user.cid.toLowerCase().includes(search.toLowerCase()) ||
-                        (controller.user.preferredName || '').toLowerCase().includes(search.toLowerCase());
-                } else {
-                    return controller.vatusa.fname.toLowerCase().includes(search.toLowerCase()) ||
-                        controller.vatusa.lname.toLowerCase().includes(search.toLowerCase()) ||
-                        (controller.vatusa.cid + '').toLowerCase().includes(search.toLowerCase());
-                }
+        }));
+    } else {
+        controllers = users.map((user) => ({
+            vatusa: null,
+            user,
+        }));
+    }
+    controllers = controllers.sort((a, b) => {
+        if (a.user && b.user) {
+            return (a.user.lastName || '').localeCompare((b.user.lastName || ''));
+        } else if (a.user) {
+            return -1;
+        } else if (b.user) {
+            return 1;
+        } else {
+            return a.vatusa?.lname.localeCompare(b.vatusa?.lname || '');
+        }
+    }).filter((controller) => {
+        // filter by the search query here
+        if (search !== undefined && search.length > 0) {
+            if (controller.user) {
+                return (controller.user.fullName || '').toLowerCase().includes(search.toLowerCase()) ||
+                    controller.user.cid.toLowerCase().includes(search.toLowerCase()) ||
+                    (controller.user.preferredName || '').toLowerCase().includes(search.toLowerCase());
+            } else {
+                return controller.vatusa?.fname.toLowerCase().includes(search.toLowerCase()) ||
+                    controller.vatusa?.lname.toLowerCase().includes(search.toLowerCase()) ||
+                    (controller.vatusa?.cid + '').toLowerCase().includes(search.toLowerCase());
             }
-            return true;
-        });
+        }
+        return true;
+    });
 
 
     const certificationTypes = await prisma.certificationType.findMany({
@@ -230,7 +237,7 @@ export default async function RosterTable({membership, search, includeVatusa,}: 
                                     ))}
                                 </TableRow>
                             )
-                        } else {
+                        } else if (user.vatusa) {
                             return (
                                 <TableRow key={user.vatusa.cid}>
                                     <TableCell>
