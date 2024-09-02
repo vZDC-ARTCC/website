@@ -93,50 +93,52 @@ export default async function Page({params}: { params: { id: string } }) {
                         </Grid>
                     </CardContent>
                 </Card>
-                <Card>
-                    <CardContent>
-                        { session && session.user &&
-                            <>
-                                <Typography variant="h6" sx={{mb: 1,}}>Event Positions</Typography>
-                                {event.positions.length === 0 && <Typography>No positions available</Typography>}
-                                {event.positions.length > 0 && <TableContainer>
-                                    <Table size="small">
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell>Position</TableCell>
-                                                <TableCell>Controllers</TableCell>
-                                                <TableCell>Actions</TableCell>
+                {session && session.user &&
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h6" sx={{mb: 1,}}>Event Positions</Typography>
+                            {event.positions.length === 0 && <Typography>No positions available</Typography>}
+                            {event.positions.length > 0 && <TableContainer>
+                                <Table size="small">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Position</TableCell>
+                                            <TableCell>Controllers</TableCell>
+                                            <TableCell>Actions</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {event.positions.map((position) => (
+                                            <TableRow key={position.id}>
+                                                <TableCell>{position.position} {position.minRating && `(${getRating(position.minRating) || getRating(2)}+)`}</TableCell>
+                                                <TableCell>
+                                                    {position.controllers.length === 0 && "N/A"}
+                                                    {position.controllers.map((controller) => (
+                                                        <Typography key={controller.id}>
+                                                            {controller.firstName} {controller.lastName} - {getRating(controller.rating)}
+                                                        </Typography>
+                                                    ))}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {event.positionsLocked &&
+                                                        <Tooltip title="Positions are locked">
+                                                            <Lock/>
+                                                        </Tooltip>
+                                                    }
+                                                    {!event.positionsLocked && !isSignedUpForAnotherPosition(position) &&
+                                                        <EventPositionSignupForm user={session.user} event={event}
+                                                                                 position={position}
+                                                                                 controllers={position.controllers as User[]}/>}
+                                                </TableCell>
                                             </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {event.positions.map((position) => (
-                                                <TableRow key={position.id}>
-                                                    <TableCell>{position.position} {position.minRating && `(${getRating(position.minRating) || getRating(2)}+)`}</TableCell>
-                                                    <TableCell>
-                                                        {position.controllers.length === 0 && "N/A"}
-                                                        {position.controllers.map((controller) => (
-                                                            <Typography key={controller.id}>
-                                                                {controller.firstName} {controller.lastName} - {getRating(controller.rating)}
-                                                            </Typography>
-                                                        ))}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        { event.positionsLocked &&
-                                                            <Tooltip title="Positions are locked">
-                                                                <Lock />
-                                                            </Tooltip>
-                                                        }
-                                                        { !event.positionsLocked && !isSignedUpForAnotherPosition(position) && <EventPositionSignupForm user={session.user} event={event} position={position} controllers={position.controllers as User[]} /> }
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>}
-                            </>
-                        }
-                    </CardContent>
-                </Card>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>}
+                        </CardContent>
+                    </Card>
+                }
+
             </Stack>
         </Container>
     );

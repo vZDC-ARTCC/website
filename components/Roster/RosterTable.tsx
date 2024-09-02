@@ -54,9 +54,7 @@ export default async function RosterTable({membership, search, includeVatusa,}: 
             loas: true,
         },
         where: {
-            controllerStatus: {
-                not: 'NONE',
-            },
+            controllerStatus: membership === 'both' ? undefined : membership === 'home' ? 'HOME' : 'VISITOR',
             OR: [
                 {
                     AND: [
@@ -177,32 +175,6 @@ export default async function RosterTable({membership, search, includeVatusa,}: 
                 <TableBody>
                     {controllers.length + users.length === 0 &&
                         <Typography>No results found for {search}</Typography>}
-                    {DEV_MODE && users.map((user) => (
-                        <TableRow key={user.cid}>
-                            <TableCell>
-                                <Link href={`/controllers/${user.cid}`}
-                                      style={{color: 'inherit', textDecoration: 'none',}}>
-                                    <Typography
-                                        variant="h6">{user.preferredName || `${user.firstName} ${user.lastName}`}
-                                        {user.loas.filter((loa: LOA) => loa.status === "APPROVED")[0] &&
-                                            <Chip label="LOA" color="primary" size="small" sx={{ml: 1,}}/>}
-                                        <Chip label="DEV MODE"/></Typography>
-                                </Link>
-                                <Typography
-                                    variant="body2">{user.preferredName && `${user.firstName} ${user.lastName}`}</Typography>
-                                <Typography variant="body1">{getRating(user.rating)} • {user.cid}</Typography>
-                                {getChips(user as User)}
-                            </TableCell>
-                            <TableCell>
-                                <Typography variant="h5">{user.operatingInitials}</Typography>
-                            </TableCell>
-                            {certificationTypes.map((certificationType) => (
-                                <TableCell key={certificationType.id}>
-                                    {getIconForCertificationOption(user.certifications.find((certification: any) => certification.certificationType.id === certificationType.id)?.certificationOption || "NONE", user.soloCertifications.find((soloCertification: any) => soloCertification.certificationType.id === certificationType.id))}
-                                </TableCell>
-                            ))}
-                        </TableRow>
-                    ))}
                     {controllers.map((user) => {
                         if (user.user) {
 
