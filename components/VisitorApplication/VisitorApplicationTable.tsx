@@ -3,7 +3,7 @@ import React from 'react';
 import {GridActionsCellItem, GridColDef} from "@mui/x-data-grid";
 import DataTable, {containsOnlyFilterOperator, equalsOnlyFilterOperator} from "@/components/DataTable/DataTable";
 import {fetchVisitorApplications} from "@/actions/visitor";
-import {VisitorApplicationStatus} from "@prisma/client";
+import {EventType, VisitorApplicationStatus} from "@prisma/client";
 import {Grading, Info} from "@mui/icons-material";
 import {useRouter} from "next/navigation";
 import {formatZuluDate} from "@/lib/date";
@@ -67,6 +67,8 @@ export default function VisitorApplicationTable() {
         {
             field: 'status',
             headerName: 'Status',
+            type: 'singleSelect',
+            valueOptions: Object.keys(VisitorApplicationStatus).map((type) => ({value: type, label: type})),
             flex: 1,
             renderCell: params => (
                 <Chip size="small" color={getChipColor(params.row.status)} label={params.row.status}/>),

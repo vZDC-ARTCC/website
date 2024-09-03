@@ -255,9 +255,7 @@ const getWhere = (filter?: GridFilterItem): Prisma.EventWhereInput => {
             };
         case 'type':
             return {
-                type: {
-                    [filter.operator]: filter.value as string,
-                },
+                type: filter.value as EventType,
             };
         case 'host':
             return {

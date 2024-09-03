@@ -172,6 +172,7 @@ model ControllerPosition {
   log      ControllerLog @relation(fields: [logId], references: [id])
   logId    String
   position String
+  facility Int?
   start    DateTime
   end      DateTime?
   active   Boolean

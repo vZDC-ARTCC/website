@@ -29,7 +29,7 @@ export default async function Page() {
             <Card sx={{mb: 2,}}>
                 <CardContent>
                     <Typography variant="h6">Legend</Typography>
-                    <Stack direction="row" justifyContent="space-evenly" sx={{mb: 2,}}>
+                    <Stack direction="column" spacing={2} sx={{mt: 1,}}>
                         <Typography color="#f44336" fontWeight="bold" sx={{p: 1, border: 1,}}>Home</Typography>
                         <Typography color="#cd8dd8" fontWeight="bold"
                                     sx={{p: 1, border: 1,}}>Support/Optional</Typography>

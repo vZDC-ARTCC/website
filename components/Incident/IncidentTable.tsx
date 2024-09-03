@@ -1,10 +1,10 @@
 'use client';
 import React from 'react';
-import {GridColDef, GridActionsCellItem} from "@mui/x-data-grid";
+import {GridActionsCellItem, GridColDef} from "@mui/x-data-grid";
 import DataTable, {containsOnlyFilterOperator, equalsOnlyFilterOperator} from "@/components/DataTable/DataTable";
 import {fetchIncidents} from "@/actions/incident";
 import {Tooltip} from "@mui/material";
-import {Info} from "@mui/icons-material";
+import {Info, VisibilityOff} from "@mui/icons-material";
 import {useRouter} from "next/navigation";
 import {formatZuluDate} from "@/lib/date";
 
@@ -17,7 +17,8 @@ export default function IncidentTable() {
             headerName: 'Reporter',
             flex: 1,
             sortable: false,
-            renderCell: (params) => params.row.closed ? 'REDACTED' : `${params.row.reporter.firstName} ${params.row.reporter.lastName} (${params.row.reporter.cid})`,
+            renderCell: (params) => params.row.closed ?
+                <VisibilityOff/> : `${params.row.reporter.firstName} ${params.row.reporter.lastName} (${params.row.reporter.cid})`,
             filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator]
         },
         {
