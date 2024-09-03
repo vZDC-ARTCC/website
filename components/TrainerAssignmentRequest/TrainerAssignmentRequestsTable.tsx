@@ -42,15 +42,15 @@ export default function TrainerAssignmentRequestsTable({manageMode}: { manageMod
             field: 'actions',
             type: 'actions',
             headerName: 'Actions',
-            getActions: (params) => manageMode ? [
+            getActions: (params) => [
                 <GridActionsCellItem
                     key={params.row.id}
                     icon={<Visibility/>}
                     label="View Request"
                     onClick={() => router.push(`/training/requests/${params.row.id}`)}
                 />,
-                <TrainerAssignmentRequestDeleteButton key={params.row.id} request={params.row}/>,
-            ] : [],
+                manageMode ? <TrainerAssignmentRequestDeleteButton key={params.row.id} request={params.row}/> : <></>,
+            ],
             flex: 1,
         }
     ];
