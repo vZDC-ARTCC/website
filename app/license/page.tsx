@@ -58,7 +58,7 @@ export default async function Home() {
                 <Card>
                     <CardContent>
                         <Typography variant="h6" sx={{mb: 1,}}>Apache License 3.0</Typography>
-                        <Link href="license.txt" target="_blank">
+                        <Link href="https://www.apache.org/licenses/LICENSE-2.0.txt" target="_blank">
                             <Button variant="contained" color="primary" endIcon={<OpenInNew/>}>Full License</Button>
                         </Link>
                     </CardContent>
