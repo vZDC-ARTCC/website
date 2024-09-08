@@ -2,15 +2,16 @@ import prisma from "@/lib/db";
 import {revalidatePath} from "next/cache";
 import {User} from "next-auth";
 import {ControllerLogMonth} from "@prisma/client";
+import {updateSyncTime} from "@/actions/lib/sync";
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
 
     const now = new Date();
-    const vatsimUpdate = await prisma.vatsimUpdateMetadata.findFirst();
+    const syncTime = await prisma.syncTimes.findFirst();
 
-    if (vatsimUpdate && vatsimUpdate.timestamp.getTime() > now.getTime() - 1000 * 10) {
+    if (syncTime?.stats && syncTime.stats?.getTime() > now.getTime() - 1000 * 10) {
         return Response.json({ ok: false, });
     }
 
@@ -119,32 +120,7 @@ export async function GET() {
         });
     }
 
-    await prisma.vatsimUpdateMetadata.upsert({
-        where: {
-            id: vatsimUpdate?.id || '',
-        },
-        update: {
-            timestamp: now,
-        },
-        create: {
-            timestamp: now,
-        },
-    });
-
-    const syncTimes = await prisma.syncTimes.findFirst();
-
-    if (syncTimes) {
-        // If a syncTimes object exists, update the events field
-        await prisma.syncTimes.update({
-            where: {id: syncTimes.id},
-            data: {stats: now},
-        });
-    } else {
-        // If no syncTimes object exists, create a new one
-        await prisma.syncTimes.create({
-            data: {stats: now},
-        });
-    }
+    await updateSyncTime({stats: new Date(),});
 
     revalidatePath('/', 'layout');
 
@@ -181,10 +157,10 @@ const addHours = async (controller: User, facility: string, hours: number, prevL
             month,
             year,
             deliveryHours: facility === 'DEL' ? hours : 0,
-            groundHours: facility ? hours : 0,
-            towerHours: facility ? hours : 0,
-            approachHours: facility ? hours : 0,
-            centerHours: facility ? hours : 0,
+            groundHours: facility === 'GND' ? hours : 0,
+            towerHours: facility === 'TWR' ? hours : 0,
+            approachHours: facility === 'APP' ? hours : 0,
+            centerHours: facility === 'CTR' ? hours : 0,
             log: {
                 connectOrCreate: {
                     create: {

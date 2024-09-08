@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import {User} from "next-auth";
-import {Card, CardContent, Divider, Stack, TextField, Switch, Tooltip} from "@mui/material";
+import {Card, CardContent, Divider, Stack, Switch, TextField, Tooltip} from "@mui/material";
 import {getRating} from "@/lib/vatsim";
 import {z} from "zod";
 import {toast} from "react-toastify";
@@ -48,7 +48,7 @@ export default function ProfileEditCard({user, sessionUser, admin = false}: {
                     `Staff ${sessionUser.cid} attempted to force update profile with profanity in preferred name or bio.` :
                     `Attempted to update profile with profanity in preferred name or bio.`,
                 user.cid);
-            toast('Please ensure your preferred name and bio do not contain any profanity.  This has been added to your dossier.', {type: 'error'});
+            toast('Please ensure your preferred name and bio do not contain any profanity.  This incident has been added to your dossier.', {type: 'error'});
             return;
         }
 
@@ -81,8 +81,11 @@ export default function ProfileEditCard({user, sessionUser, admin = false}: {
                                    defaultValue={user.preferredName || ''}/>
                         <TextField fullWidth multiline rows={5} variant="filled" name="bio" label="Bio"
                                    defaultValue={user.bio || ''}/>
-                        {admin && <TextField variant="filled" name="operatingInitials" label="Operating Initials"
-                                             defaultValue={user.operatingInitials || ''}/>}
+                        {admin &&
+                            <TextField variant="filled" name="operatingInitials" label="Operating Initials"
+                                       helperText="Initials are automatically converted to uppercase on submit."
+                                       defaultValue={user.operatingInitials || ''}/>
+                        }
                         <Tooltip  title={'As of now, this feature is DISABLED! Once implemented, toggling this off will remove you from any email notifications send from this site.'}  placement="top-start">
                             <FormControlLabel name="receiveEmailSwitch" onChange={() => setSwitchState(!switchState)} checked={switchState} disabled control={<Switch />} label="Receive Emails" />
                         </Tooltip>

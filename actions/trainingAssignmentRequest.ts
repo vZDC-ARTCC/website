@@ -108,6 +108,11 @@ export const fetchRequests = async (pagination: GridPaginationModel, sort: GridS
     if (sort.length > 0 && sort[0].field === 'submittedAt') {
         orderBy['submittedAt'] = sort[0].sort === 'asc' ? 'asc' : 'desc';
     }
+    if (sort.length > 0 && sort[0].field === 'rating') {
+        orderBy['student'] = {
+            rating: sort[0].sort === 'asc' ? 'asc' : 'desc',
+        };
+    }
 
     return prisma.$transaction([
         prisma.trainingAssignmentRequest.count({
@@ -119,10 +124,24 @@ export const fetchRequests = async (pagination: GridPaginationModel, sort: GridS
             skip: pagination.page * pagination.pageSize,
             take: pagination.pageSize,
             include: {
-                student: true,
+                student: {
+                    include: {
+                        trainingSessions: {
+                            orderBy: {start: 'desc'},
+                            take: 1,
+                            include: {
+                                tickets: {
+                                    include: {
+                                        lesson: true,
+                                    }
+                                },
+                            },
+                        },
+                    },
+                },
                 interestedTrainers: true,
             },
-        })
+        }),
     ]);
 }
 
@@ -146,6 +165,14 @@ const getWhere = (filter?: GridFilterItem) => {
                         }
                     },
                 ],
+            };
+            break;
+        case 'cid':
+            where['student'] = {
+                cid: {
+                    [filter.operator]: filter.value as string,
+                    mode: 'insensitive',
+                }
             };
             break;
         case 'interestedTrainers':

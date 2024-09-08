@@ -8,6 +8,9 @@ import {fetchTrainingAssignments} from "@/actions/trainingAssignment";
 import {Edit} from "@mui/icons-material";
 import TrainingAssignmentDeleteButton from "@/components/TrainingAssignment/TrainingAssignmentDeleteButton";
 import {useRouter} from "next/navigation";
+import {getRating} from "@/lib/vatsim";
+import Link from "next/link";
+import {Lesson} from "@prisma/client";
 
 export default function TrainingAssignmentTable({manageMode}: { manageMode: boolean }) {
 
@@ -16,16 +19,61 @@ export default function TrainingAssignmentTable({manageMode}: { manageMode: bool
     const columns: GridColDef[] = [
         {
             field: 'student',
+            flex: 1,
             headerName: 'Student',
-            renderCell: (params) => `${params.row.student.firstName} ${params.row.student.lastName} (${params.row.student.cid})`,
-            filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
+            renderCell: (params) => `${params.row.student.firstName} ${params.row.student.lastName}` || 'Unknown',
             sortable: false,
-            flex: 1
+            filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
+        },
+        {
+            field: 'cid',
+            flex: 1,
+            headerName: 'CID',
+            sortable: false,
+            renderCell: (params) => params.row.student.cid,
+            filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
+        },
+        {
+            field: 'rating',
+            flex: 1,
+            headerName: 'Rating',
+            renderCell: (params) => getRating(params.row.student.rating),
+            filterable: false,
+            filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
+        },
+        {
+            field: 'lastSession',
+            flex: 1,
+            headerName: 'Last Training Session',
+            renderCell: (params) => params.row.student.trainingSessions[0]?.tickets.map((ticket: {
+                id: string,
+                lesson: Lesson,
+                passed: boolean,
+            }) => {
+                const color = ticket.passed ? 'success' : 'error';
+                return (
+                    <Chip
+                        key={ticket.id}
+                        label={ticket.lesson.identifier}
+                        size="small"
+                        color={color}
+                        style={{margin: '2px'}}
+                    />
+                );
+            }) || 'N/A',
+            filterable: false,
+            sortable: false,
+            filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
         },
         {
             field: 'primaryTrainer',
             headerName: 'Primary Trainer',
-            renderCell: (params) => `${params.row.primaryTrainer.firstName} ${params.row.primaryTrainer.lastName} (${params.row.primaryTrainer.cid})`,
+            renderCell: (params) => <Link href={`/training/controller/${params.row.primaryTrainer.cid}`}
+                                          target="_blank">
+                <Chip
+                    label={`${params.row.primaryTrainer.firstName} ${params.row.primaryTrainer.lastName} - ${getRating(params.row.primaryTrainer.rating)}`}
+                    size="small"/>
+            </Link>,
             filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
             sortable: false,
             flex: 1
@@ -36,7 +84,10 @@ export default function TrainingAssignmentTable({manageMode}: { manageMode: bool
             renderCell: (params) => (
                 <Stack direction="row" spacing={1}>
                     {params.row.otherTrainers.map((trainer: User) => (
-                        <Chip key={trainer.id} label={`${trainer.firstName} ${trainer.lastName}`} size="small"/>
+                        <Link key={trainer.id} href={`/training/controller/${trainer.cid}`} target="_blank">
+                            <Chip label={`${trainer.firstName} ${trainer.lastName} - ${getRating(trainer.rating)}`}
+                                  size="small"/>
+                        </Link>
                     ))}
                 </Stack>
             ),

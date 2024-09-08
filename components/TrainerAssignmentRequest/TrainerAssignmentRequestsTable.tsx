@@ -9,6 +9,10 @@ import {formatZuluDate} from "@/lib/date";
 import TrainerAssignmentRequestDeleteButton
     from "@/components/TrainerAssignmentRequest/TrainerAssignmentRequestDeleteButton";
 import {useRouter} from "next/navigation";
+import {getRating} from "@/lib/vatsim";
+import {Lesson} from "@prisma/client";
+import {Chip, Stack} from "@mui/material";
+import Link from "next/link";
 
 export default function TrainerAssignmentRequestsTable({manageMode}: { manageMode: boolean }) {
 
@@ -19,7 +23,47 @@ export default function TrainerAssignmentRequestsTable({manageMode}: { manageMod
             field: 'student',
             flex: 1,
             headerName: 'Student',
-            renderCell: (params) => `${params.row.student.firstName} ${params.row.student.lastName} (${params.row.student.cid})` || 'Unknown',
+            renderCell: (params) => `${params.row.student.firstName} ${params.row.student.lastName}` || 'Unknown',
+            sortable: false,
+            filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
+        },
+        {
+            field: 'cid',
+            flex: 1,
+            headerName: 'CID',
+            sortable: false,
+            renderCell: (params) => params.row.student.cid,
+            filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
+        },
+        {
+            field: 'rating',
+            flex: 1,
+            headerName: 'Rating',
+            renderCell: (params) => getRating(params.row.student.rating),
+            filterable: false,
+            filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
+        },
+        {
+            field: 'lastSession',
+            flex: 1,
+            headerName: 'Last Training Session',
+            renderCell: (params) => params.row.student.trainingSessions[0]?.tickets.map((ticket: {
+                id: string,
+                lesson: Lesson,
+                passed: boolean,
+            }) => {
+                const color = ticket.passed ? 'success' : 'error';
+                return (
+                    <Chip
+                        key={ticket.id}
+                        label={ticket.lesson.identifier}
+                        size="small"
+                        color={color}
+                        style={{margin: '2px'}}
+                    />
+                );
+            }) || 'N/A',
+            filterable: false,
             sortable: false,
             filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
         },
@@ -27,7 +71,16 @@ export default function TrainerAssignmentRequestsTable({manageMode}: { manageMod
             field: 'interestedTrainers',
             flex: 1,
             headerName: 'Interested Trainers',
-            renderCell: (params) => params.row.interestedTrainers.map((trainer: User) => `${trainer.firstName} ${trainer.lastName} (${trainer.cid})`).join(', ') || 'None',
+            renderCell: (params) => (
+                <Stack direction="row" spacing={1}>
+                    {params.row.interestedTrainers.map((trainer: User) => (
+                        <Link key={trainer.id} href={`/training/controller/${trainer.cid}`} target="_blank">
+                            <Chip label={`${trainer.firstName} ${trainer.lastName} - ${getRating(trainer.rating)}`}
+                                  size="small"/>
+                        </Link>
+                    ))}
+                </Stack>
+            ),
             sortable: false,
             filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
         },

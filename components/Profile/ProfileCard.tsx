@@ -1,5 +1,5 @@
 import React from 'react';
-import {Avatar, Box, Card, CardContent, Grid, IconButton, Stack, Tooltip, Typography} from "@mui/material";
+import {Avatar, Box, Card, CardContent, Chip, Grid, IconButton, Stack, Tooltip, Typography} from "@mui/material";
 import {getRating} from "@/lib/vatsim";
 import {User} from "next-auth";
 import {Edit} from "@mui/icons-material";
@@ -21,7 +21,8 @@ export default async function ProfileCard({user, admin, viewOnly}: {
                         <Avatar src={user.avatarUrl}/>
                         <Box>
                             <Typography
-                                variant="h6">{user.fullName} {user.operatingInitials ? `(${user.operatingInitials})` : ''}</Typography>
+                                variant="h6">{user.fullName} {user.operatingInitials ? `(${user.operatingInitials})` : ''}<Chip
+                                sx={{ml: 1,}} label={user.controllerStatus}/></Typography>
                             {getChips(user)}
                         </Box>
                     </Stack>

@@ -160,7 +160,11 @@ export const saveTrainingAssignment = async (formData: FormData) => {
 
 export const fetchTrainingAssignments = async (pagination: GridPaginationModel, sort: GridSortModel, filter?: GridFilterItem) => {
     const orderBy: Prisma.TrainingAssignmentOrderByWithRelationInput = {};
-    if (sort.length > 0) {
+    if (sort.length > 0 && sort[0].field === 'rating') {
+        orderBy['student'] = {
+            rating: sort[0].sort === 'asc' ? 'asc' : 'desc',
+        };
+    } else if (sort.length > 0) {
         const field = sort[0].field as keyof Prisma.TrainingAssignmentOrderByWithRelationInput;
         orderBy[field] = sort[0].sort === 'asc' ? 'asc' : 'desc';
     }
@@ -172,7 +176,21 @@ export const fetchTrainingAssignments = async (pagination: GridPaginationModel, 
         prisma.trainingAssignment.findMany({
             orderBy,
             include: {
-                student: true,
+                student: {
+                    include: {
+                        trainingSessions: {
+                            orderBy: {start: 'desc'},
+                            take: 1,
+                            include: {
+                                tickets: {
+                                    include: {
+                                        lesson: true,
+                                    }
+                                },
+                            },
+                        },
+                    },
+                },
                 primaryTrainer: true,
                 otherTrainers: true,
             },
@@ -206,6 +224,15 @@ const getWhere = (filter?: GridFilterItem): Prisma.TrainingAssignmentWhereInput 
                             },
                         },
                     ],
+                },
+            };
+        case 'cid':
+            return {
+                student: {
+                    cid: {
+                        [filter.operator]: filter.value as string,
+                        mode: 'insensitive',
+                    },
                 },
             };
         case 'primaryTrainer':
@@ -252,3 +279,21 @@ const getWhere = (filter?: GridFilterItem): Prisma.TrainingAssignmentWhereInput 
             return {};
     }
 };
+
+export const getPrimaryAndSecondaryStudentNumbers = async (trainerId: string) => {
+    const primary = await prisma.trainingAssignment.count({
+        where: {
+            primaryTrainerId: trainerId,
+        },
+    });
+    const secondary = await prisma.trainingAssignment.count({
+        where: {
+            otherTrainers: {
+                some: {
+                    id: trainerId,
+                },
+            },
+        },
+    });
+    return {primary, secondary};
+}
