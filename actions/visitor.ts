@@ -9,7 +9,6 @@ import {User} from "next-auth";
 import {addVatusaVisitor} from "@/actions/vatusa/roster";
 import {
     sendVisitorApplicationAcceptedEmail,
-    sendVisitorApplicationCreatedEmail,
     sendVisitorApplicationRejectedEmail
 } from "@/actions/mail/visitor";
 import {GridFilterItem, GridPaginationModel, GridSortModel} from "@mui/x-data-grid";
@@ -66,8 +65,6 @@ export const addVisitingApplication = async (formData: FormData) => {
             user: true,
         },
     });
-
-    await sendVisitorApplicationCreatedEmail(application.user as User);
 
     revalidatePath('/admin/visitor-applications');
     revalidatePath('/visitor/new');
@@ -126,7 +123,7 @@ export const rejectVisitor = async (application: VisitorApplication, user: User)
         },
     });
 
-    await sendVisitorApplicationRejectedEmail(user);
+    await sendVisitorApplicationRejectedEmail(user, application);
 
     await log("UPDATE", "VISITOR_APPLICATION", `Rejected visitor application for ${user.fullName} (${user.cid})`);
     revalidatePath('/admin/visitor-applications');

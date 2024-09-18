@@ -11,7 +11,6 @@ import {
     sendLoaDeletedEmail,
     sendLoaDeniedEmail,
     sendLoaExpiredEmail,
-    sendLoaRequestedEmail
 } from "@/actions/mail/loa";
 import {GridFilterItem, GridPaginationModel, GridSortModel} from "@mui/x-data-grid";
 import {LOAStatus, Prisma} from "@prisma/client";
@@ -69,8 +68,6 @@ export const createOrUpdateLoa = async (formData: FormData) => {
                 status: "PENDING",
             },
         });
-
-        await sendLoaRequestedEmail(session.user);
 
         await log("CREATE", "LOA", `User ${session.user.firstName} ${session.user.lastName} requested LOA`);
         revalidatePath("/profile", "layout");
@@ -135,7 +132,7 @@ export const denyLoa = async (loaId: string) => {
         }
     });
 
-    await sendLoaDeniedEmail(loa.user as User);
+    await sendLoaDeniedEmail(loa.user as User, loa);
     await log("UPDATE", "LOA", `LOA request for ${loa.user.firstName} ${loa.user.lastName} (${loa.user.cid}) denied`);
     revalidatePath("/admin/loas", "layout");
     revalidatePath("/profile", "layout");

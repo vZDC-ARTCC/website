@@ -99,6 +99,17 @@ export const saveTrainingAssignment = async (formData: FormData) => {
 
     const {id, trainingRequestId, student, primaryTrainer, otherTrainers} = result.data;
 
+    const oldAssignment = await prisma.trainingAssignment.findUnique({
+        where: {
+            id: id || '',
+        },
+        include: {
+            student: true,
+            primaryTrainer: true,
+            otherTrainers: true,
+        },
+    });
+
     const assignment = await prisma.trainingAssignment.upsert({
         where: {
             id: id || '',
@@ -144,8 +155,21 @@ export const saveTrainingAssignment = async (formData: FormData) => {
     }
 
     if (id) {
+
+        const oldTrainerIds = oldAssignment?.otherTrainers.map(trainer => trainer.id) || [];
+        const newTrainerIds = [primaryTrainer, ...otherTrainers];
+
+        const removedTrainers = [oldAssignment?.primaryTrainer, ...oldAssignment?.otherTrainers || []].filter(trainer => !newTrainerIds.includes(trainer?.id || '')) || [];
+        const addedTrainers = assignment.otherTrainers.filter(trainer => !oldTrainerIds.includes(trainer.id));
+
         await log("UPDATE", "TRAINING_ASSIGNMENT", `Updated training assignment for ${assignment.student.fullName} (${assignment.student.cid})`);
-        await sendTrainingAssignmentUpdatedEmail(assignment.student as User, assignment.primaryTrainer as User, assignment.otherTrainers as User[]);
+        await sendTrainingAssignmentUpdatedEmail(
+            assignment.student as User,
+            assignment.primaryTrainer as User,
+            removedTrainers as User[],
+            addedTrainers as User[],
+            oldAssignment?.primaryTrainer.id !== assignment.primaryTrainer.id,
+        );
     } else {
         await log("CREATE", "TRAINING_ASSIGNMENT", `Created training assignment for ${assignment.student.fullName} (${assignment.student.cid})`);
         await sendTrainingRequestFulfilledEmail(assignment.student as User, assignment.primaryTrainer as User, assignment.otherTrainers as User[]);

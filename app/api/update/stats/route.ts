@@ -115,6 +115,12 @@ export async function GET() {
         await prisma.lOA.deleteMany({
             where: {
                 userId: controller.id,
+                start: {
+                    lte: now,
+                },
+                end: {
+                    gte: now,
+                },
                 status: 'APPROVED',
             },
         });

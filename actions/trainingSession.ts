@@ -165,7 +165,7 @@ export async function createOrUpdateTrainingSession(
                 const oldTicket = oldTickets.find((ticket) => ticket.id === newTicket.id);
 
                 if (oldTicket && !oldTicket.passed && newTicket.passed && newTicket.lesson.notifyInstructorOnPass) {
-                    await sendInstructorsTrainingSessionCreatedEmail(trainingSession.student as User, session.user, trainingSession, newTicket.lesson);
+                    await sendInstructorsTrainingSessionCreatedEmail(trainingSession.student as User, trainingSession, newTicket.lesson);
                 }
             }
 
@@ -223,13 +223,13 @@ export async function createOrUpdateTrainingSession(
                 }
             });
 
-            await sendTrainingSessionCreatedEmail(trainingSession.student as User, session.user, trainingSession);
+            await sendTrainingSessionCreatedEmail(trainingSession.student as User, trainingSession);
 
             revalidatePath('/training/sessions', "layout");
 
             for (const newTicket of trainingSession.tickets) {
                 if (newTicket.passed && newTicket.lesson.notifyInstructorOnPass) {
-                    await sendInstructorsTrainingSessionCreatedEmail(trainingSession.student as User, session.user, trainingSession, newTicket.lesson);
+                    await sendInstructorsTrainingSessionCreatedEmail(trainingSession.student as User, trainingSession, newTicket.lesson);
                 }
             }
 

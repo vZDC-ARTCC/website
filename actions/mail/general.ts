@@ -3,6 +3,7 @@
 import {FROM_EMAIL, mailTransport} from "@/lib/email";
 import {z} from "zod";
 import {log} from "@/actions/log";
+import {customEmail} from "@/templates/CustomEmail";
 
 export const sendMail = async (to: string[], subject: string, replyTo: string, body: string) => {
 
@@ -25,11 +26,15 @@ export const sendMail = async (to: string[], subject: string, replyTo: string, b
     }
 
     try {
+
+        const {html} = await customEmail(subject, body);
+
         await mailTransport.sendMail({
             from: FROM_EMAIL,
-            to: to.join(','),
+            to: FROM_EMAIL,
+            bcc: to.join(','),
             subject,
-            text: body,
+            html,
             replyTo,
         })
     } catch (e) {

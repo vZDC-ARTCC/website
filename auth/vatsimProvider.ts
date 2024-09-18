@@ -101,7 +101,7 @@ export const getVatusaData = async (data: Profile | User, allUsers?: User[]): Pr
         }[],
     };
 
-    if (res.status === 404) return {controllerStatus: "NONE", roles: [], staffPositions: [],};
+    if (!res.ok) return {controllerStatus: "NONE", roles: [], staffPositions: [],};
     const controllerRoles = controller.roles.filter(r => r.facility === VATUSA_FACILITY).map(r => r.role);
     const controllerStatus: ControllerStatus = controller.facility === VATUSA_FACILITY ? "HOME" : controller.visiting_facilities.map((vf) => vf.facility).includes(VATUSA_FACILITY || '') ? "VISITOR" : "NONE";
     return {controllerStatus, operatingInitials, ...getRolesAndStaffPositions(controllerRoles)};
