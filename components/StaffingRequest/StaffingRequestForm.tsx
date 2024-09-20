@@ -2,7 +2,7 @@
 import React from 'react';
 import {User} from "next-auth";
 import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
-import {Grid, TextField} from "@mui/material";
+import {Grid2, TextField} from "@mui/material";
 import StaffingRequestSubmitButton from "@/components/StaffingRequest/StaffingRequestSubmitButton";
 import {toast} from "react-toastify";
 import {createStaffingRequest} from "@/actions/staffingRequest";
@@ -28,33 +28,49 @@ export default function StaffingRequestForm({user}: { user: User, }) {
     }
 
     return (
-        <form action={handleSubmit}>
+        (<form action={handleSubmit}>
             <input type="hidden" name="userId" value={user.id}/>
-            <Grid container columns={2} spacing={2}>
-                <Grid item xs={2} sm={1}>
+            <Grid2 container columns={2} spacing={2}>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        sm: 1
+                    }}>
                     <TextField fullWidth variant="filled" name="pilotName" label="Your Name"
                                defaultValue={user.fullName} disabled/>
-                </Grid>
-                <Grid item xs={2} sm={1}>
+                </Grid2>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        sm: 1
+                    }}>
                     <TextField fullWidth variant="filled" name="pilotEmail" label="Your Email"
                                defaultValue={user.email} disabled/>
-                </Grid>
-                <Grid item xs={2} sm={1}>
+                </Grid2>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        sm: 1
+                    }}>
                     <TextField fullWidth variant="filled" name="pilotCid" label="Your VATSIM CID"
                                defaultValue={user.cid} disabled/>
-                </Grid>
-                <Grid item xs={2} sm={1}>
+                </Grid2>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        sm: 1
+                    }}>
                     <TextField fullWidth variant="filled" name="name" label="Event Name" required/>
-                </Grid>
-                <Grid item xs={2}>
+                </Grid2>
+                <Grid2 size={2}>
                     <TextField fullWidth required multiline rows={5} variant="filled" name="description"
                                label="Description"
                                helperText="Include airports, times, routes, and any other staffing requirements needed."/>
-                </Grid>
-                <Grid item xs={2}>
+                </Grid2>
+                <Grid2 size={2}>
                     <StaffingRequestSubmitButton/>
-                </Grid>
-            </Grid>
-        </form>
+                </Grid2>
+            </Grid2>
+        </form>)
     );
 }

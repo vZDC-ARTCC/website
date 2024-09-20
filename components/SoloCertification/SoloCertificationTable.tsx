@@ -6,6 +6,7 @@ import {fetchSoloCertifications} from "@/actions/solo";
 import SoloCertificationDeleteButton from "@/components/SoloCertification/SoloCertificationDeleteButton";
 import {formatZuluDate} from "@/lib/date";
 import {getRating} from "@/lib/vatsim";
+import {CertificationType} from "@prisma/client";
 
 export default function SoloCertificationTable() {
 
@@ -21,7 +22,7 @@ export default function SoloCertificationTable() {
         {
             field: 'certificationType',
             headerName: 'Certification Type',
-            valueFormatter: (params) => params.value.name,
+            valueFormatter: (params: CertificationType) => params.name,
             flex: 1,
             filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
         },
@@ -31,7 +32,7 @@ export default function SoloCertificationTable() {
             flex: 1,
             filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
         },
-        {field: 'expires', headerName: 'Expires', flex: 1, valueFormatter: (params) => formatZuluDate(params.value)},
+        {field: 'expires', headerName: 'Expires', flex: 1, valueFormatter: (params) => formatZuluDate(params)},
         {
             field: 'actions',
             headerName: 'Actions',

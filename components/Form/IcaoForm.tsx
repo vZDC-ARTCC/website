@@ -30,7 +30,8 @@ export default function IcaoForm({basePath}: { basePath: string }) {
     return (
         <form action={handleSubmit} style={{width: '100%',}}>
             <Stack direction={{xs: 'column', md: 'row',}} spacing={2}>
-                <TextField inputProps={{style: {textTransform: "uppercase"}}} fullWidth name="icao" label="ICAO"
+                <TextField slotProps={{htmlInput: {style: {textTransform: "uppercase"}}}} fullWidth name="icao"
+                           label="ICAO"
                            placeholder="KIAD" variant="filled" helperText="Must be 4 characters long"/>
                 <Button type="submit" variant="contained" size="large">Search</Button>
             </Stack>

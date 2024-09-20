@@ -49,7 +49,7 @@ export default function VatsimProvider(clientId?: string, clientSecret?: string)
                 division: data.vatsim.division.id || '',
                 rating: data.vatsim.rating.id,
                 updatedAt: new Date(),
-                ...await getVatusaData(data),
+                ...(await getVatusaData(data)),
             } as User;
         },
         clientId,
@@ -66,7 +66,7 @@ export const getVatusaData = async (data: Profile | User, allUsers?: User[]): Pr
 
     let operatingInitials;
     if ('personal' in data && 'name_first' in data.personal && 'name_last' in data.personal) {
-        const users = allUsers || await prisma.user.findMany();
+        const users = allUsers || (await prisma.user.findMany());
         const otherInitials = users.map(user => user.operatingInitials).filter(initial => initial !== null) as string[];
         operatingInitials = await getOperatingInitials(data.personal.name_first, data.personal.name_last, otherInitials);
     }

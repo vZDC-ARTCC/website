@@ -10,7 +10,7 @@ export default async function Page({params}: { params: { icao: string, } }) {
     const charts: Chart[] = [];
 
     if (icao) {
-        charts.push(...await fetchCharts(icao));
+        charts.push(...(await fetchCharts(icao)));
     }
 
     return (

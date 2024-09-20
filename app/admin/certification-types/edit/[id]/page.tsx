@@ -10,11 +10,11 @@ export default async function Page({params}: { params: { id: string } }) {
 
     const {id} = params;
 
-    const certificationType: CertificationType | undefined = await prisma.certificationType.findUnique({
+    const certificationType: CertificationType | undefined = (await prisma.certificationType.findUnique({
         where: {
             id,
         },
-    }) || undefined;
+    })) || undefined;
 
 
     return (

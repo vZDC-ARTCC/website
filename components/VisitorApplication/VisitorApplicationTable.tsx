@@ -32,7 +32,7 @@ export default function VisitorApplicationTable() {
             headerName: 'Submitted',
             flex: 1,
             filterable: false,
-            valueFormatter: (params) => formatZuluDate(params.value),
+            valueFormatter: (params) => formatZuluDate(params),
         },
         {
             field: 'user',
@@ -47,7 +47,7 @@ export default function VisitorApplicationTable() {
             headerName: 'CID',
             flex: 1,
             sortable: false,
-            valueGetter: (params) => params.row.user.cid,
+            renderCell: (params) => params.row.user.cid,
             filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
         },
         {
@@ -55,7 +55,7 @@ export default function VisitorApplicationTable() {
             headerName: 'Email',
             flex: 1,
             sortable: false,
-            valueGetter: (params) => params.row.user.email,
+            renderCell: (params) => params.row.user.email,
             filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
         },
         {

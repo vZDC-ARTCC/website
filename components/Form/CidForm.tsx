@@ -41,19 +41,19 @@ export default function CidForm({basePath, controllers, initialCid}: {
 
     return (
         // <form action={handleSubmit} style={{width: '100%',}}>
-            <Stack direction={{xs: 'column', md: 'row',}} spacing={2}>
-                <Autocomplete
-                    fullWidth
-                    options={controllers}
-                    getOptionLabel={(option) => `${option.firstName} ${option.lastName} (${option.cid})`}
-                    value={controllers.find((u) => u.cid === controller) || null}
-                    onChange={(event, newValue) => {
-                        setController(newValue ? newValue.cid : '');
-                    }}
-                    renderInput={(params) => <TextField {...params} variant="filled" label="Controller"/>}
-                />
-                {/*<Button type="submit" variant="contained" size="large">Search</Button>*/}
-            </Stack>
         // </form>
+        (<Stack direction={{xs: 'column', md: 'row',}} spacing={2}>
+            <Autocomplete
+                fullWidth
+                options={controllers}
+                getOptionLabel={(option) => `${option.firstName} ${option.lastName} (${option.cid})`}
+                value={controllers.find((u) => u.cid === controller) || null}
+                onChange={(event, newValue) => {
+                    setController(newValue ? newValue.cid : '');
+                }}
+                renderInput={(params) => <TextField {...params} variant="filled" label="Controller"/>}
+            />
+            {/*<Button type="submit" variant="contained" size="large">Search</Button>*/}
+        </Stack>)
     );
 }

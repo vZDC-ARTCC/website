@@ -9,6 +9,7 @@ import {Grading, Info} from "@mui/icons-material";
 import LoaDeleteButton from "@/components/LOA/LoaDeleteButton";
 import {formatZuluDate} from "@/lib/date";
 import {useRouter} from "next/navigation";
+import {User} from "next-auth";
 
 const getChipColor = (status: LOAStatus) => {
     switch (status) {
@@ -33,21 +34,21 @@ export default function LoaTable() {
             headerName: 'User',
             flex: 1,
             sortable: false,
-            valueFormatter: (params) => `${params.value.firstName} ${params.value.lastName} (${params.value.cid})`,
+            valueFormatter: (params: User) => `${params.firstName} ${params.lastName} (${params.cid})`,
         },
         {
             field: 'start',
             headerName: 'Start',
             flex: 1,
             filterable: false,
-            valueFormatter: (params) => formatZuluDate(params.value),
+            valueFormatter: (params) => formatZuluDate(params),
         },
         {
             field: 'end',
             headerName: 'End',
             flex: 1,
             filterable: false,
-            valueFormatter: (params) => formatZuluDate(params.value),
+            valueFormatter: (params) => formatZuluDate(params),
         },
         {
             field: 'status',

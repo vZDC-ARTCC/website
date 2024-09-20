@@ -159,7 +159,7 @@ export const saveTrainingAssignment = async (formData: FormData) => {
         const oldTrainerIds = oldAssignment?.otherTrainers.map(trainer => trainer.id) || [];
         const newTrainerIds = [primaryTrainer, ...otherTrainers];
 
-        const removedTrainers = [oldAssignment?.primaryTrainer, ...oldAssignment?.otherTrainers || []].filter(trainer => !newTrainerIds.includes(trainer?.id || '')) || [];
+        const removedTrainers = [oldAssignment?.primaryTrainer, ...(oldAssignment?.otherTrainers || [])].filter(trainer => !newTrainerIds.includes(trainer?.id || '')) || [];
         const addedTrainers = assignment.otherTrainers.filter(trainer => !oldTrainerIds.includes(trainer.id));
 
         await log("UPDATE", "TRAINING_ASSIGNMENT", `Updated training assignment for ${assignment.student.fullName} (${assignment.student.cid})`);

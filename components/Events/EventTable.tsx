@@ -2,13 +2,13 @@
 import React from 'react';
 import {getGridSingleSelectOperators, GridActionsCellItem, GridColDef} from "@mui/x-data-grid";
 import DataTable, {containsOnlyFilterOperator, equalsOnlyFilterOperator} from "@/components/DataTable/DataTable";
-import {format} from "date-fns";
 import {fetchEvents} from "@/actions/event";
 import {Tooltip} from "@mui/material";
 import {Checklist, Edit} from "@mui/icons-material";
 import EventDeleteButton from "@/components/Events/EventDeleteButton";
 import {EventType} from "@prisma/client";
 import {useRouter} from "next/navigation";
+import {formatZuluDate} from "@/lib/date";
 
 export default function EventTable() {
     const eventTypes = Object.keys(EventType).map((type) => ({value: type, label: type}));
@@ -34,13 +34,15 @@ export default function EventTable() {
             field: 'start',
             headerName: 'Start',
             flex: 1,
-            valueFormatter: (params) => format(new Date(params.value), 'M/d/yy HHmm') + 'z'
+            filterable: false,
+            valueFormatter: (params) => formatZuluDate(params),
         },
         {
             field: 'end',
             headerName: 'End',
             flex: 1,
-            valueFormatter: (params) => format(new Date(params.value), 'M/d/yy HHmm') + 'z'
+            filterable: false,
+            valueFormatter: (params) => formatZuluDate(params),
         },
         {
             field: 'host',

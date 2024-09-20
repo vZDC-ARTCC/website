@@ -12,14 +12,14 @@ import {
     CardContent,
     Chip,
     CircularProgress,
-    Grid,
+    FormControlLabel,
+    Grid2,
     IconButton,
     Stack,
+    Switch,
     TextField,
     Typography,
-    useTheme,
-    Switch,
-    FormControlLabel
+    useTheme
 } from "@mui/material";
 import {useRouter, useSearchParams} from "next/navigation";
 import {User} from "next-auth";
@@ -110,10 +110,10 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
     dayjs.extend(utc);
 
     return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+        (<LocalizationProvider dateAdapter={AdapterDayjs}>
             <form action={handleSubmit}>
-                <Grid container columns={2} spacing={2}>
-                    <Grid item xs={2}>
+                <Grid2 container columns={2} spacing={2}>
+                    <Grid2 size={2}>
                         <Autocomplete
                             disabled={!!trainingSession}
                             options={allUsers}
@@ -124,16 +124,24 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
                             }}
                             renderInput={(params) => <TextField {...params} label="Student"/>}
                         />
-                    </Grid>
-                    <Grid item xs={2} md={1}>
+                    </Grid2>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
                         <DateTimePicker ampm={false} label="Start" value={dayjs.utc(start)}
                                         onChange={(d) => setStart(d?.toDate() || new Date())}/>
-                    </Grid>
-                    <Grid item xs={2} md={1}>
+                    </Grid2>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
                         <DateTimePicker ampm={false} label="End" value={dayjs.utc(end)}
                                         onChange={(d) => setEnd(d?.toDate() || new Date())}/>
-                    </Grid>
-                    <Grid item xs={2}>
+                    </Grid2>
+                    <Grid2 size={2}>
                         {trainingTickets.length > 0 && <Card variant="outlined">
                             <CardContent>
                                 <Typography variant="h6" sx={{mb: 2,}}>Training Ticket(s)</Typography>
@@ -177,8 +185,8 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
                                 ))}
                             </CardContent>
                         </Card>}
-                    </Grid>
-                    <Grid item xs={2}>
+                    </Grid2>
+                    <Grid2 size={2}>
                         <Card variant="outlined">
                             <CardContent>
                                 <Typography variant="h6" sx={{mb: 2,}}>New Training Ticket</Typography>
@@ -204,8 +212,8 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
                                                     }}/>
                             </CardContent>
                         </Card>
-                    </Grid>
-                    <Grid item xs={2}>
+                    </Grid2>
+                    <Grid2 size={2}>
                         <Box sx={{}} data-color-mode={theme.palette.mode}>
                         <FormControlLabel control={<Switch onChange={()=>setEnableMarkdown(!enableMarkdown)}/>} label="Enable Markdown Editor" />
                             <Typography variant="subtitle1" sx={{mb: 1,}}>Additional Comments</Typography>
@@ -228,8 +236,8 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
                                 />
                             }
                         </Box>
-                    </Grid>
-                    <Grid item xs={2}>
+                    </Grid2>
+                    <Grid2 size={2}>
                         <Box sx={{}} data-color-mode={theme.palette.mode}>
                             <Typography variant="subtitle1" sx={{mb: 1,}}>Trainer Comments</Typography>
                             {enableMarkdown ?
@@ -251,13 +259,13 @@ export default function TrainingSessionForm({trainingSession,}: { trainingSessio
                                 />
                             }
                         </Box>
-                    </Grid>
-                    <Grid item xs={2}>
+                    </Grid2>
+                    <Grid2 size={2}>
                         <FormSaveButton/>
-                    </Grid>
-                </Grid>
+                    </Grid2>
+                </Grid2>
             </form>
-        </LocalizationProvider>
+        </LocalizationProvider>)
     );
 
 }

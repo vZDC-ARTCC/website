@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import {GridActionsCellItem, GridColDef, getGridNumericOperators, getGridSingleSelectOperators} from "@mui/x-data-grid";
+import {getGridNumericOperators, getGridSingleSelectOperators, GridActionsCellItem, GridColDef} from "@mui/x-data-grid";
 import DataTable, {containsOnlyFilterOperator, equalsOnlyFilterOperator} from "@/components/DataTable/DataTable";
 import {fetchFeedback} from "@/actions/feedback";
 import {FeedbackStatus} from "@prisma/client";
@@ -35,7 +35,7 @@ export default function FeedbackTable() {
             headerName: 'Submitted',
             flex: 1,
             filterable: false,
-            valueFormatter: (params) => formatZuluDate(params.value)
+            valueFormatter: (params) => formatZuluDate(params)
         },
         {
             field: 'controller',

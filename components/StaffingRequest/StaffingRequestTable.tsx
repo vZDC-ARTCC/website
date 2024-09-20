@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import {GridColDef, GridActionsCellItem} from "@mui/x-data-grid";
+import {GridActionsCellItem, GridColDef} from "@mui/x-data-grid";
 import DataTable, {containsOnlyFilterOperator, equalsOnlyFilterOperator} from "@/components/DataTable/DataTable";
 import {fetchStaffingRequests} from "@/actions/staffingRequest";
 import {useRouter} from "next/navigation";
@@ -23,14 +23,14 @@ export default function StaffingRequestTable() {
             field: 'cid',
             headerName: 'CID',
             flex: 1,
-            valueGetter: (params) => params.row.user.cid,
+            renderCell: (params) => params.row.user.cid,
             filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
         },
         {
             field: 'email',
             headerName: 'Email',
             flex: 1,
-            valueGetter: (params) => params.row.user.email,
+            renderCell: (params) => params.row.user.email,
             filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
         },
         {

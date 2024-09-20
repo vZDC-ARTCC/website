@@ -34,7 +34,7 @@ export default function IncidentTable() {
             headerName: 'Timestamp',
             filterable: false,
             flex: 1,
-            valueFormatter: (params) => formatZuluDate(params.value)
+            valueFormatter: (params) => formatZuluDate(params)
         },
         {field: 'closed', headerName: 'Closed', type: 'boolean', flex: 1},
         {
