@@ -1,8 +1,7 @@
 import React from 'react';
-import {Typography, Card, CardContent} from "@mui/material";
+import {Typography} from "@mui/material";
 import TrainingSessionForm from "@/components/TrainingSession/TrainingSessionForm";
 import ZuluTime from '@/components/TrainingSession/TrainingTicketZuluClock';
-import RenderFromTemplateContext from '@/node_modules/next/dist/client/components/render-from-template-context';
 
 export default async function Page() {
 

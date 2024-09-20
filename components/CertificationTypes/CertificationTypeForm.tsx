@@ -1,22 +1,20 @@
 'use client';
 import React from 'react';
-import {CertificationType} from "@prisma/client";
+import {CertificationOption, CertificationType} from "@prisma/client";
 import {useRouter} from "next/navigation";
 import {toast} from "react-toastify";
 import {createOrUpdateCertificationType} from "@/actions/certificationTypes";
-import {FormControlLabel, Stack, Switch, TextField} from "@mui/material";
+import {Autocomplete, FormControlLabel, Stack, Switch, TextField} from "@mui/material";
 import FormSaveButton from "@/components/Form/FormSaveButton";
 
 export default function CertificationTypeForm({certificationType}: { certificationType?: CertificationType }) {
+
+    const [availableOptions, setAvailableOptions] = React.useState<CertificationOption[]>(certificationType?.certificationOptions.filter((co) => !['NONE', 'SOLO'].includes(co)) || []);
     const router = useRouter();
 
     const handleSubmit = async (formData: FormData) => {
 
-        formData.set('certificationOptions', ["NONE", "TIER_1",] as any);
-
-        if (formData.get('splitCertification') === 'on') {
-            formData.set('certificationOptions', ["NONE", "TIER_1", "UNRESTRICTED"] as any);
-        }
+        formData.set('certificationOptions', ["NONE", ...availableOptions] as any);
 
         const {certificationType, errors} = await createOrUpdateCertificationType(formData);
 
@@ -29,7 +27,7 @@ export default function CertificationTypeForm({certificationType}: { certificati
         toast(`Certification type '${certificationType.name}' saved successfully!`, {type: 'success'})
     }
 
-    const splitCertification = certificationType?.certificationOptions && certificationType.certificationOptions.length > 2;
+
 
     return (
         <form action={handleSubmit}>
@@ -39,12 +37,26 @@ export default function CertificationTypeForm({certificationType}: { certificati
                 <TextField variant="filled" type="number" name="order" label="Order"
                            defaultValue={certificationType?.order || 0}
                            helperText="Lower number will put this certification higher in lists or first in table columns."/>
+                <Autocomplete
+                    multiple
+                    disableCloseOnSelect
+                    options={Object.keys(CertificationOption).filter((co) => !['NONE', 'SOLO'].includes(co)) as CertificationOption[]}
+                    value={availableOptions}
+                    onChange={(event, newValue) => {
+                        setAvailableOptions(newValue);
+                    }}
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            variant="filled"
+                            label="Available Certification Options"
+                            helperText="The order matters! You will see the first option first at any time."
+                        />
+                    )}>
+                </Autocomplete>
                 <FormControlLabel name="canSoloCert"
                                   control={<Switch defaultChecked={certificationType?.canSoloCert}/>}
                                   label="Can get solo certified?"/>
-                <FormControlLabel name="splitCertification"
-                                  control={<Switch defaultChecked={splitCertification}/>}
-                                  label="Split certification?"/>
                 <FormSaveButton />
             </Stack>
         </form>

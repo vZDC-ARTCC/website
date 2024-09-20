@@ -1,8 +1,10 @@
+// noinspection JSPotentiallyInvalidTargetOfIndexedPropertyAccess
+
 'use server'
 import prisma from "@/lib/db";
 import {z} from "zod";
 import {revalidatePath} from "next/cache";
-import { Prisma } from '@prisma/client'
+import {Prisma} from '@prisma/client'
 
 export async function createChangeLog(versionNumber: string, changeLogDetails: string, id?: string) {
 
@@ -30,7 +32,7 @@ export async function createChangeLog(versionNumber: string, changeLogDetails: s
             }
         })
         try {
-            const editChangeLog = await prisma.version.update({
+            await prisma.version.update({
                 where: {id},
                 data: {
                     versionNumber: result.data.versionNumber,
@@ -65,7 +67,7 @@ export async function createChangeLog(versionNumber: string, changeLogDetails: s
     }
     else {
         try {
-            const addChangeLog = await prisma.version.create({
+            await prisma.version.create({
                 data: {
                     versionNumber: result.data.versionNumber,
                     changeDetails: {
@@ -93,7 +95,7 @@ export async function createChangeLog(versionNumber: string, changeLogDetails: s
 }
 
 export async function deleteChangeLog(id: string){
-    const changeLog = await prisma.version.delete({
+    await prisma.version.delete({
         where: {id},
         include: {
             changeDetails: true,
@@ -105,10 +107,3 @@ export async function deleteChangeLog(id: string){
     return {};
 }
 
-export async function getChangeLog(id: string){
-    return await prisma.version.findUnique({
-        where: {
-            id: id
-        }
-    })
-}

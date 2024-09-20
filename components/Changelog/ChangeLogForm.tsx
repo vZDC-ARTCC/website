@@ -4,7 +4,7 @@ import MarkdownEditor from "@uiw/react-markdown-editor";
 import React, {useEffect} from "react";
 import {toast} from "react-toastify";
 import FormSaveButton from "@/components/Form/FormSaveButton";
-import {createChangeLog, getChangeLog} from "@/actions/changeLog";
+import {createChangeLog} from "@/actions/changeLog";
 import {useRouter} from "next/navigation";
 
 export default function ChangeLogForm({changeLog, latestVersion,}: {
@@ -23,7 +23,6 @@ export default function ChangeLogForm({changeLog, latestVersion,}: {
 
     const getInitialData = React.useCallback(async () => {
         if (changeLog) {
-            const changeLogData = await getChangeLog(changeLog.id);
             setVersionNumber(changeLog.versionNumber);
             setChangeLogDetails(changeLog.changeDetails[0].detail)
         }

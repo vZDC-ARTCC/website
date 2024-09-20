@@ -44,7 +44,7 @@ export default function TrainingAssignmentForm({
             setAllTrainers(trainersWithNumbers);
         };
 
-        fetchTrainerNumbers();
+        fetchTrainerNumbers().then();
     }, [allUsers]);
 
     const handleSubmit = async (formData: FormData) => {

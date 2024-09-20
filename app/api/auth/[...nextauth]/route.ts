@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols
+
 import NextAuth from "next-auth"
 import {authOptions} from "@/auth/auth";
 

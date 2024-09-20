@@ -1,7 +1,5 @@
 'use client';
 import React from 'react';
-import {EventPosition} from "@prisma/client";
-import {User} from "next-auth";
 import {Button} from "@mui/material";
 import {Add} from "@mui/icons-material";
 import {useFormStatus} from "react-dom";

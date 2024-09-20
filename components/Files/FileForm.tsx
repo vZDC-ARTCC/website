@@ -37,7 +37,7 @@ export default function FileForm({file, category,}: { file?: DBFile, category: F
                            defaultValue={file?.name || ''}/>
                 <TextField variant="filled" fullWidth name="description" label="Description"
                            defaultValue={file?.description || ''} multiline rows={4}/>
-                <input type="file" name="file" required/>
+                <input type="file" name="file" required={!file}/>
                 <Box>
                     <FormSaveButton/>
                 </Box>

@@ -81,7 +81,7 @@ export default function LoginButton({session, sidebar, sidebarButtonClicked,}: {
     const handleSignIn = () => {
         signIn('vatsim', {
             callbackUrl: pathname,
-        });
+        }).then();
     };
 
     const closeDropdown = () => {

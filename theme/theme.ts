@@ -1,7 +1,7 @@
 'use client';
-import {experimental_extendTheme as extendTheme} from "@mui/material";
+import {createTheme} from '@mui/material/styles';
 
-export const theme = extendTheme({
+const theme = createTheme({
     colorSchemes: {
         light: {
             palette: {
@@ -21,5 +21,20 @@ export const theme = extendTheme({
                 },
             }
         },
+    },
+    cssVariables: {
+        colorSchemeSelector: 'class',
+    },
+    typography: {
+        fontFamily: 'var(--font-roboto)',
+    },
+    palette: {
+        mode: 'dark',
+        primary: {
+            main: '#500E0E',
+            contrastText: '#EDEDF5',
+        }
     }
-})
+});
+
+export default theme;

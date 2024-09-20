@@ -1,18 +1,20 @@
 import {ReactNode} from "react";
 import type {Metadata} from "next";
-import {AppRouterCacheProvider} from "@mui/material-nextjs/v13-appRouter";
-import {Container, CssBaseline, Experimental_CssVarsProvider as CssVarsProvider} from "@mui/material";
+import {AppRouterCacheProvider} from "@mui/material-nextjs/v14-appRouter";
+import {Roboto} from 'next/font/google';
+import {Container, CssBaseline, ThemeProvider} from "@mui/material";
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import './globals.css';
 import 'react-toastify/dist/ReactToastify.css';
-import {theme} from "@/theme/theme";
+import theme from "@/theme/theme";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import {ToastContainer} from "react-toastify";
 import {GoogleTagManager} from "@next/third-parties/google";
+import InitColorSchemeScript from "@mui/system/InitColorSchemeScript";
 
 export const metadata: Metadata = {
     title: "Virtual Washington ARTCC",
@@ -21,6 +23,13 @@ export const metadata: Metadata = {
 
 const googleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 
+const roboto = Roboto({
+    weight: ['300', '400', '500', '700'],
+    subsets: ['latin'],
+    display: 'swap',
+    variable: '--font-roboto',
+});
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -28,12 +37,13 @@ export default async function RootLayout({
 }>) {
 
   return (
-    <html lang="en">
-    <body>
+      <html lang="en" suppressHydrationWarning>
+      <body className={roboto.variable}>
     <AppRouterCacheProvider>
-        <CssVarsProvider theme={theme}>
+        <ThemeProvider theme={theme}>
             <CssBaseline/>
             <GoogleTagManager gtmId={googleAnalyticsId || ''}/>
+            <InitColorSchemeScript attribute="class" defaultMode="system"/>
             <div>
                 <Navbar/>
                 <Container maxWidth="xl" sx={{marginTop: 5,}}>
@@ -42,7 +52,7 @@ export default async function RootLayout({
                 <Footer/>
                 <ToastContainer theme="dark"/>
             </div>
-        </CssVarsProvider>
+        </ThemeProvider>
     </AppRouterCacheProvider>
     </body>
     </html>

@@ -219,7 +219,13 @@ model DossierEntry {
 enum CertificationOption {
   NONE
   UNRESTRICTED
+  DEL
+  GND
+  TWR
+  APP
+  CTR
   TIER_1
+  CERTIFIED
   SOLO
 }
 

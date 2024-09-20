@@ -1,7 +1,8 @@
 import React from 'react';
 import {Card, CardContent, Container, Stack, Typography} from "@mui/material";
-import {Check, CheckCircle} from "@mui/icons-material";
+import {CheckCircle} from "@mui/icons-material";
 import {Metadata} from "next";
+
 export const metadata: Metadata = {
     title: 'Visitor Request Success | vZDC',
     description: 'vZDC visitor request page',
