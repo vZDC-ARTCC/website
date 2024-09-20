@@ -25,7 +25,7 @@ export default function Layout({children}: { children: React.ReactNode }) {
                 </Card>
                 <Card>
                     <CardContent>
-                        <RosterLegend/>
+                        {/*<RosterLegend/>*/}
                         <RosterTabs/>
                         {children}
                     </CardContent>
