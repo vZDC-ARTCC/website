@@ -13,6 +13,7 @@ import LoaDeleteButton from "@/components/LOA/LoaDeleteButton";
 import Link from "next/link";
 import {Edit} from "@mui/icons-material";
 import {LOAStatus} from "@prisma/client";
+import AssignedMentorsCard from "@/components/Profile/AssignedMentorsCard";
 
 export default async function Page() {
 
@@ -67,8 +68,11 @@ export default async function Page() {
                     </CardActions>
                 </Card>
             </Grid>}
-            <Grid item xs={6} md={4}>
+            <Grid item xs={6} md={2}>
                 <ProfileCard user={user}/>
+            </Grid>
+            <Grid item xs={6} md={2}>
+                <AssignedMentorsCard user={user}/>
             </Grid>
             <Grid item xs={6} md={2}>
                 <CertificationsCard cid={user.cid}/>

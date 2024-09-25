@@ -43,7 +43,7 @@ export default async function Layout({children}: { children: React.ReactNode }) 
                         <Card>
                             <CardContent>
                                 <Typography>All-Time Hours</Typography>
-                                <Typography variant="h6">{allTimeHours.toPrecision(3)} hours</Typography>
+                                <Typography variant="h6">{allTimeHours.toFixed(3)} hours</Typography>
                             </CardContent>
                         </Card>
                     </Grid>

@@ -2,7 +2,7 @@
 import React, {useState} from 'react';
 import {MailGroup} from "@/app/admin/mail/page";
 import {User} from "next-auth";
-import {Autocomplete, Grid, TextField} from "@mui/material";
+import {Autocomplete, Grid2, TextField} from "@mui/material";
 import FormSaveButton from "@/components/Form/FormSaveButton";
 import {sendMail} from "@/actions/mail/general";
 import {toast} from "react-toastify";
@@ -49,10 +49,14 @@ export default function MailForm({allUsers, groups}: { allUsers: User[], groups:
     }
 
     return (
-        <form action={handleSubmit}>
+        (<form action={handleSubmit}>
             <input type="hidden" name="to" value={uniqueSelectedIds}/>
-            <Grid container columns={2} spacing={2}>
-                <Grid item xs={2} md={1}>
+            <Grid2 container columns={2} spacing={2}>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        md: 1
+                    }}>
                     <Autocomplete
                         id="group-user-autocomplete"
                         options={options}
@@ -66,21 +70,25 @@ export default function MailForm({allUsers, groups}: { allUsers: User[], groups:
                         multiple
                         disableCloseOnSelect
                     />
-                </Grid>
-                <Grid item xs={2} md={1}>
+                </Grid2>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        md: 1
+                    }}>
                     <TextField required fullWidth variant="filled" name="subject" label="Subject"/>
-                </Grid>
-                <Grid item xs={2}>
+                </Grid2>
+                <Grid2 size={2}>
                     <TextField required fullWidth variant="filled" name="replyTo" label="Reply To"/>
-                </Grid>
-                <Grid item xs={2}>
+                </Grid2>
+                <Grid2 size={2}>
                     <TextField required fullWidth multiline rows={5} variant="filled" name="body"
                                label="Body"/>
-                </Grid>
-                <Grid item xs={2}>
+                </Grid2>
+                <Grid2 size={2}>
                     <FormSaveButton/>
-                </Grid>
-            </Grid>
-        </form>
+                </Grid2>
+            </Grid2>
+        </form>)
     );
 }

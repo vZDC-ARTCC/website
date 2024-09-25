@@ -26,13 +26,25 @@ export default async function Page() {
 
     return (
         <Container maxWidth="lg">
-            <Stack direction="row" justifyContent="space-evenly" sx={{ mb: 2, }}>
-                <Typography color="#f44336" fontWeight="bold" sx={{ p: 1, border: 1, }}>Home</Typography>
-                <Typography color="#ce93d8" fontWeight="bold" sx={{ p: 1, border: 1, }}>Supporting</Typography>
-                <Typography color="#66bb6a" fontWeight="bold" sx={{ p: 1, border: 1, }}>Group Flight</Typography>
-                <Typography color="#ffa726" fontWeight="bold" sx={{ p: 1, border: 1, }}>Training</Typography>
-            </Stack>
-            <EventCalendar events={events}/>
+            <Card sx={{mb: 2,}}>
+                <CardContent>
+                    <Typography variant="h6">Legend</Typography>
+                    <Stack direction="column" spacing={2} sx={{mt: 1,}}>
+                        <Typography color="#f44336" fontWeight="bold" sx={{p: 1, border: 1,}}>Home</Typography>
+                        <Typography color="#cd8dd8" fontWeight="bold"
+                                    sx={{p: 1, border: 1,}}>Support/Optional</Typography>
+                        <Typography color="#834091" fontWeight="bold"
+                                    sx={{p: 1, border: 1,}}>Support/Required</Typography>
+                        <Typography color="#66bb6a" fontWeight="bold" sx={{p: 1, border: 1,}}>Group Flight</Typography>
+                        <Typography color="#ffa726" fontWeight="bold" sx={{p: 1, border: 1,}}>Training</Typography>
+                    </Stack>
+                </CardContent>
+            </Card>
+            <Card>
+                <CardContent>
+                    <EventCalendar events={events}/>
+                </CardContent>
+            </Card>
             {events.length > 0 && <Typography variant="h6" sx={{my: 2,}}>List View</Typography>}
             <Stack direction="column" spacing={2}>
                 {events.slice(0, 10).map(async (event) => (

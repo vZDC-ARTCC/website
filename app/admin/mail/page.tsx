@@ -16,6 +16,7 @@ export default async function Page() {
             controllerStatus: {
                 not: "NONE",
             },
+            receiveEmail: true,
         },
     });
 

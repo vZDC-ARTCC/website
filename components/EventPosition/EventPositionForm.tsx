@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import {Event, EventPosition} from "@prisma/client";
-import {Grid, MenuItem, TextField} from "@mui/material";
+import {Grid2, MenuItem, TextField} from "@mui/material";
 import {toast} from "react-toastify";
 import {createOrUpdateEventPosition} from "@/actions/eventPosition";
 import FormSaveButton from "@/components/Form/FormSaveButton";
@@ -23,18 +23,26 @@ function EventPositionForm({event, eventPosition}: { event: Event, eventPosition
     }
 
     return (
-        <form action={handleSubmit}>
+        (<form action={handleSubmit}>
             <input type="hidden" name="eventId" value={event.id}/>
             <input type="hidden" name="id" value={eventPosition?.id}/>
-            <Grid container columns={2} spacing={2}>
-                <Grid item xs={2}>
+            <Grid2 container columns={2} spacing={2}>
+                <Grid2 size={2}>
                     <TextField label="Position Name" fullWidth name="position" defaultValue={eventPosition?.position}/>
-                </Grid>
-                <Grid item xs={2} md={1}>
+                </Grid2>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        md: 1
+                    }}>
                     <TextField label="Signup Cap (optional)" fullWidth type="number" name="signupCap"
                                defaultValue={eventPosition?.signupCap}/>
-                </Grid>
-                <Grid item xs={2} md={1}>
+                </Grid2>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        md: 1
+                    }}>
                     <TextField label="Minimum Rating" select fullWidth name="minRating"
                                defaultValue={eventPosition?.minRating || -1}>
                         <MenuItem value={-1}>All Ratings</MenuItem>
@@ -49,12 +57,12 @@ function EventPositionForm({event, eventPosition}: { event: Event, eventPosition
                         <MenuItem value={9}>I2</MenuItem>
                         <MenuItem value={10}>I3</MenuItem>
                     </TextField>
-                </Grid>
-                <Grid item xs={2}>
+                </Grid2>
+                <Grid2 size={2}>
                     <FormSaveButton />
-                </Grid>
-            </Grid>
-        </form>
+                </Grid2>
+            </Grid2>
+        </form>)
     );
 
 }

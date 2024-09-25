@@ -1,14 +1,17 @@
 import prisma from "@/lib/db";
 import {revalidatePath} from "next/cache";
+import {User} from "next-auth";
+import {ControllerLogMonth} from "@prisma/client";
+import {updateSyncTime} from "@/actions/lib/sync";
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
 
     const now = new Date();
-    const vatsimUpdate = await prisma.vatsimUpdateMetadata.findFirst();
+    const syncTime = await prisma.syncTimes.findFirst();
 
-    if (vatsimUpdate && vatsimUpdate.timestamp.getTime() > now.getTime() - 1000 * 10) {
+    if (syncTime?.stats && syncTime.stats?.getTime() > now.getTime() - 1000 * 10) {
         return Response.json({ ok: false, });
     }
 
@@ -18,19 +21,7 @@ export async function GET() {
             cid: true,
             log: {
                 include: {
-                    months: {
-                        select: {
-                            logId: true,
-                            id: true,
-                            month: true,
-                            year: true,
-                            deliveryHours: true,
-                            groundHours: true,
-                            towerHours: true,
-                            approachHours: true,
-                            centerHours: true,
-                        }
-                    },
+                    months: true,
                 },
             },
         },
@@ -66,6 +57,8 @@ export async function GET() {
                         end: now,
                     },
                 });
+
+                await addHours(controller as unknown as User, getFacilityType(activePosition.facility || 0), getHoursControlledSinceLastUpdate(now, activePosition.start), controller.log?.months.find((month) => month.month === now.getMonth() && month.year === now.getFullYear()));
             }
             continue;
         }
@@ -81,6 +74,7 @@ export async function GET() {
                     end: now,
                 },
             });
+            await addHours(controller as unknown as User, getFacilityType(activePosition.facility || 0), getHoursControlledSinceLastUpdate(now, activePosition.start), controller.log?.months.find((month) => month.month === now.getMonth() && month.year === now.getFullYear()));
             await prisma.controllerPosition.create({
                 data: {
                     log: {
@@ -118,76 +112,21 @@ export async function GET() {
             });
         }
 
-        const month = now.getMonth();
-        const year = now.getFullYear();
-        const log = controller.log?.months.find((controllerMonth) => controllerMonth.month === month && controllerMonth.year === year);
-
-        const onlineTimeSinceLastUpdate = getHoursControlledSinceLastUpdate(new Date(), vatsimUpdate?.timestamp || new Date());
-
-        await prisma.controllerLogMonth.upsert({
-            create: {
-                month,
-                year,
-                deliveryHours: getFacilityType(vatsimUser.facility) === 'DEL' ? onlineTimeSinceLastUpdate : 0,
-                groundHours: getFacilityType(vatsimUser.facility) === 'GND' ? onlineTimeSinceLastUpdate : 0,
-                towerHours: getFacilityType(vatsimUser.facility) === 'TWR' ? onlineTimeSinceLastUpdate : 0,
-                approachHours: getFacilityType(vatsimUser.facility) === 'APP' ? onlineTimeSinceLastUpdate : 0,
-                centerHours: getFacilityType(vatsimUser.facility) === 'CTR' ? onlineTimeSinceLastUpdate : 0,
-                log: {
-                    connectOrCreate: {
-                        create: {
-                            userId: controller.id,
-                        },
-                        where: {
-                            userId: controller.id,
-                        },
-                    },
-                },
-            },
-            update: {
-                deliveryHours: (log?.deliveryHours || 0) + (getFacilityType(vatsimUser.facility) === 'DEL' ? onlineTimeSinceLastUpdate : 0),
-                groundHours: (log?.groundHours || 0) + (getFacilityType(vatsimUser.facility) === 'GND' ? onlineTimeSinceLastUpdate : 0),
-                towerHours: (log?.towerHours || 0) + (getFacilityType(vatsimUser.facility) === 'TWR' ? onlineTimeSinceLastUpdate : 0),
-                approachHours: (log?.approachHours || 0) + (getFacilityType(vatsimUser.facility) === 'APP' ? onlineTimeSinceLastUpdate : 0),
-                centerHours: (log?.centerHours || 0) + (getFacilityType(vatsimUser.facility) === 'CTR' ? onlineTimeSinceLastUpdate : 0),
-            },
+        await prisma.lOA.deleteMany({
             where: {
-                logId_month_year: {
-                    logId: log?.logId || '',
-                    month,
-                    year,
+                userId: controller.id,
+                start: {
+                    lte: now,
                 },
+                end: {
+                    gte: now,
+                },
+                status: 'APPROVED',
             },
         });
-
     }
 
-    await prisma.vatsimUpdateMetadata.upsert({
-        where: {
-            id: vatsimUpdate?.id || '',
-        },
-        update: {
-            timestamp: now,
-        },
-        create: {
-            timestamp: now,
-        },
-    });
-
-    const syncTimes = await prisma.syncTimes.findFirst();
-
-    if (syncTimes) {
-        // If a syncTimes object exists, update the events field
-        await prisma.syncTimes.update({
-            where: {id: syncTimes.id},
-            data: {stats: now},
-        });
-    } else {
-        // If no syncTimes object exists, create a new one
-        await prisma.syncTimes.create({
-            data: {stats: now},
-        });
-    }
+    await updateSyncTime({stats: new Date(),});
 
     revalidatePath('/', 'layout');
 
@@ -209,8 +148,51 @@ const fetchVatsimControllerData = async () => {
     return data.filter((controller) => !controller.frequency.startsWith('199'));
 }
 
-const getHoursControlledSinceLastUpdate = (lastUpdated: Date, lastMetaUpdate: Date) => {
-    return (lastUpdated.getTime() - lastMetaUpdate.getTime()) / 1000 / 60 / 60;
+const getHoursControlledSinceLastUpdate = (now: Date, then: Date) => {
+    return (now.getTime() - then.getTime()) / 1000 / 60 / 60;
+}
+
+const addHours = async (controller: User, facility: string, hours: number, prevLogMonth?: ControllerLogMonth,) => {
+
+    const now = new Date();
+    const month = now.getMonth();
+    const year = now.getFullYear();
+
+    await prisma.controllerLogMonth.upsert({
+        create: {
+            month,
+            year,
+            deliveryHours: facility === 'DEL' ? hours : 0,
+            groundHours: facility === 'GND' ? hours : 0,
+            towerHours: facility === 'TWR' ? hours : 0,
+            approachHours: facility === 'APP' ? hours : 0,
+            centerHours: facility === 'CTR' ? hours : 0,
+            log: {
+                connectOrCreate: {
+                    create: {
+                        userId: controller.id,
+                    },
+                    where: {
+                        userId: controller.id,
+                    },
+                },
+            },
+        },
+        update: {
+            deliveryHours: (prevLogMonth?.deliveryHours || 0) + (facility === 'DEL' ? hours : 0),
+            groundHours: (prevLogMonth?.groundHours || 0) + (facility === 'GND' ? hours : 0),
+            towerHours: (prevLogMonth?.towerHours || 0) + (facility === 'TWR' ? hours : 0),
+            approachHours: (prevLogMonth?.approachHours || 0) + (facility === 'APP' ? hours : 0),
+            centerHours: (prevLogMonth?.centerHours || 0) + (facility === 'CTR' ? hours : 0),
+        },
+        where: {
+            logId_month_year: {
+                logId: prevLogMonth?.logId || '',
+                month,
+                year,
+            },
+        },
+    });
 }
 
 const getFacilityType = (facility: number) => {

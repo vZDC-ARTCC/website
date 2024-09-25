@@ -1,7 +1,17 @@
 'use client';
 import React from 'react';
 import {Event, EventType} from "@prisma/client";
-import {Box, Grid, MenuItem, TextField, Typography, useTheme} from "@mui/material";
+import {
+    Box,
+    Grid,
+    MenuItem,
+    Stack,
+    TextField,
+    ToggleButton,
+    ToggleButtonGroup,
+    Typography,
+    useTheme
+} from "@mui/material";
 import {DateTimePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
@@ -13,7 +23,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import FormSaveButton from "@/components/Form/FormSaveButton";
-import { StaticImageData } from '@/node_modules/next/image';
+import {StaticImageData} from '@/node_modules/next/image';
 
 const MarkdownEditor = dynamic(
     () => import("@uiw/react-markdown-editor").then((mod) => mod.default),
@@ -24,6 +34,7 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
 
     const theme = useTheme();
     const [description, setDescription] = React.useState<string>(event?.description || '');
+    const [bannerUploadType, setBannerUploadType] = React.useState('file');
     const router = useRouter();
     dayjs.extend(utc);
 
@@ -37,6 +48,13 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
         router.push('/admin/events');
         toast(`Event '${event.name}' saved successfully!`, {type: 'success'});
     }
+
+    const handleChange = (
+        event: React.MouseEvent<HTMLElement>,
+        newAlignment: string,
+      ) => {
+        setBannerUploadType(newAlignment);
+      };
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -84,7 +102,21 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
                     </Grid>
                     <Grid item xs={2} md={1}>
                         <Typography variant="h6" sx={{mb: 2,}}>Upload Banner Image</Typography>
-                        <input type="file" name="bannerImage" accept="image/*"/>
+                        <Stack spacing={2}>
+                            <ToggleButtonGroup
+                                color="primary"
+                                value={bannerUploadType}
+                                exclusive
+                                onChange={handleChange}
+                            >
+                                <ToggleButton value="file">File</ToggleButton>
+                                <ToggleButton value="url">URL</ToggleButton>
+                            </ToggleButtonGroup>
+
+                            {bannerUploadType === "file" ?
+                                <input type="file" name="bannerImage" accept="image/*"/> :
+                                <TextField variant="filled" type="url" fullWidth name="bannerUrl" label="Image URL"/>}
+                        </Stack>
                     </Grid>
                     {imageUrl &&
                         <Grid item xs={2} md={1}>

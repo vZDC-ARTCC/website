@@ -1,14 +1,8 @@
 'use client';
 import React from 'react';
-import {
-    Card,
-    CardContent,
-    Typography,
-    Switch,
-    FormControlLabel,
-} from "@mui/material";
+import {Card, CardContent, Typography,} from "@mui/material";
 import Markdown from "react-markdown";
-import { TrainingSession } from "@prisma/client"
+import {TrainingSession} from "@prisma/client"
 
 export default function TrainingMarkdownSwitch({trainingSession, trainerView}: { trainingSession:TrainingSession ,trainerView?: boolean }){
 

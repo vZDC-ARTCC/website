@@ -2,6 +2,7 @@ import {OAuthConfig} from "@auth/core/providers";
 import {Profile, User} from "next-auth";
 import {ControllerStatus, Role, StaffPosition} from "@prisma/client";
 import prisma from "@/lib/db";
+import {getOperatingInitials} from "@/actions/lib/oi";
 
 // vatusa facility id from environment variables
 const VATUSA_FACILITY = process.env['VATUSA_FACILITY'];
@@ -48,7 +49,7 @@ export default function VatsimProvider(clientId?: string, clientSecret?: string)
                 division: data.vatsim.division.id || '',
                 rating: data.vatsim.rating.id,
                 updatedAt: new Date(),
-                ...await getVatusaData(data),
+                ...(await getVatusaData(data)),
             } as User;
         },
         clientId,
@@ -56,7 +57,7 @@ export default function VatsimProvider(clientId?: string, clientSecret?: string)
     } satisfies OAuthConfig<any>;
 }
 
-export const getVatusaData = async (data: Profile | User): Promise<{
+export const getVatusaData = async (data: Profile | User, allUsers?: User[]): Promise<{
     controllerStatus: ControllerStatus,
     roles: Role[],
     staffPositions: StaffPosition[],
@@ -65,9 +66,9 @@ export const getVatusaData = async (data: Profile | User): Promise<{
 
     let operatingInitials;
     if ('personal' in data && 'name_first' in data.personal && 'name_last' in data.personal) {
-        const users = await prisma.user.findMany();
+        const users = allUsers || (await prisma.user.findMany());
         const otherInitials = users.map(user => user.operatingInitials).filter(initial => initial !== null) as string[];
-        operatingInitials = getOperatingInitials(data.personal.name_first, data.personal.name_last, otherInitials);
+        operatingInitials = await getOperatingInitials(data.personal.name_first, data.personal.name_last, otherInitials);
     }
 
     if (DEV_MODE) {
@@ -100,29 +101,10 @@ export const getVatusaData = async (data: Profile | User): Promise<{
         }[],
     };
 
-    if (!controller) return {controllerStatus: "NONE", roles: [], staffPositions: [],};
+    if (!res.ok) return {controllerStatus: "NONE", roles: [], staffPositions: [],};
     const controllerRoles = controller.roles.filter(r => r.facility === VATUSA_FACILITY).map(r => r.role);
     const controllerStatus: ControllerStatus = controller.facility === VATUSA_FACILITY ? "HOME" : controller.visiting_facilities.map((vf) => vf.facility).includes(VATUSA_FACILITY || '') ? "VISITOR" : "NONE";
     return {controllerStatus, operatingInitials, ...getRolesAndStaffPositions(controllerRoles)};
-}
-
-export const getOperatingInitials = (firstName: string, lastName: string, otherInitials: string[]): string => {
-    let initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
-
-    while (otherInitials.includes(initials)) {
-        initials = generateRandomInitials();
-    }
-
-    return initials;
-}
-
-const generateRandomInitials = (): string => {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    let result = '';
-    for (let i = 0; i < 2; i++) {
-        result += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return result;
 }
 
 export const getRolesAndStaffPositions = (controllerRoles: string[]) => {

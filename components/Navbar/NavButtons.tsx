@@ -1,22 +1,5 @@
 'use client';
 import React, {useState} from 'react';
-import {
-    Add,
-    AddComment,
-    AirplanemodeActive,
-    BarChart,
-    CalendarMonth,
-    Campaign,
-    Description,
-    DeveloperBoard,
-    FileDownload,
-    Handshake,
-    ListAlt,
-    Newspaper,
-    PersonAdd,
-    Radar,
-    Route
-} from "@mui/icons-material";
 import Link from "next/link";
 import NavButton from "@/components/Navbar/NavButton";
 import {Box, ListItemIcon, ListItemText, MenuItem} from "@mui/material";

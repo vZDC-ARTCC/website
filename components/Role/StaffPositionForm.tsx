@@ -35,6 +35,7 @@ function StaffPositionForm({user}: { user: User }) {
                     <FormControl fullWidth>
                         <InputLabel id="staff-position-select-label">Staff Position(s)</InputLabel>
                         <Select
+                            variant="filled"
                             labelId="staff-position-select-label"
                             id="staff-position-select"
                             multiple
@@ -47,8 +48,7 @@ function StaffPositionForm({user}: { user: User }) {
                                         <Chip key={value} label={value}/>
                                     ))}
                                 </Box>
-                            )}
-                        >
+                            )}>
                             {Object.keys(StaffPosition).map((position) => (
                                 <MenuItem key={position} value={position}>{position}</MenuItem>
                             ))}

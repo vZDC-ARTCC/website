@@ -95,18 +95,18 @@ export const assignEventPosition = async (event: Event, eventPosition: EventPosi
     if (!isAbleToSignup(eventPosition, controllers, user)) {
         throw new Error("User is not able to signup for this position");
     }
-    const signedUpPositions = await prisma.eventPosition.findMany({
-        where: {
-            controllers: {
-                some: {
-                    id: user.id,
-                },
-            },
-            id: {
-                not: eventPosition.id,
-            },
-        },
-    });
+    // const signedUpPositions = await prisma.eventPosition.findMany({
+    //     where: {
+    //         controllers: {
+    //             some: {
+    //                 id: user.id,
+    //             },
+    //         },
+    //         id: {
+    //             not: eventPosition.id,
+    //         },
+    //     },
+    // });
     // if (signedUpPositions.length > 0) {
     //     throw new Error("User is already signed up for another position");
     // }

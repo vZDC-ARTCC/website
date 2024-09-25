@@ -67,68 +67,79 @@ export default async function Page({params}: { params: { id: string } }) {
 
     return (
         <Container maxWidth="md">
-            <Card>
-                <CardContent>
-                    <Grid container columns={2} spacing={2}>
-                        <Grid item xs={2}>
-                            <Box sx={{position: 'relative', width: '100%', minHeight: 400,}}>
-                                <Image src={['png','jpeg','jpg','gif'].indexOf(imageUrl.split('.').at(-1)!) > -1 ?imageUrl:Placeholder} alt={event.name} priority fill style={{objectFit: 'contain'}}/>
-                            </Box>
-                        </Grid>
-                        <Grid item xs={2}>
-                            <Stack direction="column" spacing={1} sx={{mb: 4,}}>
-                                <Typography variant="h5">{event.name}</Typography>
-                                <Typography variant="subtitle1">
-                                    {format(new Date(event.start), 'M/d/yy HHmm')}z
-                                    - {format(new Date(event.end), 'M/d/yy HHmm')}z
-                                </Typography>
-                                <Typography variant="subtitle2">{event.featuredFields.join(" • ") || 'No fields'}</Typography>
-                            </Stack>
-                            <Markdown>{event.description}</Markdown>
-                        </Grid>
-                        { session && session.user &&
+            <Stack direction="column" spacing={2}>
+                <Card>
+                    <CardContent>
+                        <Grid container columns={2} spacing={2}>
                             <Grid item xs={2}>
-                                <Typography variant="h6">Event Positions</Typography>
-                                <TableContainer>
-                                    <Table size="small">
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell>Position</TableCell>
-                                                <TableCell>Controllers</TableCell>
-                                                <TableCell>Actions</TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {event.positions.map((position) => (
-                                                <TableRow key={position.id}>
-                                                    <TableCell>{position.position} {position.minRating && `(${getRating(position.minRating) || getRating(2)}+)`}</TableCell>
-                                                    <TableCell>
-                                                        {position.controllers.length === 0 && "N/A"}
-                                                        {position.controllers.map((controller) => (
-                                                            <Typography key={controller.id}>
-                                                                {controller.firstName} {controller.lastName} - {getRating(controller.rating)}
-                                                            </Typography>
-                                                        ))}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        { event.positionsLocked &&
-                                                            <Tooltip title="Positions are locked">
-                                                                <Lock />
-                                                            </Tooltip>
-                                                        }
-                                                        { !event.positionsLocked && !isSignedUpForAnotherPosition(position) && <EventPositionSignupForm user={session.user} event={event} position={position} controllers={position.controllers as User[]} /> }
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
+                                <Box sx={{position: 'relative', width: '100%', minHeight: 400,}}>
+                                    <Image
+                                        src={['png', 'jpeg', 'jpg', 'gif'].indexOf(imageUrl.split('.').at(-1)!) > -1 ? imageUrl : Placeholder}
+                                        alt={event.name} priority fill style={{objectFit: 'contain'}}/>
+                                </Box>
                             </Grid>
-                        }
-                    </Grid>
-                </CardContent>
-            </Card>
+                            <Grid item xs={2}>
+                                <Stack direction="column" spacing={1} sx={{mb: 4,}}>
+                                    <Typography variant="h5">{event.name}</Typography>
+                                    <Typography variant="subtitle1">
+                                        {format(new Date(event.start), 'M/d/yy HHmm')}z
+                                        - {format(new Date(event.end), 'M/d/yy HHmm')}z
+                                    </Typography>
+                                    <Typography
+                                        variant="subtitle2">{event.featuredFields.join(" • ") || 'No fields'}</Typography>
+                                </Stack>
+                                <Markdown>{event.description}</Markdown>
+                            </Grid>
+                        </Grid>
+                    </CardContent>
+                </Card>
+                {session && session.user &&
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h6" sx={{mb: 1,}}>Event Positions</Typography>
+                            {event.positions.length === 0 && <Typography>No positions available</Typography>}
+                            {event.positions.length > 0 && <TableContainer>
+                                <Table size="small">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Position</TableCell>
+                                            <TableCell>Controllers</TableCell>
+                                            <TableCell>Actions</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {event.positions.map((position) => (
+                                            <TableRow key={position.id}>
+                                                <TableCell>{position.position} {position.minRating && `(${getRating(position.minRating) || getRating(2)}+)`}</TableCell>
+                                                <TableCell>
+                                                    {position.controllers.length === 0 && "N/A"}
+                                                    {position.controllers.map((controller) => (
+                                                        <Typography key={controller.id}>
+                                                            {controller.firstName} {controller.lastName} - {getRating(controller.rating)}
+                                                        </Typography>
+                                                    ))}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {event.positionsLocked &&
+                                                        <Tooltip title="Positions are locked">
+                                                            <Lock/>
+                                                        </Tooltip>
+                                                    }
+                                                    {!event.positionsLocked && !isSignedUpForAnotherPosition(position) &&
+                                                        <EventPositionSignupForm user={session.user} event={event}
+                                                                                 position={position}
+                                                                                 controllers={position.controllers as User[]}/>}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>}
+                        </CardContent>
+                    </Card>
+                }
 
+            </Stack>
         </Container>
     );
 }

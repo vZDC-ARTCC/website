@@ -28,90 +28,74 @@ export const log = async (type: LogType, model: LogModel, message: string) => {
 }
 
 export const fetchLogs = async (pagination: GridPaginationModel, sort: GridSortModel, filter?: GridFilterItem, onlyModels?: LogModel[]) => {
-
     const orderBy: Prisma.LogOrderByWithRelationInput = {};
     if (sort.length > 0) {
         orderBy.timestamp = sort[0].sort === 'asc' ? 'asc' : 'desc';
     }
 
+    const where = getWhere(filter, onlyModels);
+
     return prisma.$transaction([
-        prisma.log.count({
-            where: filter ? filter?.field === 'model' ? {
-                model: {
-                    in: [...(onlyModels || []), filter.field === 'model' && filter.value].filter((v) => !!v),
-                },
-            } : filter.field === 'user' ? {
-                model: {
-                    in: onlyModels || Object.values(LogModel),
-                },
-                user: {
-                    OR: [
-                        {
-                            cid: {
-                                [filter.operator]: filter.value as string,
-                                mode: 'insensitive',
-                            }
-                        },
-                        {
-                            fullName: {
-                                [filter.operator]: filter.value as string,
-                                mode: 'insensitive',
-                            }
-                        },
-                    ],
-                },
-            } : {
-                model: {
-                    in: onlyModels || Object.values(LogModel),
-                },
-                [filter.field]: {
-                    equals: filter.value,
-                },
-            } : undefined,
-        }),
+        prisma.log.count({where}),
         prisma.log.findMany({
             orderBy,
             include: {
                 user: true,
             },
-            where: filter ? filter?.field === 'model' ? {
-                model: {
-                    in: [...(onlyModels || []), filter.field === 'model' && filter.value].filter((v) => !!v),
-                },
-            } : filter.field === 'user' ? {
-                model: {
-                    in: onlyModels || Object.values(LogModel),
-                },
-                user: {
-                    OR: [
-                        {
-                            cid: {
-                                [filter.operator]: filter.value as string,
-                                mode: 'insensitive',
-                            }
-                        },
-                        {
-                            fullName: {
-                                [filter.operator]: filter.value as string,
-                                mode: 'insensitive',
-                            }
-                        },
-                    ],
-                },
-            } : {
-                model: {
-                    in: onlyModels || Object.values(LogModel),
-                },
-                [filter.field]: {
-                    equals: filter.value,
-                },
-            } : {
-                model: {
-                    in: onlyModels || Object.values(LogModel),
-                },
-            },
+            where,
             take: pagination.pageSize,
             skip: pagination.page * pagination.pageSize,
-        })
+        }),
     ]);
-}
+};
+
+const getWhere = (filter?: GridFilterItem, onlyModels?: LogModel[]): Prisma.LogWhereInput => {
+    if (!filter) {
+        return {
+            model: {
+                in: onlyModels || Object.values(LogModel),
+            },
+        };
+    }
+
+    if (filter.field === 'model') {
+        return {
+            model: {
+                in: [filter.value as LogModel].filter((v) => !!v),
+            },
+        };
+    }
+
+    if (filter.field === 'user') {
+        return {
+            model: {
+                in: onlyModels || Object.values(LogModel),
+            },
+            user: {
+                OR: [
+                    {
+                        cid: {
+                            [filter.operator]: filter.value as string,
+                            mode: 'insensitive',
+                        },
+                    },
+                    {
+                        fullName: {
+                            [filter.operator]: filter.value as string,
+                            mode: 'insensitive',
+                        },
+                    },
+                ],
+            } as Prisma.UserWhereInput,
+        };
+    }
+
+    return {
+        model: {
+            in: onlyModels || Object.values(LogModel),
+        },
+        [filter.field]: {
+            equals: filter.value,
+        },
+    };
+};

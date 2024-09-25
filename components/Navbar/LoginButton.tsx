@@ -81,7 +81,7 @@ export default function LoginButton({session, sidebar, sidebarButtonClicked,}: {
     const handleSignIn = () => {
         signIn('vatsim', {
             callbackUrl: pathname,
-        });
+        }).then();
     };
 
     const closeDropdown = () => {
@@ -172,7 +172,7 @@ export default function LoginButton({session, sidebar, sidebarButtonClicked,}: {
                     </ListItemIcon>
                     <ListItemText>Refresh VATUSA Account Information</ListItemText>
                 </MenuItem>
-                {session?.user.controllerStatus == "VISITOR" || "HOME" &&
+                {session?.user.controllerStatus !== "NONE" &&
                     <Link href="https://training.vzdc.org/" style={{textDecoration: 'none', color: 'inherit',}}>
                         <MenuItem onClick={closeDropdown}>
                             <ListItemIcon>

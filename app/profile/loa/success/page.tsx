@@ -13,7 +13,8 @@ export default function Page() {
                 </Stack>
                 <Container maxWidth="sm">
                     <Typography>Your LOA has been submitted successfully! You should receive an email with an update
-                        within 7 business days.</Typography>
+                        within 7 business days. Feel free to modify or delete your L.O.A request at any time on the
+                        profile page.</Typography>
                     <Box sx={{mt: 2, textAlign: 'center',}}>
                         <Link href="/profile/overview">
                             <Button variant="contained" size="large" startIcon={<Settings/>}>

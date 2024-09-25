@@ -1,5 +1,5 @@
 import React from 'react';
-import {AppBar, Stack, Toolbar} from "@mui/material";
+import {AppBar, Box, Stack, Toolbar} from "@mui/material";
 import ColorModeSwitcher from "@/components/Navbar/ColorModeSwitcher";
 import Logo from "@/components/Logo/Logo";
 import NavButtons from "@/components/Navbar/NavButtons";
@@ -18,11 +18,17 @@ export default async function Navbar() {
                 <Stack direction="row" spacing={2} alignItems="center">
                     <RootSidebar session={session}/>
                     <Logo/>
-                    <NavButtons/>
+                    <Box sx={{display: {xs: 'none', xl: 'flex',},}}>
+                        <NavButtons/>
+                    </Box>
                 </Stack>
                 <span style={{flexGrow: 1,}}></span>
-                <ColorModeSwitcher/>
-                <LoginButton session={session}/>
+                <Box>
+                    <ColorModeSwitcher/>
+                    <Box sx={{display: {xs: 'none', sm: 'inline-block',},}}>
+                        <LoginButton session={session}/>
+                    </Box>
+                </Box>
             </Toolbar>
         </AppBar>
     );

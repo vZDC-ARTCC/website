@@ -38,7 +38,7 @@ export default async function EventSignupCard({user}: { user: User, }) {
     });
 
     return (
-        <Card>
+        <Card sx={{height: '100%',}}>
             <CardContent>
                 <Typography variant="h6" sx={{mb: 1,}}>Event Signups</Typography>
                 {eventSignups.length === 0 && <Typography>You are not signed up for any events.</Typography>}

@@ -26,6 +26,7 @@ export default function TrainingSessionSearch({trainer, student}: { trainer?: st
                 <FormControl fullWidth>
                     <InputLabel id="user-select-label">User</InputLabel>
                     <Select
+                        variant="filled"
                         labelId="user-select-label"
                         id="user-select"
                         name="user"

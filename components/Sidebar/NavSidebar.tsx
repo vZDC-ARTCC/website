@@ -20,7 +20,7 @@ export default function NavSidebar({children, title, open, openButton, onOpen, o
     return (
         <>
             {openButton && <Tooltip title="Open Sidebar">
-                <IconButton color="inherit" onClick={onOpen} sx={{display: {xl: 'flex',},}}>
+                <IconButton color="inherit" onClick={onOpen} sx={{display: {xs: 'inline-block', xl: 'none',},}}>
                     <Menu/>
                 </IconButton>
             </Tooltip>}

@@ -11,17 +11,12 @@ import {
     Chip,
     Stack,
     Typography,
-    Switch,
-    FormControlLabel,
-    Checkbox,
 } from "@mui/material";
 import LessonRubricGrid from "@/components/Lesson/LessonRubricGrid";
 import {ExpandMore} from "@mui/icons-material";
 import Markdown from "react-markdown";
 import {formatZuluDate, getDuration} from "@/lib/date";
 import TrainingMarkdownSwitch from './TrainingMarkdownSwitch';
-
-const VATUSA_FACILITY = process.env.VATUSA_FACILITY;
 
 export default async function TrainingSessionInformation({id, trainerView}: { id: string, trainerView?: boolean }) {
 

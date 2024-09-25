@@ -1,7 +1,7 @@
 import React from 'react';
 import prisma from "@/lib/db";
 import {notFound} from "next/navigation";
-import {Box, Card, CardContent, Chip, Grid, Stack, Typography} from "@mui/material";
+import {Card, CardContent, Chip, Grid, Stack, Typography} from "@mui/material";
 import VisitorApplicationDecisionForm from "@/components/VisitorApplication/VisitorApplicationDecisionForm";
 import {VisitorApplicationStatus} from "@prisma/client";
 import {getRating} from "@/lib/vatsim";

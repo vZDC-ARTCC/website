@@ -9,7 +9,6 @@ import {revalidatePath} from "next/cache";
 const ut = new UTApi();
 
 export const createOrUpdateFileCategory = async (formData: FormData) => {
-
     const fileCategoryZ = z.object({
         id: z.string().optional(),
         name: z.string().min(1, 'Name is required').max(100, 'Name is too long'),
@@ -24,12 +23,8 @@ export const createOrUpdateFileCategory = async (formData: FormData) => {
         return {errors: result.error.errors};
     }
 
-    const fileCategoryExists = await prisma.fileCategory.findFirst({
-        where: {id: result.data.id || ''},
-    });
-
     const fileCategory = await prisma.fileCategory.upsert({
-        where: {id: result.data.id},
+        where: {id: result.data.id || ''},
         update: {
             name: result.data.name,
         },
@@ -38,32 +33,41 @@ export const createOrUpdateFileCategory = async (formData: FormData) => {
         },
     });
 
-    if (!fileCategoryExists) {
-        await log("CREATE", "FILE_CATEGORY", `Created file category ${fileCategory.name}`);
-    } else {
+    if (result.data.id) {
         await log("UPDATE", "FILE_CATEGORY", `Updated file category ${fileCategory.name}`);
+    } else {
+        await log("CREATE", "FILE_CATEGORY", `Created file category ${fileCategory.name}`);
     }
 
     revalidatePath('/admin/files');
-
-    return {fileCategory};
+    return {fileCategory}
 }
 
 export const deleteFileCategory = async (id: string) => {
-
-    const fileCategory = await prisma.fileCategory.delete({
+    const fileCategory = await prisma.fileCategory.findUnique({
         where: {id},
         include: {
             files: true,
-        }
+        },
     });
 
-    await ut.deleteFiles(fileCategory.files.map((file) => file.key));
+    if (!fileCategory) {
+        return;
+    }
+
+    for (const file of fileCategory.files) {
+        await ut.deleteFiles(file.key);
+        await prisma.file.delete({
+            where: {id: file.id},
+        });
+    }
+
+    await prisma.fileCategory.delete({
+        where: {id},
+    });
 
     await log("DELETE", "FILE_CATEGORY", `Deleted file category ${fileCategory.name}`);
-
     revalidatePath('/admin/files');
-
 }
 
 export const createOrUpdateFile = async (formData: FormData) => {
@@ -91,14 +95,21 @@ export const createOrUpdateFile = async (formData: FormData) => {
         },
     });
 
-    const inputFile = formData.get('file') as File;
-    const res = await ut.uploadFiles(inputFile);
-    if (res.error) {
-        console.log(res.error);
-        throw new Error("Error saving file");
-    }
-    if (fileExists) {
-        await ut.deleteFiles(fileExists.key);
+    const inputFile = formData.get('file') as File | null;
+    let fileKey = fileExists?.key || '';
+
+    if (inputFile) {
+        const res = await ut.uploadFiles(inputFile);
+        if (res.error) {
+            console.log(res.error);
+            throw new Error("Error saving file");
+        }
+        fileKey = res.data.key;
+        if (fileExists) {
+            await ut.deleteFiles(fileExists.key);
+        }
+    } else if (!fileExists) {
+        return {errors: [{message: "File is required for new entries"}]};
     }
 
     const file = await prisma.file.upsert({
@@ -106,13 +117,13 @@ export const createOrUpdateFile = async (formData: FormData) => {
         update: {
             name: result.data.name,
             description: result.data.description,
-            key: res.data.key,
+            key: fileKey,
             updatedAt: new Date(),
         },
         create: {
             name: result.data.name,
             description: result.data.description,
-            key: res.data.key,
+            key: fileKey,
             category: {
                 connect: {
                     id: result.data.categoryId,
@@ -138,15 +149,25 @@ export const createOrUpdateFile = async (formData: FormData) => {
 }
 
 export const deleteFile = async (id: string) => {
-    const file = await prisma.file.delete({
+    const file = await prisma.file.findUnique({
+        where: {id},
+        include: {
+            category: true,
+        },
+    });
+
+    if (!file) {
+        return;
+    }
+
+    await ut.deleteFiles(file.key);
+
+    await prisma.file.delete({
         where: {id},
     });
 
     await ut.deleteFiles(file.key);
-
     await log("DELETE", "FILE", `Deleted file ${file.name}`);
-
+    revalidatePath(`/admin/files/${file.category.id}`);
     revalidatePath('/admin/files');
-    revalidatePath(`/admin/files/${file.categoryId}`);
 }
-

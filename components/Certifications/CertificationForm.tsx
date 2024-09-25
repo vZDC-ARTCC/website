@@ -64,13 +64,13 @@ export default function CertificationForm({cid, certificationTypes, certificatio
                         <FormControl key={certificationType.id} fullWidth>
                             <InputLabel id={certificationType.id + 'label'}>{certificationType.name}</InputLabel>
                             <Select
+                                variant="filled"
                                 labelId={certificationType.id + 'label'}
                                 id={certificationType.id}
                                 defaultValue={isSolo ? 'SOLO' : getCertificationForType(certifications, certificationType)?.certificationOption || ''}
                                 label="Certification"
                                 name={certificationType.id}
-                                disabled={isSolo}
-                            >
+                                disabled={isSolo}>
                                 {certificationType.certificationOptions.map((certificationOption) => (
                                     <MenuItem key={certificationOption} value={certificationOption}>
                                         <Stack direction="row" spacing={1} alignItems="center">

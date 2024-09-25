@@ -1,7 +1,17 @@
 'use client';
 import React from 'react';
 import {Lesson} from "@prisma/client";
-import {Box, FormControlLabel, FormGroup, Grid, MenuItem, Switch, TextField, Typography, useTheme} from "@mui/material";
+import {
+    Box,
+    FormControlLabel,
+    FormGroup,
+    Grid2,
+    MenuItem,
+    Switch,
+    TextField,
+    Typography,
+    useTheme
+} from "@mui/material";
 import MarkdownEditor from "@uiw/react-markdown-editor";
 import {createOrUpdateLessonDetails} from "@/actions/lesson";
 import {toast} from "react-toastify";
@@ -29,27 +39,47 @@ export default function LessonForm({lesson}: { lesson?: Lesson, }) {
     }
 
     return (
-        <form action={handleSubmit}>
+        (<form action={handleSubmit}>
             <input type="hidden" name="lessonId" value={lesson?.id || ''}/>
             <input type="hidden" name="description" value={description}/>
-            <Grid container columns={2} spacing={2}>
-                <Grid item xs={2} md={1}>
+            <Grid2 container columns={2} spacing={2}>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        md: 1
+                    }}>
                     <TextField fullWidth variant="filled" name="identifier" label="Indentifier"
                                defaultValue={lesson?.identifier || ''} required/>
-                </Grid>
-                <Grid item xs={2} md={1}>
+                </Grid2>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        md: 1
+                    }}>
                     <TextField fullWidth variant="filled" name="name" label="Name" defaultValue={lesson?.name || ''}
                                required/>
-                </Grid>
-                <Grid item xs={2} md={1}>
+                </Grid2>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        md: 1
+                    }}>
                     <TextField fullWidth variant="filled" name="facility" label="Facility"
                                defaultValue={lesson?.facility || ''} required/>
-                </Grid>
-                <Grid item xs={2} md={1}>
+                </Grid2>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        md: 1
+                    }}>
                     <TextField fullWidth variant="filled" name="position" label="Position"
                                defaultValue={lesson?.position || ''} required/>
-                </Grid>
-                <Grid item xs={2} md={1}>
+                </Grid2>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        md: 1
+                    }}>
                     <TextField
                         select
                         label="Location"
@@ -68,16 +98,16 @@ export default function LessonForm({lesson}: { lesson?: Lesson, }) {
                             Sweatbox
                         </MenuItem>
                     </TextField>
-                </Grid>
-                <Grid item xs={2}>
+                </Grid2>
+                <Grid2 size={2}>
                     <FormGroup>
                         <FormControlLabel control={<Switch defaultChecked={lesson?.instructorOnly}/>}
                                           name="instructorOnly" label="Instructor Only?"/>
                         <FormControlLabel control={<Switch defaultChecked={lesson?.notifyInstructorOnPass}/>}
                                           name="notifyInstructorOnPass" label="Notify Instructors on PASS?"/>
                     </FormGroup>
-                </Grid>
-                <Grid item xs={2}>
+                </Grid2>
+                <Grid2 size={2}>
                     <Box sx={{maxWidth: '700px',}} data-color-mode={theme.palette.mode}>
                         <Typography variant="subtitle1" sx={{mb: 1,}}>Description</Typography>
                         <MarkdownEditor
@@ -87,12 +117,12 @@ export default function LessonForm({lesson}: { lesson?: Lesson, }) {
                             onChange={(d) => setDescription(d)}
                         />
                     </Box>
-                </Grid>
-                <Grid item xs={2}>
+                </Grid2>
+                <Grid2 size={2}>
                     <FormSaveButton/>
-                </Grid>
-            </Grid>
-        </form>
+                </Grid2>
+            </Grid2>
+        </form>)
     );
 
 }

@@ -1,44 +1,36 @@
 'use client'
-import {Box, FormControlLabel, Grid, Switch, TextField, Typography, useTheme} from "@mui/material";
+import {Box, TextField, Typography, useTheme} from "@mui/material";
 import MarkdownEditor from "@uiw/react-markdown-editor";
-import React from "react";
+import React, {useEffect} from "react";
 import {toast} from "react-toastify";
 import FormSaveButton from "@/components/Form/FormSaveButton";
-import { createChangeLog, getChangeLog } from "@/actions/changeLog";
-import {useRouter, useSearchParams} from "next/navigation";
-import {z} from "zod";
+import {createChangeLog} from "@/actions/changeLog";
+import {useRouter} from "next/navigation";
 
-export default function ChangeLogForm({changeLog,}: { changeLog?: { changeDetails: { id: string; detail: string; versionId: string; }[]; } & { id: string; versionNumber: string; createdAt: Date; }, }) {
+export default function ChangeLogForm({changeLog, latestVersion,}: {
+    changeLog?: { changeDetails: { id: string; detail: string; versionId: string; }[]; } & {
+        id: string;
+        versionNumber: string;
+        createdAt: Date;
+    },
+    latestVersion?: string,
+}) {
 
     const router = useRouter();
     const theme = useTheme();
-    const [versionNumber, setVersionNumber] = React.useState<string>('')
+    const [versionNumber, setVersionNumber] = React.useState<string>(latestVersion || '')
     const [changeLogDetails, setChangeLogDetails] = React.useState<string>('')
 
     const getInitialData = React.useCallback(async () => {
         if (changeLog) {
-            const changeLogData = await getChangeLog(changeLog.id);
             setVersionNumber(changeLog.versionNumber);
             setChangeLogDetails(changeLog.changeDetails[0].detail)
         }
     },[changeLog])
 
-    React.useEffect(() => {
+    useEffect(() => {
         getInitialData().then();
     }, [getInitialData])
-    // const getInitialData = React.useCallback(async () => {
-    //     if (changeLog) {
-    //         const changeLog = await getChangeLog(changeLog.id);
-    //         setTrainingTickets(tickets.map((ticket) => {
-    //             return {
-    //                 passed: ticket.scores.every((score) => score.passed),
-    //                 lesson: ticket.lesson,
-    //                 mistakes: ticket.mistakes,
-    //                 scores: ticket.scores,
-    //             }
-    //         }));
-    //     }
-    // }, [changeLog]);
 
     const handleSubmit = async () => {
 
@@ -56,15 +48,6 @@ export default function ChangeLogForm({changeLog,}: { changeLog?: { changeDetail
         }
             
         router.replace(`/changelog`)
-
-        // if (!trainingSession?.id) {
-        //     if (session){
-        //     router.replace(`/training/sessions/${session.id}`);
-        //     }
-
-        // router.replace(`/training/sessions`);
-
-        // }
         toast("Change log saved successfully!", {type: 'success'});
     }
 
@@ -81,7 +64,7 @@ export default function ChangeLogForm({changeLog,}: { changeLog?: { changeDetail
                 />
                 <br/>
                 <br/>
-                <Typography variant="subtitle1" sx={{mb: 1,}}>Changelog Version Description</Typography>
+                <Typography variant="subtitle1" sx={{mb: 1,}}>Description: </Typography>
                 <MarkdownEditor
                     enableScroll={false}
                     minHeight="200px"

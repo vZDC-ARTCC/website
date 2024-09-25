@@ -4,6 +4,8 @@ import prisma from "@/lib/db";
 import {log} from "@/actions/log";
 import {revalidatePath} from "next/cache";
 import {z} from "zod";
+import {GridFilterItem, GridPaginationModel, GridSortModel} from "@mui/x-data-grid";
+import {Prisma} from "@prisma/client";
 
 export const deleteMistake = async (id: string) => {
     const mistake = await prisma.commonMistake.delete({
@@ -65,3 +67,47 @@ export const createOrUpdateMistake = async (formData: FormData) => {
     revalidatePath('/training/mistakes');
     return false
 }
+
+export const fetchCommonMistakes = async (pagination: GridPaginationModel, sort: GridSortModel, filter?: GridFilterItem) => {
+    const orderBy: Prisma.CommonMistakeOrderByWithRelationInput = {};
+    if (sort.length > 0) {
+        const sortField = sort[0].field as keyof Prisma.CommonMistakeOrderByWithRelationInput;
+        orderBy[sortField] = sort[0].sort === 'asc' ? 'asc' : 'desc';
+    }
+
+    return prisma.$transaction([
+        prisma.commonMistake.count({
+            where: getWhere(filter),
+        }),
+        prisma.commonMistake.findMany({
+            orderBy,
+            where: getWhere(filter),
+            take: pagination.pageSize,
+            skip: pagination.page * pagination.pageSize,
+        })
+    ]);
+};
+
+const getWhere = (filter?: GridFilterItem): Prisma.CommonMistakeWhereInput => {
+    if (!filter) {
+        return {};
+    }
+    switch (filter?.field) {
+        case 'name':
+            return {
+                name: {
+                    [filter.operator]: filter.value as string,
+                    mode: 'insensitive',
+                },
+            };
+        case 'facility':
+            return {
+                description: {
+                    [filter.operator]: filter.value as string,
+                    mode: 'insensitive',
+                },
+            };
+        default:
+            return {};
+    }
+};

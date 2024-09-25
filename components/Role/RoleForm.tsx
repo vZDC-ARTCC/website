@@ -31,6 +31,7 @@ export default function RoleForm({user}: { user: User, }) {
                     <FormControl fullWidth>
                         <InputLabel id="role-select-label">Role(s)</InputLabel>
                         <Select
+                            variant="filled"
                             labelId="role-select-label"
                             id="role-select"
                             multiple
@@ -43,8 +44,7 @@ export default function RoleForm({user}: { user: User, }) {
                                         <Chip key={value} label={value}/>
                                     ))}
                                 </Box>
-                            )}
-                        >
+                            )}>
                             {Object.keys(Role).map((role) => (
                                 <MenuItem key={role} value={role}>{role}</MenuItem>
                             ))}

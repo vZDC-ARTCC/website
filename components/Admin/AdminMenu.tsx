@@ -17,7 +17,8 @@ import {
     QuestionAnswer,
     Report,
     Send,
-    Task
+    Task,
+    ViewCompact
 } from "@mui/icons-material";
 import prisma from "@/lib/db";
 
@@ -124,6 +125,16 @@ export default async function AdminMenu() {
                             <ListItemText primary="Purge Assistant"/>
                         </ListItemButton>
                     </Link>
+
+                    <Link href="/admin/oi-matrix" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <ViewCompact/>
+                            </ListItemIcon>
+                            <ListItemText primary="O.I. Matrix"/>
+                        </ListItemButton>
+                    </Link>
+
                     <Link href="/admin/controller" style={{textDecoration: 'none', color: 'inherit',}}>
                         <ListItemButton>
                             <ListItemIcon>
