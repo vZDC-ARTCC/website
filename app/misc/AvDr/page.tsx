@@ -1,6 +1,6 @@
 import {Roboto} from "next/font/google";
 
-Roboto({subsets: ['latin'], weight: '400',});
+const roboto = Roboto({subsets: ['latin'], weight: '400',});
 
 export default async function Page() {
 
