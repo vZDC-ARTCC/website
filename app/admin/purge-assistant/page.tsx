@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card, CardContent, Typography} from "@mui/material";
+import {Card, CardContent, Stack, Typography} from "@mui/material";
 import prisma from "@/lib/db";
 import PurgeAssistantTable from "@/components/PurgeAssistant/PurgeAssistantTable";
 import {getServerSession, User} from "next-auth";
@@ -74,11 +74,17 @@ export default async function Page({searchParams,}: {
             const duration = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60); // Convert milliseconds to hours
             return sum + duration;
         }, 0).toPrecision(3) || 'N/A';
+        
+        let homeController = false;
+        if (controller.controllerStatus === "HOME"){
+            homeController = true;
+        }
 
         return {
             controller: controller as User,
             totalHours,
             totalTrainingHours,
+            homeController,
         };
     });
 
@@ -89,20 +95,29 @@ export default async function Page({searchParams,}: {
     const session = await getServerSession(authOptions);
 
     return session?.user && (
-        <Card>
-            <CardContent>
-                <Typography variant="h5" fontWeight="bold" sx={{
-                    p: 2,
-                    border: 4,
-                    borderColor: 'red',
-                    borderRadius: '8px',
-                }}>Roster Purge Assistant</Typography>
-                <RosterPurgeSelectionForm startMonth={parseInt(startMonth)} endMonth={parseInt(endMonth)}
-                                          maxHours={parseInt(maxHours)} year={parseInt(year)}
-                                          maxTrainingHours={parseInt(maxTrainingHours)} includeLoas={!!includeLoas}/>
-                <PurgeAssistantTable controllers={condensedControllers} user={session.user}/>
-            </CardContent>
-        </Card>
+        <Stack direction="column" spacing={2}>
+            <Card>
+                <CardContent>
+                    <Typography variant="h5" fontWeight="bold" sx={{
+                        p: 2,
+                        border: 4,
+                        borderColor: 'red',
+                        borderRadius: '8px',
+                    }}>Roster Purge Assistant</Typography>
+                    <RosterPurgeSelectionForm startMonth={parseInt(startMonth)} endMonth={parseInt(endMonth)}
+                                              maxHours={parseInt(maxHours)} year={parseInt(year)}
+                                              maxTrainingHours={parseInt(maxTrainingHours)}
+                                              includeLoas={!!includeLoas}/>
+                </CardContent>
+            </Card>
+            <Card>
+                <CardContent>
+                    <Typography variant="h6">Found {condensedControllers.length} Combined Controller(s)</Typography>
+                    <PurgeAssistantTable controllers={condensedControllers} user={session.user}/>
+                </CardContent>
+            </Card>
+        </Stack>
+
     );
 
 }

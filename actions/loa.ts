@@ -11,8 +11,9 @@ import {
     sendLoaDeletedEmail,
     sendLoaDeniedEmail,
     sendLoaExpiredEmail,
-    sendLoaRequestedEmail
 } from "@/actions/mail/loa";
+import {GridFilterItem, GridPaginationModel, GridSortModel} from "@mui/x-data-grid";
+import {LOAStatus, Prisma} from "@prisma/client";
 
 export const createOrUpdateLoa = async (formData: FormData) => {
     const loaZ = z.object({
@@ -67,8 +68,6 @@ export const createOrUpdateLoa = async (formData: FormData) => {
                 status: "PENDING",
             },
         });
-
-        await sendLoaRequestedEmail(session.user);
 
         await log("CREATE", "LOA", `User ${session.user.firstName} ${session.user.lastName} requested LOA`);
         revalidatePath("/profile", "layout");
@@ -133,7 +132,7 @@ export const denyLoa = async (loaId: string) => {
         }
     });
 
-    await sendLoaDeniedEmail(loa.user as User);
+    await sendLoaDeniedEmail(loa.user as User, loa);
     await log("UPDATE", "LOA", `LOA request for ${loa.user.firstName} ${loa.user.lastName} (${loa.user.cid}) denied`);
     revalidatePath("/admin/loas", "layout");
     revalidatePath("/profile", "layout");
@@ -173,3 +172,59 @@ export const deleteExpiredLoas = async () => {
     revalidatePath("/profile", "layout");
     return {expiredLoas};
 }
+
+export const fetchLoas = async (pagination: GridPaginationModel, sort: GridSortModel, filter?: GridFilterItem) => {
+    const orderBy: Prisma.LOAOrderByWithRelationInput = {};
+    if (sort.length > 0) {
+        const sortField = sort[0].field as keyof Prisma.LOAOrderByWithRelationInput;
+        orderBy[sortField] = sort[0].sort === 'asc' ? 'asc' : 'desc';
+    }
+
+    return prisma.$transaction([
+        prisma.lOA.count({
+            where: getWhere(filter),
+        }),
+        prisma.lOA.findMany({
+            orderBy,
+            where: getWhere(filter),
+            take: pagination.pageSize,
+            skip: pagination.page * pagination.pageSize,
+            include: {
+                user: true,
+            },
+        })
+    ]);
+}
+
+const getWhere = (filter?: GridFilterItem): Prisma.LOAWhereInput => {
+    if (!filter) {
+        return {};
+    }
+    switch (filter?.field) {
+        case 'user':
+            return {
+                user: {
+                    OR: [
+                        {
+                            cid: {
+                                [filter.operator]: filter.value as string,
+                                mode: 'insensitive',
+                            }
+                        },
+                        {
+                            fullName: {
+                                [filter.operator]: filter.value as string,
+                                mode: 'insensitive',
+                            }
+                        },
+                    ],
+                },
+            };
+        case 'status':
+            return {
+                status: filter.value as LOAStatus,
+            };
+        default:
+            return {};
+    }
+};

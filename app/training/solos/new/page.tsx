@@ -4,6 +4,7 @@ import {Card, CardContent, Typography} from "@mui/material";
 import SoloForm from "@/components/SoloCertification/SoloForm";
 import {getServerSession, User} from "next-auth";
 import {authOptions} from "@/auth/auth";
+import ErrorCard from "@/components/Error/ErrorCard";
 
 export default async function Page() {
 
@@ -29,6 +30,11 @@ export default async function Page() {
             canSoloCert: true,
         },
     });
+
+    if (certificationTypes.length === 0) {
+        return <ErrorCard heading="Unable to grant solo certification"
+                          message="There are no certification types that are allowed to be solo certified.  Create or modify the certification types to continue."/>
+    }
 
     return (
         <Card>

@@ -3,7 +3,7 @@ import prisma from "@/lib/db";
 import {notFound} from "next/navigation";
 import {getServerSession, User} from "next-auth";
 import {authOptions} from "@/auth/auth";
-import {Card, CardContent, Grid, Typography} from "@mui/material";
+import {Card, CardContent, Grid2, Typography} from "@mui/material";
 import ProfileCard from "@/components/Profile/ProfileCard";
 import DossierForm from "@/components/Dossier/DossierForm";
 import DossierTable from "@/components/Dossier/DossierTable";
@@ -50,19 +50,33 @@ export default async function AdminControllerInformation({cid}: { cid: string, }
     const session = await getServerSession(authOptions);
 
     return session?.user && (
-        <Grid container columns={4} spacing={2}>
-            <Grid item xs={3}>
+        <Grid2 container columns={4} spacing={2}>
+            <Grid2
+                size={{
+                    xs: 4,
+                    lg: 3
+                }}>
                 <ProfileCard user={controller as User} admin={session.user.roles.includes("STAFF")}/>
-            </Grid>
-            <Grid item xs={3} lg={1}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 4,
+                    lg: 1
+                }}>
                 <Card>
                     <CardContent>
                         <Typography variant="h6" sx={{mb: 2,}}>User Settings</Typography>
-                        <UserSettingsForm user={controller as User}/>
+                        {!session.user.roles.includes("STAFF") &&
+                            <Typography>You are not allowed to view user settings.</Typography>}
+                        {session.user.roles.includes("STAFF") && <UserSettingsForm user={controller as User}/>}
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={4} lg={2}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 4,
+                    lg: 2
+                }}>
                 <Card>
                     <CardContent>
                         <Typography variant="h6" sx={{mb: 1,}}>Add Dossier Entry</Typography>
@@ -74,8 +88,12 @@ export default async function AdminControllerInformation({cid}: { cid: string, }
                                       })}/>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={4} lg={2}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 4,
+                    lg: 2
+                }}>
                 <Card>
                     <CardContent>
                         <Typography variant="h6">Certifications</Typography>
@@ -84,7 +102,7 @@ export default async function AdminControllerInformation({cid}: { cid: string, }
                                            soloCertifications={controller.soloCertifications}/>
                     </CardContent>
                 </Card>
-            </Grid>
-        </Grid>
+            </Grid2>
+        </Grid2>
     );
 }

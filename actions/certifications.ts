@@ -7,6 +7,13 @@ import {writeDossier} from "@/actions/dossier";
 import {log} from "@/actions/log";
 
 export const saveCertifications = async (cid: string, certifications: Certification[], dossierMessage: string) => {
+
+    const user = await prisma.user.findUnique({
+        where: {
+            cid,
+        },
+    });
+
     for (const certification of certifications) {
         if (certification.id) {
             await prisma.certification.update({
@@ -35,7 +42,7 @@ export const saveCertifications = async (cid: string, certifications: Certificat
             });
         }
     }
-    await log("UPDATE", "CERTIFICATION", `Updated certifications for ${cid}`);
+    await log("UPDATE", "CERTIFICATION", `Updated certifications for ${user?.firstName} ${user?.lastName} (${cid})`);
     await writeDossier(dossierMessage, cid);
     revalidatePath('/profile/overview');
 }

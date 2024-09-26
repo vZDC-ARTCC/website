@@ -2,7 +2,9 @@ import React from 'react';
 import {Typography} from "@mui/material";
 import TrainingSessionForm from "@/components/TrainingSession/TrainingSessionForm";
 import prisma from "@/lib/db";
-import {notFound} from "next/navigation";
+import {notFound, permanentRedirect} from "next/navigation";
+import {getServerSession} from "next-auth";
+import {authOptions} from "@/auth/auth";
 
 export default async function Page({params}: { params: { id: string } }) {
 
@@ -10,10 +12,19 @@ export default async function Page({params}: { params: { id: string } }) {
         where: {
             id: params.id
         },
+        include: {
+            instructor: true,
+        }
     });
 
     if (!trainingSession) {
         notFound();
+    }
+
+    const session = await getServerSession(authOptions);
+
+    if (session?.user.roles.includes("MENTOR") && trainingSession.instructor.id !== session.user.id) {
+        permanentRedirect(`/training/sessions/${params.id}`);
     }
 
     return (

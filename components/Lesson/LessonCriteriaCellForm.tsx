@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import {Lesson, LessonRubricCell, LessonRubricCriteria} from "@prisma/client";
-import {Grid, TextField} from "@mui/material";
+import {Grid2, TextField} from "@mui/material";
 import FormSaveButton from "@/components/Form/FormSaveButton";
 import {createOrUpdateLessonCriteriaCell} from "@/actions/lessonCriteriaCell";
 import {toast} from "react-toastify";
@@ -28,26 +28,34 @@ export default function LessonCriteriaCellForm({lesson, criteria, cell}: {
     }
 
     return (
-        <form action={handleSubmit}>
+        (<form action={handleSubmit}>
             <input type="hidden" name="lessonId" value={lesson.id}/>
             <input type="hidden" name="criteriaId" value={criteria.id}/>
             <input type="hidden" name="cellId" value={cell?.id || ''}/>
             <input type="hidden" name="maxPoints" value={criteria.maxPoints}/>
-            <Grid container columns={2} spacing={2}>
-                <Grid item xs={2} md={1}>
+            <Grid2 container columns={2} spacing={2}>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        md: 1
+                    }}>
                     <TextField fullWidth variant="filled" type="number" required name="points" label="Points"
                                helperText={`Points must be less than or equal to the maximum points in this criteria: ${criteria.maxPoints}`}
                                defaultValue={cell?.points || 0}/>
-                </Grid>
-                <Grid item xs={2} md={1}>
+                </Grid2>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        md: 1
+                    }}>
                     <TextField fullWidth variant="filled" type="text" required name="description" label="Description"
                                helperText="The description should give trainers an idea of what fits in this point category.  It should be short and mention specifics (ex. No more than 2 clearances missed)."
                                defaultValue={cell?.description || ''}/>
-                </Grid>
-                <Grid item xs={2}>
+                </Grid2>
+                <Grid2 size={2}>
                     <FormSaveButton/>
-                </Grid>
-            </Grid>
-        </form>
+                </Grid2>
+            </Grid2>
+        </form>)
     );
 }

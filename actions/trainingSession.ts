@@ -1,3 +1,5 @@
+// noinspection JSPotentiallyInvalidTargetOfIndexedPropertyAccess
+
 'use server';
 
 import prisma from "@/lib/db";
@@ -94,162 +96,154 @@ export async function createOrUpdateTrainingSession(
 
     const session = await getServerSession(authOptions);
 
-    try {
-        if (id && session) {
+    if (id && session) {
 
-            const oldTickets = await prisma.trainingTicket.findMany({
-                where: {
-                    sessionId: id,
-                },
-                include: {
-                    lesson: true,
-                },
-            });
+        const oldTickets = await prisma.trainingTicket.findMany({
+            where: {
+                sessionId: id,
+            },
+            include: {
+                lesson: true,
+            },
+        });
 
-            const trainingSession = await prisma.trainingSession.update({
-                where: {id},
-                data: {
-                    start,
-                    end,
-                    additionalComments: result.data.additionalComments,
-                    trainerComments: result.data.trainerComments,
-                    tickets: {
-                        create: result.data.trainingTickets.map((t) => ({
-                            lesson: {connect: {id: t.lesson.id}},
-                            mistakes: {connect: t.mistakes.map((m) => ({id: m.id}))},
-                            scores: {
-                                create: t.scores.map((s) => (
-                                    {
-                                        criteria: {connect: {id: s.criteriaId}},
-                                        cell: {
-                                            connect: {id: s.cellId}
-                                        },
-                                        passed: s.passed
-                                    }
-                                ))
-                            },
-                            passed: t.passed,
-                        })),
-                    },
-                    // enableMarkdown,
-                },
-                include: {
-                    student: true,
-                    tickets: {
-                        include: {
-                            lesson: true,
+        const trainingSession = await prisma.trainingSession.update({
+            where: {id},
+            data: {
+                start,
+                end,
+                additionalComments: result.data.additionalComments,
+                trainerComments: result.data.trainerComments,
+                tickets: {
+                    create: result.data.trainingTickets.map((t) => ({
+                        lesson: {connect: {id: t.lesson.id}},
+                        mistakes: {connect: t.mistakes.map((m) => ({id: m.id}))},
+                        scores: {
+                            create: t.scores.map((s) => (
+                                {
+                                    criteria: {connect: {id: s.criteriaId}},
+                                    cell: {
+                                        connect: {id: s.cellId}
+                                    },
+                                    passed: s.passed
+                                }
+                            ))
                         },
+                        passed: t.passed,
+                    })),
+                },
+                enableMarkdown: result.data.enableMarkdown,
+            },
+            include: {
+                student: true,
+                tickets: {
+                    include: {
+                        lesson: true,
                     },
                 },
-            });
+            },
+        });
 
-            await prisma.trainingTicket.deleteMany({
-                where: {
-                    id: {
-                        in: oldTickets.map((t) => t.id),
-                    },
+        await prisma.trainingTicket.deleteMany({
+            where: {
+                id: {
+                    in: oldTickets.map((t) => t.id),
                 },
-            })
+            },
+        })
 
-            await log("UPDATE", "TRAINING_SESSION", `Updated training session with student ${trainingSession.student.cid} - ${trainingSession.student.firstName} ${trainingSession.student.lastName}`);
+        await log("UPDATE", "TRAINING_SESSION", `Updated training session with student ${trainingSession.student.cid} - ${trainingSession.student.firstName} ${trainingSession.student.lastName}`);
 
-            const updateStatus = await editVatusaTrainingSession(session.user.cid, start, trainingSession.tickets[0].lesson.position || 'N/A', getDuration(trainingSession.start, trainingSession.end), result.data.additionalComments || '', trainingSession.vatusaId || '');
+        const updateStatus = await editVatusaTrainingSession(session.user.cid, start, trainingSession.tickets.map((tt) => tt.lesson.position).join(','), getDuration(trainingSession.start, trainingSession.end), `${result.data.additionalComments || ''}\n\nRefer to your training ticket in the vZDC website to see the scoring rubric.`, getOtsStatus(trainingSession.tickets), trainingSession.vatusaId || '');
 
-            if (updateStatus !== 'OK'){
-                throw new Error("Failed to update ticket")
-            }
-
-            revalidatePath('/training/sessions', "layout");
-
-            for (const newTicket of trainingSession.tickets) {
-                const oldTicket = oldTickets.find((ticket) => ticket.id === newTicket.id);
-
-                if (oldTicket && !oldTicket.passed && newTicket.passed && newTicket.lesson.notifyInstructorOnPass) {
-                    await sendInstructorsTrainingSessionCreatedEmail(trainingSession.student as User, session.user, trainingSession, newTicket.lesson);
-                }
-            }
-
-            return {session: trainingSession};
-
-        } else if (session) {
-
-            const trainingSession = await prisma.trainingSession.create({
-                data: {
-                    student: {connect: {id: result.data.student}},
-                    instructor: {connect: {id: session.user.id}},
-                    start,
-                    end,
-                    additionalComments: result.data.additionalComments,
-                    trainerComments: result.data.trainerComments,
-                    tickets: {
-                        create: result.data.trainingTickets.map((t) => ({
-                            lesson: {connect: {id: t.lesson.id}},
-                            mistakes: {connect: t.mistakes.map((m) => ({id: m.id}))},
-                            scores: {
-                                create: t.scores.map((s) => (
-                                    {
-                                        criteria: {connect: {id: s.criteriaId}},
-                                        cell: {
-                                            connect: {id: s.cellId}
-                                        },
-                                        passed: s.passed
-                                    }
-                                ))
-                            },
-                            passed: t.passed,
-                        })),
-                    },
-                    // enableMarkdown,
-                },
-                include: {
-                    student: true,
-                    instructor: true,
-                    tickets: {
-                        include: {
-                            lesson: true,
-                        },
-                    },
-                },
-            });
-
-            await log("CREATE", "TRAINING_SESSION", `Created training session with student ${trainingSession.student.cid} - ${trainingSession.student.firstName} ${trainingSession.student.lastName}`);
-
-            const vatusaId = await createVatusaTrainingSession(trainingSession.tickets[0].lesson.location, trainingSession.student.cid, session.user.cid, start, trainingSession.tickets[0].lesson.position || 'N/A', getDuration(trainingSession.start, trainingSession.end), result.data.additionalComments || '');
-
-            await prisma.trainingSession.update({
-                where: {id: trainingSession.id},
-                data: {
-                    vatusaId: vatusaId,
-                }
-            });
-
-            await sendTrainingSessionCreatedEmail(trainingSession.student as User, session.user, trainingSession);
-
-            revalidatePath('/training/sessions', "layout");
-
-            for (const newTicket of trainingSession.tickets) {
-                if (newTicket.passed && newTicket.lesson.notifyInstructorOnPass) {
-                    await sendInstructorsTrainingSessionCreatedEmail(trainingSession.student as User, session.user, trainingSession, newTicket.lesson);
-                }
-            }
-
-            return {session: trainingSession};
-        } else {
-            return {
-                errors: [{
-                    message: "You must be logged in to perform this action."
-                }]
-            };
+        if (updateStatus !== 'OK') {
+            await log("CREATE", "TRAINING_SESSION", `An error occurred when trying to save training ticket.`)
+            //fetch latest session to return
+            return {};
         }
 
-    } catch (e) {
-        console.log(e)
-        await log("CREATE", "TRAINING_SESSION", `An error occurred when trying to save training ticket.`)
-        //fetch latest session to return
-        return {};
+        revalidatePath('/training/sessions', "layout");
+
+        for (const newTicket of trainingSession.tickets) {
+            const oldTicket = oldTickets.find((ticket) => ticket.id === newTicket.id);
+
+            if (oldTicket && !oldTicket.passed && newTicket.passed && newTicket.lesson.notifyInstructorOnPass) {
+                await sendInstructorsTrainingSessionCreatedEmail(trainingSession.student as User, trainingSession, newTicket.lesson);
+            }
+        }
+
+        return {session: trainingSession};
+
+    } else if (session) {
+
+        const trainingSession = await prisma.trainingSession.create({
+            data: {
+                student: {connect: {id: result.data.student}},
+                instructor: {connect: {id: session.user.id}},
+                start,
+                end,
+                additionalComments: result.data.additionalComments,
+                trainerComments: result.data.trainerComments,
+                tickets: {
+                    create: result.data.trainingTickets.map((t) => ({
+                        lesson: {connect: {id: t.lesson.id}},
+                        mistakes: {connect: t.mistakes.map((m) => ({id: m.id}))},
+                        scores: {
+                            create: t.scores.map((s) => (
+                                {
+                                    criteria: {connect: {id: s.criteriaId}},
+                                    cell: {
+                                        connect: {id: s.cellId}
+                                    },
+                                    passed: s.passed
+                                }
+                            ))
+                        },
+                        passed: t.passed,
+                    })),
+                },
+                enableMarkdown: result.data.enableMarkdown,
+            },
+            include: {
+                student: true,
+                instructor: true,
+                tickets: {
+                    include: {
+                        lesson: true,
+                    },
+                },
+            },
+        });
+
+        await log("CREATE", "TRAINING_SESSION", `Created training session with student ${trainingSession.student.cid} - ${trainingSession.student.firstName} ${trainingSession.student.lastName}`);
+
+        const vatusaId = await createVatusaTrainingSession(trainingSession.tickets[0].lesson.location, trainingSession.student.cid, session.user.cid, start, trainingSession.tickets.map((tt) => tt.lesson.position).join(','), getDuration(trainingSession.start, trainingSession.end), `${result.data.additionalComments || ''}\n\nRefer to your training ticket in the vZDC website to see the scoring rubric.`, getOtsStatus(trainingSession.tickets));
+
+        await prisma.trainingSession.update({
+            where: {id: trainingSession.id},
+            data: {
+                vatusaId: vatusaId,
+            }
+        });
+
+        await sendTrainingSessionCreatedEmail(trainingSession.student as User, trainingSession);
+
+        revalidatePath('/training/sessions', "layout");
+
+        for (const newTicket of trainingSession.tickets) {
+            if (newTicket.passed && newTicket.lesson.notifyInstructorOnPass) {
+                await sendInstructorsTrainingSessionCreatedEmail(trainingSession.student as User, trainingSession, newTicket.lesson);
+            }
+        }
+
+        return {session: trainingSession};
+    } else {
+        return {
+            errors: [{
+                message: "You must be logged in to perform this action."
+            }]
+        };
     }
-
-
 }
 
 export const fetchTrainingSessions = async (pagination: GridPaginationModel, sort: GridSortModel, filter?: GridFilterItem, onlyUser?: User) => {
@@ -305,7 +299,7 @@ const getWhere = (filter?: GridFilterItem, onlyUser?: User): Prisma.TrainingSess
                     ],
                 },
             };
-        case 'trainer':
+        case 'instructor':
             return {
                 instructor: {
                     OR: [
@@ -361,4 +355,26 @@ const onlyUserWhere = (onlyUser?: User): Prisma.TrainingSessionWhereInput => {
         }
     }
     return {};
+}
+
+function getOtsStatus(trainingTickets: { passed: boolean, lesson: Lesson, }[]): number {
+    let status = 0;
+
+    for (const ticket of trainingTickets) {
+        if (ticket.lesson.instructorOnly) {
+            if (ticket.passed) {
+                return 1; // OTS Pass
+            } else {
+                return 2; // OTS Fail
+            }
+        }
+    }
+
+    for (const ticket of trainingTickets) {
+        if (ticket.lesson.notifyInstructorOnPass && status === 0) {
+            status = 3; // OTS Recommended
+        }
+    }
+
+    return status; // Not OTS
 }

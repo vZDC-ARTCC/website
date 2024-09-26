@@ -1,14 +1,11 @@
 'use client';
 import React from 'react';
-import {getServerSession, User} from "next-auth";
+import {User} from "next-auth";
 import {Box, Chip, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography} from "@mui/material";
 import {Role} from "@prisma/client";
 import FormSaveButton from "@/components/Form/FormSaveButton";
 import {toast} from "react-toastify";
 import {saveRoles} from "@/actions/role";
-import {authOptions} from "@/auth/auth";
-import checkIfWebmaster from "@/components/Webmaster/checkIfWebmaster"
-
 
 export default function RoleForm({user}: { user: User, }) {
 
@@ -34,6 +31,7 @@ export default function RoleForm({user}: { user: User, }) {
                     <FormControl fullWidth>
                         <InputLabel id="role-select-label">Role(s)</InputLabel>
                         <Select
+                            variant="filled"
                             labelId="role-select-label"
                             id="role-select"
                             multiple
@@ -46,12 +44,8 @@ export default function RoleForm({user}: { user: User, }) {
                                         <Chip key={value} label={value}/>
                                     ))}
                                 </Box>
-                            )}
-                        >
-                            {Object.keys(Role).filter((role)=>{
-                                if (role === "WEBMASTER" && !user.staffPositions.includes("WM")) return false;
-                                return true;
-                            }).map((role) => (
+                            )}>
+                            {Object.keys(Role).map((role) => (
                                 <MenuItem key={role} value={role}>{role}</MenuItem>
                             ))}
                         </Select>

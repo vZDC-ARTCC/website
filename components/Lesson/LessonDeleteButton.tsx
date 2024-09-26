@@ -1,28 +1,32 @@
 'use client';
 import React, {useState} from 'react';
-import {Lesson} from "@prisma/client";
-import {toast} from "react-toastify";
-import {IconButton} from "@mui/material";
+import {GridActionsCellItem} from "@mui/x-data-grid";
 import {Delete} from "@mui/icons-material";
+import {toast} from "react-toastify";
 import {deleteLesson} from "@/actions/lesson";
+import {Tooltip} from "@mui/material";
+import {Lesson} from "@prisma/client";
 
-export default function LessonDeleteButton({lesson}: { lesson: Lesson, }) {
+export default function LessonDeleteButton({lesson}: { lesson: Lesson }) {
     const [clicked, setClicked] = useState(false);
 
-    const handleClick = async () => {
+    const handleDelete = async () => {
         if (clicked) {
             await deleteLesson(lesson.id);
-            toast(`Lesson deleted successfully!`, {type: 'success'});
+            toast(`'${lesson.name}' deleted successfully!`, {type: 'success'});
         } else {
-            toast(`Deleting this lesson will remove it from all progressions and training tickets.  Click again to confirm.`, {type: 'warning'});
+            toast(`Deleting '${lesson.name}' will remove this lesson. Click again to confirm.`, {type: 'warning'});
             setClicked(true);
         }
-
     }
 
     return (
-        <IconButton onClick={handleClick}>
-            {clicked ? <Delete color="warning"/> : <Delete/>}
-        </IconButton>
+        <Tooltip title="Delete Lesson">
+            <GridActionsCellItem
+                icon={<Delete color={clicked ? "warning" : "inherit"}/>}
+                label="Delete Lesson"
+                onClick={handleDelete}
+            />
+        </Tooltip>
     );
 }

@@ -3,43 +3,67 @@
 import {VATUSA_API, VATUSA_API_KEY} from "@/actions/vatusa/config";
 
 export const addVatusaSolo = async (cid: string, position: string, expires: Date) => {
+
+    const expireSplit = expires.toISOString().split("T");
+
+    const expireDate = expireSplit[0]+" "+expireSplit[1].split(":")[0]+":"+expireSplit[1].split(":")[1]
+
+    let soloObj: { [key: string]: string | number } = {
+        'cid': cid,
+        'position': position,
+        'expDate': expireDate
+    };
+
+    let soloForm = [];
+    for (let property in soloObj) {
+        let encodedKey = encodeURIComponent(property);
+        let encodedValue = encodeURIComponent(soloObj[property]);
+        soloForm.push(encodedKey + "=" + encodedValue);
+    }
+
     const res = await fetch(`${VATUSA_API}/solo?apikey=${VATUSA_API_KEY}`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify({
-            cid,
-            position,
-            expires: expires.toUTCString(),
-        }),
+        body: soloForm.join("&"),
     });
 
-    if (!res.ok) {
-        console.log(await res.json());
+    const data = await res.json();
+    if (data.data.status === 'error') {
+        console.log(data.data.msg)
     }
 
-    const data = await res.json();
     return data.cid;
 }
 
 export const deleteVatusaSolo = async (cid: string, position: string) => {
+
+    let soloObj: { [key: string]: string | number } = {
+        'cid': cid,
+        'position': position,
+    };
+
+    let soloForm = [];
+    for (let property in soloObj) {
+        let encodedKey = encodeURIComponent(property);
+        let encodedValue = encodeURIComponent(soloObj[property]);
+        soloForm.push(encodedKey + "=" + encodedValue);
+    }
+
     const res = await fetch(`${VATUSA_API}/solo?apikey=${VATUSA_API_KEY}`, {
         method: 'DELETE',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify({
-            cid,
-            position,
-        }),
+        body: soloForm.join("&"),
     });
 
-    if (!res.ok) {
-        console.log(await res.json());
-    }
-
     const data = await res.json();
+    if (data.data.status === 'error') {
+        console.log(data.data.msg)
+    }
+    
     return data.cid;
 }
 

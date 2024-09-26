@@ -1,12 +1,21 @@
 'use server';
 
 import {z} from "zod";
-import {Feedback} from "@prisma/client";
+import {Feedback, FeedbackStatus, Prisma} from "@prisma/client";
 import prisma from "@/lib/db";
 import {revalidatePath} from "next/cache";
 import {log} from "@/actions/log";
 import {sendNewFeedbackEmail} from "@/actions/mail/feedback";
 import {User} from "next-auth";
+import {GridFilterItem, GridPaginationModel, GridSortModel} from "@mui/x-data-grid";
+
+const operatorMapping: { [key: string]: keyof Prisma.IntFilter } = {
+    '=': 'equals',
+    '<': 'lt',
+    '>': 'gt',
+    '<=': 'lte',
+    '>=': 'gte',
+};
 
 export const submitFeedback = async (formData: FormData) => {
 
@@ -99,3 +108,92 @@ export const stashFeedback = async (feedback: Feedback) => {
     revalidatePath('/admin/feedback');
     revalidatePath(`/admin/feedback/${feedback.id}`);
 }
+
+export const fetchFeedback = async (pagination: GridPaginationModel, sort: GridSortModel, filter?: GridFilterItem) => {
+    const orderBy: Prisma.FeedbackOrderByWithRelationInput = {};
+    if (sort.length > 0) {
+        const sortField = sort[0].field as keyof Prisma.FeedbackOrderByWithRelationInput;
+        orderBy[sortField] = sort[0].sort === 'asc' ? 'asc' : 'desc';
+    }
+
+    return prisma.$transaction([
+        prisma.feedback.count({
+            where: getWhere(filter),
+        }),
+        prisma.feedback.findMany({
+            orderBy,
+            where: getWhere(filter),
+            take: pagination.pageSize,
+            skip: pagination.page * pagination.pageSize,
+            include: {
+                pilot: true,
+                controller: true,
+            },
+        })
+    ]);
+}
+
+const getWhere = (filter?: GridFilterItem): Prisma.FeedbackWhereInput => {
+    if (!filter) {
+        return {};
+    }
+    switch (filter?.field) {
+        case 'controller':
+            return {
+                controller: {
+                    OR: [
+                        {
+                            cid: {
+                                [filter.operator]: filter.value as string,
+                                mode: 'insensitive',
+                            }
+                        },
+                        {
+                            fullName: {
+                                [filter.operator]: filter.value as string,
+                                mode: 'insensitive',
+                            }
+                        },
+                    ],
+                },
+            };
+        case 'pilot':
+            return {
+                pilot: {
+                    OR: [
+                        {
+                            cid: {
+                                [filter.operator]: filter.value as string,
+                                mode: 'insensitive',
+                            }
+                        },
+                        {
+                            fullName: {
+                                [filter.operator]: filter.value as string,
+                                mode: 'insensitive',
+                            }
+                        },
+                    ],
+                },
+            };
+        case 'controllerPosition':
+            return {
+                controllerPosition: {
+                    [filter.operator]: filter.value as string,
+                    mode: 'insensitive',
+                },
+            };
+        case 'rating':
+            return {
+                rating: {
+                    [operatorMapping[filter.operator]]: parseInt(filter.value as string) || 0,
+                },
+            };
+        case 'status':
+            return {
+                status: filter.value as FeedbackStatus,
+            };
+        default:
+            return {};
+    }
+};

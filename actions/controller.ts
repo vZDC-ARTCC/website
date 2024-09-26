@@ -12,7 +12,7 @@ export const purgeControllers = async (ids: string[]) => {
 
     const session = await getServerSession(authOptions);
 
-    if (!session || !session.user.staffPositions.some((sp) => ["ATM", "DATM"])) {
+    if (!session || !session.user.staffPositions.some((sp) => ["ATM", "DATM"].includes(sp))) {
         return;
     }
 
@@ -43,7 +43,7 @@ export const purgeControllers = async (ids: string[]) => {
 
     for (const user of users) {
         await log("DELETE", "USER", `Purged user ${user.firstName} ${user.lastName} (${user.cid}) from roster.`);
-        await removeVatusaController(user.cid, user.controllerStatus === "VISITOR");
+        await removeVatusaController(session.user, user.cid, user.controllerStatus === "VISITOR");
         await sendRosterRemovalEmail(user as User);
     }
 

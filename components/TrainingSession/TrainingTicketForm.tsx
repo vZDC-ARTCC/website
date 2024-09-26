@@ -1,11 +1,22 @@
 'use client';
 import React, {useCallback, useEffect} from 'react';
 import {CommonMistake, Lesson, LessonRubricCell, LessonRubricCriteria, RubricCriteraScore} from "@prisma/client";
-import {Alert, Autocomplete, Button, CircularProgress, Grid, TextField} from "@mui/material";
+import {
+    Alert,
+    Autocomplete,
+    Button,
+    Chip,
+    CircularProgress,
+    Grid2,
+    TextField,
+    Tooltip,
+    Typography
+} from "@mui/material";
 import LessonRubricGridInteractive from "@/components/Lesson/LessonRubricGridInteractive";
 import {getCriteriaForLesson} from "@/actions/trainingSessionFormHelper";
 import {toast} from "react-toastify";
 import {Check} from "@mui/icons-material";
+import Markdown from "react-markdown";
 
 export default function TrainingTicketForm({
                                                allLessons,
@@ -66,8 +77,12 @@ export default function TrainingTicketForm({
     }, [getCriteria, selectedLesson]);
 
     return (
-        <Grid container columns={2} spacing={2}>
-            <Grid item xs={2} md={1}>
+        (<Grid2 container columns={2} spacing={2}>
+            <Grid2
+                size={{
+                    xs: 2,
+                    md: 1
+                }}>
                 <Autocomplete
                     disabled={!!scores}
                     options={allLessons}
@@ -78,8 +93,12 @@ export default function TrainingTicketForm({
                     }}
                     renderInput={(params) => <TextField {...params} label="Lesson (search name or identifier)"/>}
                 />
-            </Grid>
-            <Grid item xs={2} md={1}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 2,
+                    md: 1
+                }}>
                 <Autocomplete
                     multiple
                     disableCloseOnSelect
@@ -90,9 +109,27 @@ export default function TrainingTicketForm({
                         setSelectedMistakes(newValue);
                     }}
                     renderInput={(params) => <TextField {...params} label="Common Mistakes (search name or facility)"/>}
+                    renderOption = {(props, option) => {
+                        return(
+                            <li {...props}>                        
+                                <>
+                                    <Tooltip placement="left" title={<h2><Markdown>{option.description}</Markdown></h2>}>
+                                        <Typography>{option.facility ? option.facility + ' - ' + option.name: option.name}</Typography>
+                                    </Tooltip>
+                                </>
+                            </li>
+                        )}
+                    }
+                    renderTags={(value, props)=>{
+                        return value.map((option, index) => (
+                            <Tooltip key={index} placement="top-start" title={<h2><Markdown>{option.description}</Markdown></h2>}>
+                                <Chip {...props({index})} key={index+1000} label={option.facility ? option.facility + ' - ' + option.name : option.name}/>
+                            </Tooltip>
+                        ))
+                    }}
                 />
-            </Grid>
-            <Grid item xs={2}>
+            </Grid2>
+            <Grid2 size={2}>
                 {selectedLesson && (!criteria || !cells) && <CircularProgress/>}
                 {criteria && cells && <LessonRubricGridInteractive criteria={criteria} cells={cells} scores={scores}
                                                                    updateScores={(scores) => {
@@ -106,17 +143,17 @@ export default function TrainingTicketForm({
                                                                            }
                                                                        }));
                                                                    }}/>}
-            </Grid>
-            <Grid item xs={2}>
+            </Grid2>
+            <Grid2 size={2}>
                 <Button variant="contained" onClick={handleSubmit} startIcon={<Check/>}>Save Ticket</Button>
-            </Grid>
-            <Grid item xs={2}>
+            </Grid2>
+            <Grid2 size={2}>
                 <Alert severity="warning">
                     If the lesson pass standards, criteria, or rubric cells have changed after the ticket was previously
                     saved, the ticket will be re-scored with the new criteria.
                 </Alert>
-            </Grid>
-        </Grid>
+            </Grid2>
+        </Grid2>)
     );
 
 }

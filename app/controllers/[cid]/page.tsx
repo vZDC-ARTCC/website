@@ -7,6 +7,7 @@ import {User} from "next-auth";
 import StatisticsTable from "@/components/Statistics/StatisticsTable";
 import {getMonthLog} from "@/lib/hours";
 import ControllingSessionsTable from "@/components/Statistics/ControllingSessionsTable";
+import {getMonth} from "@/lib/date";
 
 export default async function Page({params}: { params: { cid: string } }) {
 
@@ -51,8 +52,8 @@ export default async function Page({params}: { params: { cid: string } }) {
                 },
             },
             start: {
-                gte: new Date(new Date().getFullYear(), 0, 1),
-                lt: new Date(new Date().getFullYear() + 1, 0, 1)
+                gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+                lt: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1)
             },
         },
         orderBy: {
@@ -76,7 +77,7 @@ export default async function Page({params}: { params: { cid: string } }) {
             <Grid item xs={2} lg={1}>
                 <Card>
                     <CardContent>
-                        <Typography variant="h6">{new Date().getFullYear()} Controlling Sessions</Typography>
+                        <Typography variant="h6">{getMonth(new Date().getMonth())} Controlling Sessions</Typography>
                         <ControllingSessionsTable positions={positionsWorked}/>
                     </CardContent>
                 </Card>

@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import {User} from "next-auth";
-import {Autocomplete, FormControl, Grid, InputLabel, MenuItem, Select, TextField} from "@mui/material";
+import {Autocomplete, FormControl, Grid2, InputLabel, MenuItem, Select, TextField} from "@mui/material";
 import {CertificationType} from "@prisma/client";
 import {DateTimePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
@@ -32,10 +32,14 @@ export default function SoloForm({controllers, certificationTypes,}: {
     };
 
     return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+        (<LocalizationProvider dateAdapter={AdapterDayjs}>
             <form action={handleSubmit}>
-                <Grid container columns={2} spacing={2}>
-                    <Grid item xs={2} md={1}>
+                <Grid2 container columns={2} spacing={2}>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
                         <Autocomplete
                             renderInput={(params) => <TextField {...params} label="Controller"/>}
                             options={controllers}
@@ -45,8 +49,12 @@ export default function SoloForm({controllers, certificationTypes,}: {
                             fullWidth
                         />
                         <input type="hidden" name="controller" value={controller?.id}/>
-                    </Grid>
-                    <Grid item xs={2} md={1}>
+                    </Grid2>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
                         <FormControl fullWidth>
                             <InputLabel id="ct-select-label">Certification Type</InputLabel>
                             <Select
@@ -54,26 +62,34 @@ export default function SoloForm({controllers, certificationTypes,}: {
                                 id="ct-select"
                                 label="Certification Type"
                                 name="certificationType"
-                            >
+                                required
+                                variant="filled">
                                 {certificationTypes.map((certificationType) => (
                                     <MenuItem key={certificationType.id}
                                               value={certificationType.id}>{certificationType.name}</MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
-                    </Grid>
-                    <Grid item xs={2} md={1}>
+                    </Grid2>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
                         <TextField fullWidth variant="filled" name="position" label="Position" required/>
-                    </Grid>
-                    <Grid item xs={2} md={1}>
-                        <DateTimePicker  ampm={false} name="expires" defaultValue={dayjs(new Date()).add(1, "month")}/>
-                    </Grid>
-                    <Grid item xs={2}>
+                    </Grid2>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
+                        <DateTimePicker ampm={false} name="expires" defaultValue={dayjs(new Date()).add(1, "month")}/>
+                    </Grid2>
+                    <Grid2 size={2}>
                         <FormSaveButton/>
-                    </Grid>
-                </Grid>
+                    </Grid2>
+                </Grid2>
             </form>
-        </LocalizationProvider>
-
+        </LocalizationProvider>)
     );
 }

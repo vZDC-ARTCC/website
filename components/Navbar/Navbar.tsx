@@ -6,8 +6,7 @@ import NavButtons from "@/components/Navbar/NavButtons";
 import LoginButton from "@/components/Navbar/LoginButton";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/auth/auth";
-import NavSidebar from "@/components/Sidebar/NavSidebar";
-import NavSidebarButtons from "@/components/Sidebar/NavSidebarButtons";
+import RootSidebar from "@/components/Sidebar/RootSidebar";
 
 export default async function Navbar() {
 
@@ -17,16 +16,19 @@ export default async function Navbar() {
         <AppBar position="sticky">
             <Toolbar>
                 <Stack direction="row" spacing={2} alignItems="center">
-                    <NavSidebar openButton title="Main Menu">
-                        <NavSidebarButtons/>
-                        <LoginButton session={session} sidebar/>
-                    </NavSidebar>
+                    <RootSidebar session={session}/>
                     <Logo/>
-                    <NavButtons/>
+                    <Box sx={{display: {xs: 'none', xl: 'flex',},}}>
+                        <NavButtons/>
+                    </Box>
                 </Stack>
                 <span style={{flexGrow: 1,}}></span>
-                <ColorModeSwitcher/>
-                <LoginButton session={session}/>
+                <Box>
+                    <ColorModeSwitcher/>
+                    <Box sx={{display: {xs: 'none', sm: 'inline-block',},}}>
+                        <LoginButton session={session}/>
+                    </Box>
+                </Box>
             </Toolbar>
         </AppBar>
     );

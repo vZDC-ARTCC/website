@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import {User} from "next-auth";
-import {Autocomplete, Grid, TextField} from "@mui/material";
+import {Autocomplete, Grid2, TextField} from "@mui/material";
 import {DateTimePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import FormSaveButton from "@/components/Form/FormSaveButton";
@@ -27,11 +27,15 @@ export default function IncidentReportForm({allUsers,}: { allUsers: User[], }) {
     }
 
     return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+        (<LocalizationProvider dateAdapter={AdapterDayjs}>
             <form action={handleSubmit}>
                 <input type="hidden" name="reporteeId" value={reportee}/>
-                <Grid container columns={2} spacing={2}>
-                    <Grid item xs={2} md={1}>
+                <Grid2 container columns={2} spacing={2}>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
                         <Autocomplete
                             options={allUsers}
                             getOptionLabel={(option) => `${option.firstName} ${option.lastName} (${option.cid})`}
@@ -41,26 +45,38 @@ export default function IncidentReportForm({allUsers,}: { allUsers: User[], }) {
                             }}
                             renderInput={(params) => <TextField {...params} label="Controller"/>}
                         />
-                    </Grid>
-                    <Grid item xs={2} md={1}>
+                    </Grid2>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
                         <DateTimePicker  ampm={false} disableFuture name="timestamp"
                                         label="Date and time of incident"/>
-                    </Grid>
-                    <Grid item xs={2} sm={1}>
+                    </Grid2>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            sm: 1
+                        }}>
                         <TextField fullWidth variant="filled" name="reporteeCallsign" label="Controller Callsign"/>
-                    </Grid>
-                    <Grid item xs={2} sm={1}>
+                    </Grid2>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            sm: 1
+                        }}>
                         <TextField fullWidth variant="filled" name="reporterCallsign" label="Your Callsign"/>
-                    </Grid>
-                    <Grid item xs={2}>
+                    </Grid2>
+                    <Grid2 size={2}>
                         <TextField fullWidth multiline rows={5} variant="filled" name="reason"
                                    label="Describe the incident."/>
-                    </Grid>
-                    <Grid item xs={2}>
+                    </Grid2>
+                    <Grid2 size={2}>
                         <FormSaveButton/>
-                    </Grid>
-                </Grid>
+                    </Grid2>
+                </Grid2>
             </form>
-        </LocalizationProvider>
+        </LocalizationProvider>)
     );
 }

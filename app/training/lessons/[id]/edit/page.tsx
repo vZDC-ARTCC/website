@@ -62,7 +62,9 @@ export default async function Page({params}: { params: { id: string, }, }) {
                     <Card variant="outlined">
                         <CardContent>
                             <Typography variant="h6" sx={{mb: 1,}}>Lesson Rubric Criteria</Typography>
-                            <TableContainer>
+                            {!lesson.rubric || lesson.rubric.items.length === 0 &&
+                                <Typography>No criteria found; create one below.</Typography>}
+                            {lesson.rubric && lesson.rubric.items.length > 0 && <TableContainer>
                                 <Table>
                                     <TableHead>
                                         <TableRow>
@@ -91,7 +93,7 @@ export default async function Page({params}: { params: { id: string, }, }) {
                                         ))}
                                     </TableBody>
                                 </Table>
-                            </TableContainer>
+                            </TableContainer>}
                         </CardContent>
                     </Card>
                     <Card variant="outlined">

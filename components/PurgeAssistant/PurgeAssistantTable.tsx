@@ -1,33 +1,21 @@
 'use client';
 import React from 'react';
 import {User} from "next-auth";
-import {
-    Box,
-    Button,
-    Checkbox,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Typography
-} from "@mui/material";
+import {Box, Button, Stack, Typography, Tab, Tabs} from "@mui/material";
+import {DataGrid, GridColDef, GridToolbar} from '@mui/x-data-grid';
 import {getRating} from "@/lib/vatsim";
 import {toast} from "react-toastify";
 import {purgeControllers} from "@/actions/controller";
-import {useSession} from "next-auth/react";
 
 export default function PurgeAssistantTable({controllers, user}: {
-    controllers: { controller: User, totalHours: number, totalTrainingHours: string, }[],
+    controllers: { controller: User, totalHours: number, totalTrainingHours: string, homeController: boolean }[],
     user: User,
 }) {
 
     const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
     const [clickedOnce, setClickedOnce] = React.useState<boolean>(false);
     const [disabled, setDisabled] = React.useState<boolean>(false);
-    const session = useSession();
+    const [selectedRoster, setSelectedRoster] = React.useState<string>("home");
 
     const handlePurge = async () => {
         setDisabled(true);
@@ -37,7 +25,7 @@ export default function PurgeAssistantTable({controllers, user}: {
             return;
         }
         if (!clickedOnce) {
-            toast("THIS ACTION IS IRREVERSIBLE.  Any staff positions or training positions will be removed.  Click again to confirm purge.", {type: "warning",});
+            toast("THIS ACTION IS IRREVERSIBLE. Any staff positions or training positions will be removed. Click again to confirm purge.", {type: "warning",});
             setClickedOnce(true);
             setDisabled(false);
             return;
@@ -53,64 +41,88 @@ export default function PurgeAssistantTable({controllers, user}: {
         return <Typography>No controllers match criteria</Typography>
     }
 
+    const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+        setSelectedRoster(newValue);
+    }
+
+    const columns: GridColDef[] = [
+        {field: 'controller', headerName: 'Controller', flex: 1},
+        {field: 'cid', headerName: 'CID', flex: 1},
+        {field: 'rating', headerName: 'Rating', flex: 1},
+        {field: 'totalHours', headerName: 'Total Hours', flex: 1},
+        {field: 'totalTrainingHours', headerName: 'Total Training Hours', flex: 1},
+    ];
+
+    const rows = controllers.map(({controller, totalHours, totalTrainingHours}) => ({
+        id: controller.id,
+        controller: `${controller.firstName} ${controller.lastName}`,
+        cid: controller.cid,
+        rating: getRating(controller.rating),
+        totalHours: totalHours.toPrecision(3),
+        totalTrainingHours: totalTrainingHours,
+    }));
+
     return (
         <Box>
-            <TableContainer sx={{maxHeight: 600,}}>
-                <Table size="small">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>
-                                <Checkbox
-                                    color="primary"
-                                    disabled={clickedOnce || disabled}
-                                    indeterminate={selectedIds.length > 0 && selectedIds.length < controllers.length}
-                                    checked={selectedIds.length > 0 && selectedIds.length === controllers.length}
-                                    onChange={() => {
-                                        setSelectedIds(selectedIds.length > 0 ? [] : controllers.map(({controller}) => controller.id));
-                                    }}
-                                />
-                            </TableCell>
-                            <TableCell>Controller</TableCell>
-                            <TableCell>Rating</TableCell>
-                            <TableCell>Total Hours</TableCell>
-                            <TableCell>Total Training Hours</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {controllers.map(({controller, totalHours, totalTrainingHours}) => (
-                            <TableRow key={controller.id} role="">
-                                <TableCell>
-                                    <Checkbox
-                                        color="primary"
-                                        disabled={clickedOnce || disabled}
-                                        checked={selectedIds.includes(controller.id)}
-                                        onChange={() => {
-                                            setSelectedIds(selectedIds.includes(controller.id) ? selectedIds.filter(id => id !== controller.id) : [...selectedIds, controller.id]);
-                                        }}
-                                    />
-                                </TableCell>
-                                <TableCell>{controller.firstName} {controller.lastName}</TableCell>
-                                <TableCell>{getRating(controller.rating)}</TableCell>
-                                <TableCell sx={{border: 1,}}>{totalHours.toPrecision(3)}</TableCell>
-                                <TableCell sx={{border: 1,}}>{totalTrainingHours}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <Tabs variant="fullWidth" value={selectedRoster} onChange={handleChange}>
+                <Tab label="Home" value="home"/>
+                <Tab label="Visiting" value="visit"/>
+            </Tabs>
+            <Box hidden={selectedRoster !== "home"}>
+                <DataGrid
+                    autoHeight
+                    initialState={{sorting: {sortModel: [{field: 'totalHours', sort: 'desc',}]}}}
+                    rows={rows.filter(row => controllers.find(c => c.controller.id === row.id)?.homeController)}
+                    columns={columns}
+                    sortingMode="client"
+                    filterMode="client"
+                    disableRowSelectionOnClick
+                    checkboxSelection
+                    onRowSelectionModelChange={(newSelection) => {
+                        setSelectedIds(newSelection as string[]);
+                    }}
+                    slots={{
+                        toolbar: GridToolbar,
+                    }}
+                />
+            </Box>
+            <Box hidden={selectedRoster !== "visit"}>
+                <DataGrid
+                    autoHeight
+                    initialState={{sorting: {sortModel: [{field: 'totalHours', sort: 'desc',}]}}}
+                    rows={rows.filter(row => !controllers.find(c => c.controller.id === row.id)?.homeController)}
+                    columns={columns}
+                    sortingMode="client"
+                    filterMode="client"
+                    disableRowSelectionOnClick
+                    checkboxSelection
+                    onRowSelectionModelChange={(newSelection) => {
+                        setSelectedIds(newSelection as string[]);
+                    }}
+                    slots={{
+                        toolbar: GridToolbar,
+                    }}
+                />
+            </Box>
+            <Typography variant="h5" sx={{
+                border: 4,
+                borderRadius: 3,
+                borderColor: 'lightgreen',
+                p: 2,
+                my: 1,
+            }}><b>{selectedRoster.toUpperCase()}</b> ROSTER PURGE ONLY</Typography>
             <Stack direction="row" spacing={2} alignItems="center" sx={{mt: 2,}}>
                 <Button variant="contained" color="error"
-                        disabled={disabled || selectedIds.length === 0 || !session.data?.user.staffPositions.some((sp) => ["ATM", "DATM"].includes(sp))}
+                        disabled={disabled || selectedIds.length === 0 || !user.staffPositions.some((sp) => ["ATM", "DATM"].includes(sp))}
                         size="large"
                         sx={{mt: 2,}}
                         onClick={handlePurge}>Purge {selectedIds.length} controller{selectedIds.length === 1 ? '' : 's'}</Button>
-                <Button variant="contained" color="warning" size="large" disabled={!clickedOnce} onClick={() => {
+                {clickedOnce && <Button variant="contained" color="warning" size="large" onClick={() => {
                     setDisabled(true);
                     setClickedOnce(false);
                     setDisabled(false)
-                }}>Cancel</Button>
+                }}>Cancel</Button>}
             </Stack>
         </Box>
-
     );
 }

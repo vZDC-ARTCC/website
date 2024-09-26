@@ -5,18 +5,17 @@ import {
     AirplanemodeActive,
     BarChart,
     CalendarMonth,
+    Chat,
     Description,
     DeveloperBoard,
-    FileDownload,
     FileOpen,
+    Forum,
     Group,
     ListAlt,
     PersonAdd,
     Radar,
-    Route,
-    Chat,
     Radio,
-    Forum, OpenInNew
+    Route
 } from "@mui/icons-material";
 
 export type NavigationButton = {
@@ -100,21 +99,8 @@ export const NAVIGATION: NavigationButton[] = [
     },
     {
         label: 'Publications',
+        link: '/publications/downloads',
         icon: <FileOpen/>,
-        dropdown: {
-            buttons: [
-                {
-                    label: 'Wiki',
-                    link: 'https://wiki.vzdc.org',
-                    icon: <Description/>,
-                },
-                {
-                    label: 'Downloads',
-                    link: '/publications/downloads',
-                    icon: <FileDownload/>,
-                },
-            ],
-        },
     },
     {
         label: 'Events',

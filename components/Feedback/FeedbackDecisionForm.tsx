@@ -2,8 +2,7 @@
 import React from 'react';
 import {Feedback} from "@prisma/client";
 import {Box, Button, Divider, Stack, TextField} from "@mui/material";
-import {Check, Clear, Delete, Send} from "@mui/icons-material";
-import {addVisitor} from "@/actions/visitor";
+import {Delete, Send} from "@mui/icons-material";
 import {toast} from "react-toastify";
 import {releaseFeedback, stashFeedback} from "@/actions/feedback";
 

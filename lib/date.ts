@@ -31,7 +31,7 @@ export const getMonth = (month: number) => {
 
 export const getDuration = (start: Date, end: Date) => {
     const diff = end.getTime() - start.getTime();
-    var difference = new Date(diff);
+    const difference = new Date(diff);
 
     const timeSplit = difference.toISOString().split("T");
 

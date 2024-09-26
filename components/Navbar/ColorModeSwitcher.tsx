@@ -5,8 +5,9 @@ import {useEffect, useState} from "react";
 import {DarkMode, LightMode} from "@mui/icons-material";
 
 export default function ColorModeSwitcher() {
-    const {mode, setMode} = useColorScheme();
+    const {colorScheme, setColorScheme} = useColorScheme();
     const [mounted, setMounted] = useState(false);
+
 
     useEffect(() => {
         setMounted(true);
@@ -23,14 +24,14 @@ export default function ColorModeSwitcher() {
             <IconButton
                 color="inherit"
                 onClick={() => {
-                    if (mode === 'light') {
-                        setMode('dark');
+                    if (colorScheme === 'light') {
+                        setColorScheme('dark');
                     } else {
-                        setMode('light');
+                        setColorScheme('light');
                     }
                 }}
             >
-                {mode === 'light' ? <DarkMode/> : <LightMode/>}
+                {colorScheme === 'light' ? <DarkMode/> : <LightMode/>}
             </IconButton>
         </Tooltip>
     );

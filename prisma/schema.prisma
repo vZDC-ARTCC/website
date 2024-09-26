@@ -74,8 +74,11 @@ model User {
   eventSignups       EventPosition[]
   staffingRequests   StaffingRequest[]
   loas               LOA[]
+  receiveEmail       Boolean?            @default(true)
 
   noRequestLoas                  Boolean?
+  noRequestTrainingAssignments   Boolean?
+  noRequestTrainerRelease        Boolean?
   noEventSignup                  Boolean?
   noEditProfile                  Boolean?
   excludedFromVatusaRosterUpdate Boolean?
@@ -93,6 +96,47 @@ model User {
   trainingSessions      TrainingSession[]   @relation("TrainingsStudent")
   incidentsReported     IncidentReport[]    @relation("IncidentReportReporter")
   incidentReports       IncidentReport[]    @relation("IncidentReportReportee")
+
+  trainingAssignmentStudent        TrainingAssignment?  @relation("TrainingAssignmentStudent")
+  trainingAssignmentPrimaryTrainer TrainingAssignment[] @relation("TrainingAssignmentPrimaryTrainer")
+  trainingAssignmentOtherTrainers  TrainingAssignment[] @relation("TrainingAssignmentOtherTrainers")
+
+  trainingAssignmentRequestStudent            TrainingAssignmentRequest?  @relation("TrainingAssignmentRequestStudent")
+  trainingAssignmentRequestInterestedTrainers TrainingAssignmentRequest[] @relation("TrainingAssignmentRequestInterestedTrainers")
+
+  trainerReleaseRequestStudent TrainerReleaseRequest? @relation("TrainingMentorReleaseRequestStudent")
+}
+
+model TrainingAssignment {
+  id String @id @default(cuid())
+
+  student   User   @relation(fields: [studentId], references: [id], onDelete: Cascade, name: "TrainingAssignmentStudent")
+  studentId String @unique
+
+  primaryTrainer   User   @relation(fields: [primaryTrainerId], references: [id], onDelete: Cascade, name: "TrainingAssignmentPrimaryTrainer")
+  primaryTrainerId String
+
+  otherTrainers User[] @relation(name: "TrainingAssignmentOtherTrainers")
+}
+
+model TrainingAssignmentRequest {
+  id String @id @default(cuid())
+
+  student   User   @relation(fields: [studentId], references: [id], onDelete: Cascade, name: "TrainingAssignmentRequestStudent")
+  studentId String @unique
+
+  submittedAt DateTime
+
+  interestedTrainers User[] @relation(name: "TrainingAssignmentRequestInterestedTrainers")
+}
+
+model TrainerReleaseRequest {
+  id String @id @default(cuid())
+
+  student   User   @relation(fields: [studentId], references: [id], onDelete: Cascade, name: "TrainingMentorReleaseRequestStudent")
+  studentId String @unique
+
+  submittedAt DateTime
 }
 
 model VatsimUpdateMetadata {
@@ -128,6 +172,7 @@ model ControllerPosition {
   log      ControllerLog @relation(fields: [logId], references: [id])
   logId    String
   position String
+  facility Int?
   start    DateTime
   end      DateTime?
   active   Boolean
@@ -174,8 +219,14 @@ model DossierEntry {
 
 enum CertificationOption {
   NONE
-  MINOR
-  MAJOR
+  UNRESTRICTED
+  DEL
+  GND
+  TWR
+  APP
+  CTR
+  TIER_1
+  CERTIFIED
   SOLO
 }
 
@@ -243,6 +294,9 @@ enum LogModel {
   EMAIL
   USER_SETTINGS
   STATISTICS_PREFIXES
+  TRAINING_ASSIGNMENT
+  TRAINING_ASSIGNMENT_REQUEST
+  TRAINER_RELEASE_REQUEST
 }
 
 model Log {
@@ -345,7 +399,8 @@ model Event {
 
 enum EventType {
   HOME
-  SUPPORT
+  SUPPORT_REQUIRED
+  SUPPORT_OPTIONAL
   GROUP_FLIGHT
   TRAINING
 }
@@ -420,7 +475,7 @@ model LessonRubricCriteria {
 
 model LessonRubricCell {
   id         String               @id @default(cuid())
-  criteria   LessonRubricCriteria @relation(fields: [criteriaId], references: [id])
+  criteria   LessonRubricCriteria @relation(fields: [criteriaId], references: [id], onDelete: Cascade)
   criteriaId String
 
   points      Int
@@ -449,7 +504,7 @@ model TrainingSession {
   trainerComments    String?
   vatusaId           String?
   tickets            TrainingTicket[]
-  // enableMarkdown     Boolean
+  enableMarkdown     Boolean?         @default(false)
 }
 
 model TrainingTicket {
@@ -516,4 +571,19 @@ model SyncTimes {
 model StatisticsPrefixes {
   id       String   @id @default(cuid())
   prefixes String[]
+}
+
+// additionChangeLog
+model Version {
+  id            String         @id @default(cuid())
+  versionNumber String         @unique
+  createdAt     DateTime       @default(now())
+  changeDetails ChangeDetail[]
+}
+
+model ChangeDetail {
+  id        String  @id @default(cuid())
+  detail    String
+  versionId String
+  version   Version @relation(fields: [versionId], references: [id], onDelete: Cascade)
 }

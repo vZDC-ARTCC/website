@@ -11,7 +11,14 @@ export default async function Page() {
 
     const fileCategories = await prisma.fileCategory.findMany({
         include: {
-            files: true,
+            files: {
+                orderBy: {
+                    name: 'asc',
+                },
+            },
+        },
+        orderBy: {
+            name: 'asc',
         },
     });
 

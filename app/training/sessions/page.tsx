@@ -9,6 +9,12 @@ import TrainingSessionTable from "@/components/TrainingSession/TrainingSessionTa
 export default async function Page() {
 
     const session = await getServerSession(authOptions);
+    let isInstructor = false;
+    const mentorCID = session!.user.cid;
+
+    if (session!.user.roles.includes("INSTRUCTOR") || session!.user.roles.includes("STAFF")){
+        isInstructor = true;
+    }
 
     return (
         <>
@@ -20,8 +26,7 @@ export default async function Page() {
                         <Button variant="contained" size="large" startIcon={<Add/>}>New Training Session</Button>
                     </Link>
             </Stack>
-            <Typography sx={{my: 1,}}>All times in GMT</Typography>
-            <TrainingSessionTable admin/>
+            <TrainingSessionTable admin isInstructor={isInstructor} mentorCID={mentorCID}/>
         </>
     );
 

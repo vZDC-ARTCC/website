@@ -12,6 +12,7 @@ export default function NavDropdown({open, anchorElement, onClose, children}: {
             open={open}
             onClose={onClose}
             anchorEl={anchorElement}
+            disableScrollLock={true}
         >
             {children}
         </Menu>

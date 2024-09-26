@@ -2,7 +2,7 @@
 import React from 'react';
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import {Tab, Tabs} from "@mui/material";
-import {FeedbackStatus, VisitorApplicationStatus} from "@prisma/client";
+import {FeedbackStatus} from "@prisma/client";
 
 export default function FeedbackTabs() {
 
