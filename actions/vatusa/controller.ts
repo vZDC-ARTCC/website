@@ -6,9 +6,9 @@ export const addVatusaSolo = async (cid: string, position: string, expires: Date
 
     const expireSplit = expires.toISOString().split("T");
 
-    const expireDate = expireSplit[0]+" "+expireSplit[1].split(":")[0]+":"+expireSplit[1].split(":")[1]
+    const expireDate = expireSplit[0];
 
-    let soloObj: { [key: string]: string | number } = {
+        let soloObj: { [key: string]: string | number } = {
         'cid': cid,
         'position': position,
         'expDate': expireDate
