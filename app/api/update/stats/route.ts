@@ -89,6 +89,7 @@ export async function GET() {
                     },
                     position: vatsimUser.callsign,
                     start: vatsimUser.logon_time,
+                    facility: vatsimUser.facility,
                     active: true,
                 },
             });
@@ -107,6 +108,7 @@ export async function GET() {
                     },
                     position: vatsimUser.callsign,
                     start: vatsimUser.logon_time,
+                    facility: vatsimUser.facility,
                     active: true,
                 },
             });

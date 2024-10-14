@@ -1,24 +1,33 @@
 'use server';
 
-
 import {VATUSA_API, VATUSA_API_KEY, VATUSA_FACILITY} from "@/actions/vatusa/config";
 import {User} from "next-auth";
 
 export const removeVatusaController = async (staffUser: User, cid: string, visitor?: boolean) => {
 
-    const res = await fetch(`${VATUSA_API}/facility/${VATUSA_FACILITY}/roster/${visitor ? 'manageVisitor/' : ''}${cid}?apikey=${VATUSA_API_KEY}`, {
-        method: 'DELETE',
-        body: JSON.stringify({
-            reason: `Removed by ${staffUser.fullName} via ZDC Dashboard Roster Purge on ${new Date().toISOString()}`,
-            by: staffUser.cid,
-        })
-    });
+    let purgeObj: { [key: string]: string | number } = {
+        'reason': `Removed by ${staffUser.fullName} via ZDC Dashboard Roster Purge on ${new Date().toISOString()}`,
+        'by': Number(staffUser.cid),
+    };
 
-    if (!res.ok) {
-        console.log(await res.json());
+    let purgeForm = [];
+    for (let property in purgeObj) {
+        let encodedKey = encodeURIComponent(property);
+        let encodedValue = encodeURIComponent(purgeObj[property]);
+        purgeForm.push(encodedKey + "=" + encodedValue);
     }
 
-    return res.ok;
+    const res = await fetch(`${VATUSA_API}/facility/${VATUSA_FACILITY}/roster/${visitor ? 'manageVisitor/' : ''}${cid}?apikey=${VATUSA_API_KEY}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: purgeForm.join("&"),
+    });
+
+    const data = await res.json();
+
+    return data;
 }
 
 export const addVatusaVisitor = async (cid: string) => {
