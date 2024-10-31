@@ -11,7 +11,7 @@ import TrainerAssignmentRequestDeleteButton
 import {useRouter} from "next/navigation";
 import {getRating} from "@/lib/vatsim";
 import {Lesson} from "@prisma/client";
-import {Chip, Stack} from "@mui/material";
+import {Chip, Stack, Tooltip} from "@mui/material";
 import Link from "next/link";
 
 export default function TrainerAssignmentRequestsTable({manageMode}: { manageMode: boolean }) {
@@ -23,7 +23,21 @@ export default function TrainerAssignmentRequestsTable({manageMode}: { manageMod
             field: 'student',
             flex: 1,
             headerName: 'Student',
-            renderCell: (params) => `${params.row.student.firstName} ${params.row.student.lastName}` || 'Unknown',
+            renderCell: (params) => {
+                const color = params.row.student.controllerStatus === "HOME" ? 'error' : 'success';
+
+                return (
+                    <Tooltip title={`${params.row.student.controllerStatus}`}>
+                        <Chip
+                            key={params.row.student.id}
+                            label={`${params.row.student.firstName} ${params.row.student.lastName}` || 'Unknown'}
+                            size="small"
+                            color={color}
+                            style={{margin: '2px'}}
+                        />
+                    </Tooltip>
+                )
+            },
             sortable: false,
             filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
         },
