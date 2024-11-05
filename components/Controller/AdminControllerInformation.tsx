@@ -9,6 +9,7 @@ import DossierForm from "@/components/Dossier/DossierForm";
 import DossierTable from "@/components/Dossier/DossierTable";
 import CertificationForm from "@/components/Certifications/CertificationForm";
 import UserSettingsForm from "@/components/ControllerSettings/UserSettingsForm";
+import TrainingSessionTable from '@/components/TrainingSession/TrainingSessionTable';
 
 export default async function AdminControllerInformation({cid}: { cid: string, }) {
     const controller = await prisma.user.findUnique({
@@ -48,6 +49,13 @@ export default async function AdminControllerInformation({cid}: { cid: string, }
     });
 
     const session = await getServerSession(authOptions);
+
+    let isInstructor = false;
+    const mentorCID = session!.user.cid;
+
+    if (session!.user.roles.includes("INSTRUCTOR") || session!.user.roles.includes("STAFF")){
+        isInstructor = true;
+    }
 
     return session?.user && (
         <Grid2 container columns={4} spacing={2}>
@@ -100,6 +108,19 @@ export default async function AdminControllerInformation({cid}: { cid: string, }
                         <CertificationForm cid={controller.cid} certificationTypes={certificationTypes}
                                            certifications={controller.certifications}
                                            soloCertifications={controller.soloCertifications}/>
+                    </CardContent>
+                </Card>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 4,
+                    lg: 4
+                }}>
+                <Card>
+                    <CardContent>
+                        <Typography variant="h6" sx={{mb: 1,}}>Recent Training History</Typography>
+                        <TrainingSessionTable admin isInstructor={isInstructor} mentorCID={mentorCID}
+                                  onlyUser={controller as User}/>
                     </CardContent>
                 </Card>
             </Grid2>
