@@ -28,13 +28,16 @@ export default function TrainerAssignmentRequestsTable({manageMode}: { manageMod
 
                 return (
                     <Tooltip title={`${params.row.student.controllerStatus}`}>
-                        <Chip
-                            key={params.row.student.id}
-                            label={`${params.row.student.firstName} ${params.row.student.lastName}` || 'Unknown'}
-                            size="small"
-                            color={color}
-                            style={{margin: '2px'}}
-                        />
+                        <Link href={`/admin/controller/${params.row.student.cid}`} target="_blank"
+                                              style={{textDecoration: 'none',}}>
+                            <Chip
+                                key={params.row.student.id}
+                                label={`${params.row.student.firstName} ${params.row.student.lastName}` || 'Unknown'}
+                                size="small"
+                                color={color}
+                                style={{margin: '2px'}}
+                            />
+                        </Link>
                     </Tooltip>
                 )
             },
