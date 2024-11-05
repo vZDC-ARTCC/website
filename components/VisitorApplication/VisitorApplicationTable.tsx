@@ -7,7 +7,7 @@ import {VisitorApplicationStatus} from "@prisma/client";
 import {Grading, Info} from "@mui/icons-material";
 import {useRouter} from "next/navigation";
 import {formatZuluDate} from "@/lib/date";
-import {Chip, Tooltip} from "@mui/material";
+import {Chip, Link, Tooltip} from "@mui/material";
 
 const getChipColor = (status: VisitorApplicationStatus) => {
     switch (status) {
@@ -39,7 +39,20 @@ export default function VisitorApplicationTable() {
             headerName: 'User',
             flex: 1,
             sortable: false,
-            renderCell: (params) => `${params.row.user.firstName} ${params.row.user.lastName}`,
+            renderCell: (params) => {
+                return (
+                    <Link href={`https://vatusa.net/mgt/controller/${params.row.user.cid}`} target="_blank"
+                                              style={{textDecoration: 'none',}}>
+                        <Chip
+                                key={params.row.user.id}
+                                label={`${params.row.user.firstName} ${params.row.user.lastName}` || 'Unknown'}
+                                size="small"
+                                color='info'
+                                style={{margin: '2px'}}
+                            />
+                    </Link>
+                )
+            },
             filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
         },
         {
