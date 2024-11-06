@@ -2,7 +2,7 @@
 import React from 'react';
 import DataTable, {containsOnlyFilterOperator, equalsOnlyFilterOperator} from "@/components/DataTable/DataTable";
 import {GridActionsCellItem, GridColDef} from "@mui/x-data-grid";
-import {Chip, Stack} from "@mui/material";
+import {Chip, Stack, Tooltip} from "@mui/material";
 import {User} from "next-auth";
 import {fetchTrainingAssignments} from "@/actions/trainingAssignment";
 import {Edit} from "@mui/icons-material";
@@ -21,7 +21,24 @@ export default function TrainingAssignmentTable({manageMode}: { manageMode: bool
             field: 'student',
             flex: 1,
             headerName: 'Student',
-            renderCell: (params) => `${params.row.student.firstName} ${params.row.student.lastName}` || 'Unknown',
+            renderCell: (params) => {
+                const color = params.row.student.controllerStatus === "HOME" ? 'error' : 'success';
+
+                return (
+                    <Tooltip title={`${params.row.student.controllerStatus}`}>
+                        <Link href={`/admin/controller/${params.row.student.cid}`} target="_blank"
+                                              style={{textDecoration: 'none',}}>
+                            <Chip
+                                key={params.row.student.id}
+                                label={`${params.row.student.firstName} ${params.row.student.lastName}` || 'Unknown'}
+                                size="small"
+                                color={color}
+                                style={{margin: '2px'}}
+                            />
+                        </Link>
+                    </Tooltip>
+                )
+            },
             sortable: false,
             filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
         },
