@@ -28,7 +28,20 @@ export default function TrainingSessionTable({admin, isInstructor, mentorCID, on
             field: 'student',
             flex: 1,
             headerName: 'Student',
-            renderCell: (params) => `${params.row.student.firstName} ${params.row.student.lastName}` || 'Unknown',
+            renderCell: (params) => {
+                return (
+                    <Link href={`/training/history/${params.row.student.cid}`} target="_blank"
+                                              style={{textDecoration: 'none',}}>
+                        <Chip
+                                key={params.row.student.id}
+                                label={`${params.row.student.firstName} ${params.row.student.lastName}` || 'Unknown'}
+                                size="small"
+                                color='info'
+                                style={{margin: '2px'}}
+                            />
+                    </Link>
+                )
+            },
             filterable: !onlyUser,
             sortable: false,
             filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
