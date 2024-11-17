@@ -4,9 +4,12 @@ import {notFound} from "next/navigation";
 import {Card, CardContent, Typography} from "@mui/material";
 import ProcedureForm from "@/components/Airports/ProcedureForm";
 
-export default async function Page({params}: {
-    params: { airportId: string, runwayId: string, instructionId: string, },
-}) {
+export default async function Page(
+    props: {
+        params: Promise<{ airportId: string, runwayId: string, instructionId: string, }>,
+    }
+) {
+    const params = await props.params;
 
     const {runwayId, instructionId} = params;
 

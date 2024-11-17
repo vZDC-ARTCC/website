@@ -5,7 +5,8 @@ import {notFound} from "next/navigation";
 import {getServerSession, User} from "next-auth";
 import {authOptions} from "@/auth/auth";
 
-export default async function Page({params}: { params: { cid: string } }) {
+export default async function Page(props: { params: Promise<{ cid: string }> }) {
+    const params = await props.params;
 
     const session = await getServerSession(authOptions);
 

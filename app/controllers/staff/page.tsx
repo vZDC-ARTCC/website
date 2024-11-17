@@ -3,7 +3,7 @@ import prisma from "@/lib/db";
 import {
     Card,
     CardContent,
-    Grid,
+    Grid2,
     Table,
     TableBody,
     TableCell,
@@ -139,15 +139,19 @@ export default async function Page() {
     });
 
     return (
-        <Grid container columns={12} spacing={2}>
-            <Grid item xs={12}>
+        (<Grid2 container columns={12} spacing={2}>
+            <Grid2 size={12}>
                 <Card>
                     <CardContent>
                         <Typography variant="h6">{VATUSA_FACILITY} Staff</Typography>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={12} md={6}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 12,
+                    md: 6
+                }}>
                 <Card sx={{height: '100%',}}>
                     <CardContent>
                         <Typography variant="subtitle2">Air Traffic Manager (ATM)</Typography>
@@ -155,8 +159,12 @@ export default async function Page() {
                         <Typography>atm@vzdc.org</Typography>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={12} md={6}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 12,
+                    md: 6
+                }}>
                 <Card sx={{height: '100%',}}>
                     <CardContent>
                         <Typography variant="subtitle2">Deputy Air Traffic Manager (DATM)</Typography>
@@ -164,8 +172,13 @@ export default async function Page() {
                         <Typography>datm@vzdc.org</Typography>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={12} md={6} lg={3}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 12,
+                    md: 6,
+                    lg: 3
+                }}>
                 <Card sx={{height: '100%',}}>
                     <CardContent>
                         <Typography variant="subtitle2">Training Administrator (TA)</Typography>
@@ -193,8 +206,13 @@ export default async function Page() {
                         </TableContainer>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={12} md={6} lg={3}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 12,
+                    md: 6,
+                    lg: 3
+                }}>
                 <Card sx={{height: '100%',}}>
                     <CardContent>
                         <Typography variant="subtitle2">Event Coordinator (EC)</Typography>
@@ -221,8 +239,13 @@ export default async function Page() {
                         </TableContainer>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={12} md={6} lg={3}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 12,
+                    md: 6,
+                    lg: 3
+                }}>
                 <Card sx={{height: '100%',}}>
                     <CardContent>
                         <Typography variant="subtitle2">Facility Engineer (FE)</Typography>
@@ -249,8 +272,13 @@ export default async function Page() {
                         </TableContainer>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={12} md={6} lg={3}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 12,
+                    md: 6,
+                    lg: 3
+                }}>
                 <Card sx={{height: '100%',}}>
                     <CardContent>
                         <Typography variant="subtitle2">Webmaster (WM)</Typography>
@@ -277,8 +305,12 @@ export default async function Page() {
                         </TableContainer>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={12} md={6}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 12,
+                    md: 6
+                }}>
                 <Card>
                     <CardContent>
                         <Typography variant="h6">Instructors</Typography>
@@ -302,8 +334,12 @@ export default async function Page() {
                         </TableContainer>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={12} md={6}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 12,
+                    md: 6
+                }}>
                 <Card>
                     <CardContent>
                         <Typography variant="h6">Mentors</Typography>
@@ -327,8 +363,8 @@ export default async function Page() {
                         </TableContainer>
                     </CardContent>
                 </Card>
-            </Grid>
-        </Grid>
+            </Grid2>
+        </Grid2>)
     );
 
 }

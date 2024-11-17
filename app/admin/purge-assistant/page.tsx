@@ -8,16 +8,19 @@ import RosterPurgeSelectionForm from "@/components/PurgeAssistant/RosterPurgeSel
 import {permanentRedirect} from "next/navigation";
 import ErrorCard from "@/components/Error/ErrorCard";
 
-export default async function Page({searchParams,}: {
-    searchParams: {
-        startMonth: string,
-        endMonth: string,
-        maxHours: string,
-        maxTrainingHours: string,
-        year: string,
-        includeLoas: string,
-    },
-}) {
+export default async function Page(
+    props: {
+        searchParams: Promise<{
+            startMonth: string,
+            endMonth: string,
+            maxHours: string,
+            maxTrainingHours: string,
+            year: string,
+            includeLoas: string,
+        }>,
+    }
+) {
+    const searchParams = await props.searchParams;
 
     const {startMonth, endMonth, maxHours, maxTrainingHours, year, includeLoas,} = searchParams;
 
@@ -119,5 +122,4 @@ export default async function Page({searchParams,}: {
         </Stack>
 
     );
-
 }

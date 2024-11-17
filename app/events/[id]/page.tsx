@@ -6,7 +6,7 @@ import {
     Card,
     CardContent,
     Container,
-    Grid,
+    Grid2,
     Stack,
     Table,
     TableBody,
@@ -31,7 +31,8 @@ import Placeholder from "../../../public/img/logo_large.png";
 
 const ut = new UTApi();
 
-export default async function Page({params}: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
 
     const {id} = params;
 
@@ -66,19 +67,19 @@ export default async function Page({params}: { params: { id: string } }) {
     const session = await getServerSession(authOptions);
 
     return (
-        <Container maxWidth="md">
+        (<Container maxWidth="md">
             <Stack direction="column" spacing={2}>
                 <Card>
                     <CardContent>
-                        <Grid container columns={2} spacing={2}>
-                            <Grid item xs={2}>
+                        <Grid2 container columns={2} spacing={2}>
+                            <Grid2 size={2}>
                                 <Box sx={{position: 'relative', width: '100%', minHeight: 400,}}>
                                     <Image
                                         src={['png', 'jpeg', 'jpg', 'gif'].indexOf(imageUrl.split('.').at(-1)!) > -1 ? imageUrl : Placeholder}
                                         alt={event.name} priority fill style={{objectFit: 'contain'}}/>
                                 </Box>
-                            </Grid>
-                            <Grid item xs={2}>
+                            </Grid2>
+                            <Grid2 size={2}>
                                 <Stack direction="column" spacing={1} sx={{mb: 4,}}>
                                     <Typography variant="h5">{event.name}</Typography>
                                     <Typography variant="subtitle1">
@@ -89,8 +90,8 @@ export default async function Page({params}: { params: { id: string } }) {
                                         variant="subtitle2">{event.featuredFields.join(" • ") || 'No fields'}</Typography>
                                 </Stack>
                                 <Markdown>{event.description}</Markdown>
-                            </Grid>
-                        </Grid>
+                            </Grid2>
+                        </Grid2>
                     </CardContent>
                 </Card>
                 {session && session.user &&
@@ -140,7 +141,7 @@ export default async function Page({params}: { params: { id: string } }) {
                 }
 
             </Stack>
-        </Container>
+        </Container>)
     );
 }
 

@@ -3,7 +3,7 @@ import {
     Card,
     CardContent,
     Chip,
-    Grid,
+    Grid2,
     Table,
     TableBody,
     TableCell,
@@ -43,40 +43,65 @@ export default async function Page() {
     const syncTimes = await prisma.syncTimes.findFirst();
 
     return (
-        <Grid container columns={20} spacing={2}>
-            <Grid item xs={20} md={10} lg={5}>
+        (<Grid2 container columns={20} spacing={2}>
+            <Grid2
+                size={{
+                    xs: 20,
+                    md: 10,
+                    lg: 5
+                }}>
                 <Card>
                     <CardContent>
                         <Typography>Membership</Typography>
                         <Typography variant="h4">{membership.length}</Typography>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={20} md={10} lg={5}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 20,
+                    md: 10,
+                    lg: 5
+                }}>
                 <Card>
                     <CardContent>
                         <Typography>Visitors</Typography>
                         <Typography variant="h4">{visitors.length}</Typography>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={20} md={10} lg={5}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 20,
+                    md: 10,
+                    lg: 5
+                }}>
                 <Card>
                     <CardContent>
                         <Typography>Training Staff</Typography>
                         <Typography variant="h4">{trainingStaff.length}</Typography>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={20} md={10} lg={5}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 20,
+                    md: 10,
+                    lg: 5
+                }}>
                 <Card>
                     <CardContent>
                         <Typography>{getMonth(now.getMonth())} Hours</Typography>
                         <Typography variant="h4">{monthHours}</Typography>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={20} md={10} lg={4}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 20,
+                    md: 10,
+                    lg: 4
+                }}>
                 <Card>
                     <CardContent>
                         <Typography sx={{mb: 1,}}>Roster Sync</Typography>
@@ -84,8 +109,13 @@ export default async function Page() {
                               color={getChipColor(syncTimes?.roster)}/>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={20} md={10} lg={4}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 20,
+                    md: 10,
+                    lg: 4
+                }}>
                 <Card>
                     <CardContent>
                         <Typography sx={{mb: 1,}}>Statistics Sync</Typography>
@@ -93,8 +123,13 @@ export default async function Page() {
                               color={getChipColor(syncTimes?.stats)}/>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={20} md={10} lg={4}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 20,
+                    md: 10,
+                    lg: 4
+                }}>
                 <Card>
                     <CardContent>
                         <Typography sx={{mb: 1,}}>Solo Certification Sync</Typography>
@@ -102,8 +137,13 @@ export default async function Page() {
                               color={getChipColor(syncTimes?.soloCert)}/>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={20} md={10} lg={4}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 20,
+                    md: 10,
+                    lg: 4
+                }}>
                 <Card>
                     <CardContent>
                         <Typography sx={{mb: 1,}}>Events Sync</Typography>
@@ -111,8 +151,13 @@ export default async function Page() {
                               color={getChipColor(syncTimes?.events)}/>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={20} md={10} lg={4}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 20,
+                    md: 10,
+                    lg: 4
+                }}>
                 <Card>
                     <CardContent>
                         <Typography sx={{mb: 1,}}>LOA Sync</Typography>
@@ -120,8 +165,8 @@ export default async function Page() {
                               color={getChipColor(syncTimes?.loas)}/>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={20}>
+            </Grid2>
+            <Grid2 size={20}>
                 <Card>
                     <CardContent>
                         <Typography variant="h5">Recent Activity</Typography>
@@ -153,8 +198,8 @@ export default async function Page() {
 
                     </CardContent>
                 </Card>
-            </Grid>
-        </Grid>
+            </Grid2>
+        </Grid2>)
     );
 }
 

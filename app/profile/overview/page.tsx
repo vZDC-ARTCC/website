@@ -1,7 +1,7 @@
 import React from 'react';
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/auth/auth";
-import {Button, Card, CardActions, CardContent, Chip, Grid, Stack, Typography} from "@mui/material";
+import {Button, Card, CardActions, CardContent, Chip, Grid2, Stack, Typography} from "@mui/material";
 import ProfileCard from "@/components/Profile/ProfileCard";
 import CertificationsCard from "@/components/Profile/CertificationsCard";
 import FeedbackCard from "@/components/Profile/FeedbackCard";
@@ -44,11 +44,11 @@ export default async function Page() {
     }
 
     return user && (
-        <Grid container columns={6} spacing={2}>
-            <Grid item xs={6}>
+        <Grid2 container columns={6} spacing={2}>
+            <Grid2 size={6}>
                 <Typography variant="h4">Your Profile</Typography>
-            </Grid>
-            {loa && <Grid item xs={6}>
+            </Grid2>
+            {loa && <Grid2 size={6}>
                 <Card>
                     <CardContent>
                         <Stack direction="row" spacing={1} alignItems="center" sx={{mb: 1,}}>
@@ -67,28 +67,56 @@ export default async function Page() {
                         <LoaDeleteButton loa={loa}/>
                     </CardActions>
                 </Card>
-            </Grid>}
-            <Grid item xs={6} md={2}>
+            </Grid2>}
+            <Grid2
+                size={{
+                    xs: 6,
+                    md: 2
+                }}>
                 <ProfileCard user={user}/>
-            </Grid>
-            <Grid item xs={6} md={2}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 6,
+                    md: 2
+                }}>
                 <AssignedMentorsCard user={user}/>
-            </Grid>
-            <Grid item xs={6} md={2}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 6,
+                    md: 2
+                }}>
                 <CertificationsCard cid={user.cid}/>
-            </Grid>
-            <Grid item xs={6} md={4}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 6,
+                    md: 4
+                }}>
                 <FeedbackCard user={user}/>
-            </Grid>
-            <Grid item xs={6} md={2}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 6,
+                    md: 2
+                }}>
                 <LinksCard/>
-            </Grid>
-            <Grid item xs={6} md={4}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 6,
+                    md: 4
+                }}>
                 <TrainingCard user={user}/>
-            </Grid>
-            <Grid item xs={6} md={2}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 6,
+                    md: 2
+                }}>
                 <EventSignupCard user={user}/>
-            </Grid>
-        </Grid>
+            </Grid2>
+        </Grid2>
     );
 }

@@ -6,8 +6,8 @@ import {getIconForCertificationOption} from "@/lib/certification";
 function RosterLegend() {
     return (
         <Grid2 container spacing={2} justifyContent="center" sx={{mb: 2,}}>
-            {Object.values(CertificationOption).map((co: CertificationOption) => (
-                <Grid2 size={1}>
+            {Object.values(CertificationOption).map((co: CertificationOption, idx) => (
+                <Grid2 key={idx} size={1}>
                     <Stack key={co} direction="column" alignItems="center">
                         {getIconForCertificationOption(co)}
                         <Typography variant="subtitle2">{co}</Typography>

@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import {Airport} from "@prisma/client";
-import {Grid, TextField,} from "@mui/material";
+import {Grid2, TextField,} from "@mui/material";
 import {toast} from "react-toastify";
 import {upsertAirport} from "@/actions/airports";
 import {useRouter} from "next/navigation";
@@ -26,27 +26,43 @@ export default function AirportForm({airport, traconGroupId}: { airport?: Airpor
     }
 
     return (
-        <form action={handleSubmit}>
+        (<form action={handleSubmit}>
             <input type="hidden" name="traconGroupId" value={traconGroupId}/>
             <input type="hidden" name="id" value={airport?.id}/>
-            <Grid container columns={2} spacing={2}>
-                <Grid item xs={2} sm={1}>
+            <Grid2 container columns={2} spacing={2}>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        sm: 1
+                    }}>
                     <TextField fullWidth variant="filled" label="ICAO" name="icao" defaultValue={airport?.icao || ''}/>
-                </Grid>
-                <Grid item xs={2} sm={1}>
+                </Grid2>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        sm: 1
+                    }}>
                     <TextField fullWidth variant="filled" label="IATA" name="iata" defaultValue={airport?.iata || ''}/>
-                </Grid>
-                <Grid item xs={2} sm={1}>
+                </Grid2>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        sm: 1
+                    }}>
                     <TextField fullWidth variant="filled" label="Name" name="name" defaultValue={airport?.name || ''}/>
-                </Grid>
-                <Grid item xs={2} sm={1}>
+                </Grid2>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        sm: 1
+                    }}>
                     <TextField fullWidth variant="filled" label="City" name="city" defaultValue={airport?.city || ''}/>
-                </Grid>
-                <Grid item xs={2}>
+                </Grid2>
+                <Grid2 size={2}>
                     <FormSaveButton />
-                </Grid>
-            </Grid>
-        </form>
+                </Grid2>
+            </Grid2>
+        </form>)
     );
 
 }

@@ -3,7 +3,7 @@ import React from 'react';
 import {Event, EventType} from "@prisma/client";
 import {
     Box,
-    Grid,
+    Grid2,
     MenuItem,
     Stack,
     TextField,
@@ -57,38 +57,62 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
       };
 
     return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+        (<LocalizationProvider dateAdapter={AdapterDayjs}>
             <form action={handleSubmit}>
                 <input type="hidden" name="id" value={event?.id}/>
                 <input type="hidden" name="description" value={description}/>
-                <Grid container columns={2} spacing={2}>
-                    <Grid item xs={2} md={1}>
+                <Grid2 container columns={2} spacing={2}>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
                         <TextField variant="filled" fullWidth name="name" label="Name"
                                    defaultValue={event?.name || ''}/>
-                    </Grid>
-                    <Grid item xs={2} md={1}>
+                    </Grid2>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
                         <TextField variant="filled" fullWidth name="host" label="Host"
                                    helperText="Leave blank if this ARTCC is hosting the event"
                                    defaultValue={event?.host || ''}/>
-                    </Grid>
-                    <Grid item xs={2} md={1}>
+                    </Grid2>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
                         <TextField variant="filled" fullWidth name="featuredFields" label="Featured Fields" helperText="Seperate using commas (IAD,DCA,BWI,KATL)" defaultValue={event?.featuredFields.join(',') || ''} />
-                    </Grid>
-                    <Grid item xs={2} md={1}>
+                    </Grid2>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
                         <TextField variant="filled" fullWidth name="type" label="Type" select defaultValue={event?.type || ''}>
                             {Object.keys(EventType).map((type) => (
                                 <MenuItem key={type} value={type}>{type}</MenuItem>
                             ))}
                         </TextField>
-                    </Grid>
-                    <Grid item xs={2} md={1}>
+                    </Grid2>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
                         <DateTimePicker disablePast name="start" ampm={false} defaultValue={dayjs(event?.start)}
                                         label="Start (Zulu)"/>
-                    </Grid>
-                    <Grid item xs={2} md={1}>
+                    </Grid2>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
                         <DateTimePicker disablePast name="end" ampm={false} defaultValue={dayjs(event?.end)} label="End (Zulu)"/>
-                    </Grid>
-                    <Grid item xs={2}>
+                    </Grid2>
+                    <Grid2 size={2}>
                         <Box sx={{maxWidth: '700px',}} data-color-mode={theme.palette.mode}>
                             <Typography variant="h6" sx={{ mb: 2, }}>Description</Typography>
                             <MarkdownEditor
@@ -99,8 +123,12 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
                             />
                         </Box>
 
-                    </Grid>
-                    <Grid item xs={2} md={1}>
+                    </Grid2>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
                         <Typography variant="h6" sx={{mb: 2,}}>Upload Banner Image</Typography>
                         <Stack spacing={2}>
                             <ToggleButtonGroup
@@ -117,9 +145,13 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
                                 <input type="file" name="bannerImage" accept="image/*"/> :
                                 <TextField variant="filled" type="url" fullWidth name="bannerUrl" label="Image URL"/>}
                         </Stack>
-                    </Grid>
+                    </Grid2>
                     {imageUrl &&
-                        <Grid item xs={2} md={1}>
+                        <Grid2
+                            size={{
+                                xs: 2,
+                                md: 1
+                            }}>
                             <Typography variant="h6">Active Banner Image</Typography>
                             <Typography>Click to open in a new tab.</Typography>
                             <Link href={typeof imageUrl === 'string'?imageUrl:''} target="_blank" passHref>
@@ -127,14 +159,14 @@ export default function EventForm({event, imageUrl, }: { event?: Event, imageUrl
                                     <Image src={imageUrl} alt={event?.name || ''} fill style={{objectFit: 'contain',}}/>
                                 </Box>
                             </Link>
-                        </Grid>
+                        </Grid2>
                     }
-                    <Grid item xs={2}>
+                    <Grid2 size={2}>
                         <FormSaveButton />
-                    </Grid>
-                </Grid>
+                    </Grid2>
+                </Grid2>
             </form>
-        </LocalizationProvider>
+        </LocalizationProvider>)
     );
 
 }

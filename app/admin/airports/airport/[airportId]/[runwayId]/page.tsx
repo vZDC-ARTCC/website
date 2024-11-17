@@ -20,7 +20,8 @@ import {Edit} from "@mui/icons-material";
 import ProcedureDeleteButton from "@/components/Airports/ProcedureDeleteButton";
 import ProcedureForm from "@/components/Airports/ProcedureForm";
 
-export default async function Page({params}: { params: { airportId: string, runwayId: string, }, }) {
+export default async function Page(props: { params: Promise<{ airportId: string, runwayId: string, }>, }) {
+    const params = await props.params;
 
     const {airportId, runwayId} = params;
 

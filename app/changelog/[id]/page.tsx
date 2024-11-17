@@ -4,7 +4,8 @@ import prisma from "@/lib/db";
 import {notFound} from "next/navigation";
 import ChangeLogForm from '@/components/Changelog/ChangeLogForm';
 
-export default async function Page({params}: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
 
     const changeLog = await prisma.version.findUnique({
         where: {
@@ -25,5 +26,4 @@ export default async function Page({params}: { params: { id: string } }) {
             <ChangeLogForm changeLog={changeLog}/>
         </>
     );
-
 }

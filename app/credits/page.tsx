@@ -1,11 +1,11 @@
-import {Card, CardContent, Grid, Typography} from "@mui/material";
+import {Card, CardContent, Grid2, Typography} from "@mui/material";
 import Link from "next/link";
 
 export default async function Home() {
 
     return (
-        <Grid container columns={6} spacing={4}>
-            <Grid item xs={6}>
+        (<Grid2 container columns={6} spacing={4}>
+            <Grid2 size={6}>
                 <Card>
                     <CardContent>
                         <Typography variant="h4">Credit Information</Typography>
@@ -14,8 +14,8 @@ export default async function Home() {
                             style={{color: '#29B6F6', textDecoration: 'none',}}>our public GitHub.</Link></Typography>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={6}>
+            </Grid2>
+            <Grid2 size={6}>
                 <Card>
                     <CardContent>
                         <Typography variant="h5" sx={{mb: 1,}}>Main Contributors</Typography>
@@ -25,7 +25,7 @@ export default async function Home() {
                         <Typography variant="h6" color="#29B6F6" fontWeight="bold">Harry Xu</Typography>
                     </CardContent>
                 </Card>
-            </Grid>
-        </Grid>
+            </Grid2>
+        </Grid2>)
     );
 }

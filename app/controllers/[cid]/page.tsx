@@ -1,7 +1,7 @@
 import React from 'react';
 import prisma from "@/lib/db";
 import {notFound} from "next/navigation";
-import {Card, CardContent, Grid, Typography} from "@mui/material";
+import {Card, CardContent, Grid2, Typography} from "@mui/material";
 import ProfileCard from "@/components/Profile/ProfileCard";
 import {User} from "next-auth";
 import StatisticsTable from "@/components/Statistics/StatisticsTable";
@@ -9,7 +9,8 @@ import {getMonthLog} from "@/lib/hours";
 import ControllingSessionsTable from "@/components/Statistics/ControllingSessionsTable";
 import {getMonth} from "@/lib/date";
 
-export default async function Page({params}: { params: { cid: string } }) {
+export default async function Page(props: { params: Promise<{ cid: string }> }) {
+    const params = await props.params;
 
     const {cid} = params;
 
@@ -62,26 +63,34 @@ export default async function Page({params}: { params: { cid: string } }) {
     });
 
     return (
-        <Grid container columns={2} spacing={2}>
-            <Grid item xs={2}>
+        (<Grid2 container columns={2} spacing={2}>
+            <Grid2 size={2}>
                 <ProfileCard user={user as User} viewOnly/>
-            </Grid>
-            <Grid item xs={2} lg={1}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 2,
+                    lg: 1
+                }}>
                 <Card>
                     <CardContent>
                         <Typography variant="h6">{new Date().getFullYear()} Statistics</Typography>
                         <StatisticsTable heading="Month" logs={getMonthLog(logs)}/>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={2} lg={1}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 2,
+                    lg: 1
+                }}>
                 <Card>
                     <CardContent>
                         <Typography variant="h6">{getMonth(new Date().getMonth())} Controlling Sessions</Typography>
                         <ControllingSessionsTable positions={positionsWorked}/>
                     </CardContent>
                 </Card>
-            </Grid>
-        </Grid>
+            </Grid2>
+        </Grid2>)
     );
 }

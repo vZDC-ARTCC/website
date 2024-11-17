@@ -7,7 +7,10 @@ export const metadata: Metadata = {
     description: 'vZDC home roster page',
 };
 
-export default function Page({searchParams}: { searchParams: { search?: string, includeVatusa?: string, } }) {
+export default async function Page(
+    props: { searchParams: Promise<{ search?: string, includeVatusa?: string, }> }
+) {
+    const searchParams = await props.searchParams;
     return (
         <RosterTable membership="home" search={searchParams.search}
                      includeVatusa={searchParams.includeVatusa === 'true'}/>

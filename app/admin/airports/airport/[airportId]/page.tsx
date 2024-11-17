@@ -20,7 +20,8 @@ import {Edit} from "@mui/icons-material";
 import RunwayDeleteButton from "@/components/Airports/RunwayDeleteButton";
 import RunwayForm from "@/components/Airports/RunwayForm";
 
-export default async function Page({params}: { params: { airportId: string, }, }) {
+export default async function Page(props: { params: Promise<{ airportId: string, }>, }) {
+    const params = await props.params;
 
     const {airportId} = params;
 

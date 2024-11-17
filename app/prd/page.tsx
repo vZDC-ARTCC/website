@@ -20,7 +20,10 @@ export const metadata: Metadata = {
     description: 'vZDC preferred route page',
 };
 
-export default async function Page({searchParams}: { searchParams: { origin?: string, destination?: string } }) {
+export default async function Page(
+    props: { searchParams: Promise<{ origin?: string, destination?: string }> }
+) {
+    const searchParams = await props.searchParams;
 
     const {origin, destination} = searchParams;
 

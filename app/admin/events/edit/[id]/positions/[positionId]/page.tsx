@@ -6,7 +6,8 @@ import Link from "next/link";
 import {ArrowBack} from "@mui/icons-material";
 import EventPositionForm from "@/components/EventPosition/EventPositionForm";
 
-export default async function Page({params}: { params: { positionId: string, } }) {
+export default async function Page(props: { params: Promise<{ positionId: string, }> }) {
+    const params = await props.params;
 
     const {positionId} = params;
 

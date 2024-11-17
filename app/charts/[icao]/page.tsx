@@ -3,7 +3,8 @@ import ChartsList from "@/components/Charts/ChartsList";
 import {Chart} from "@/types";
 import {fetchCharts} from "@/actions/charts";
 
-export default async function Page({params}: { params: { icao: string, } }) {
+export default async function Page(props: { params: Promise<{ icao: string, }> }) {
+    const params = await props.params;
 
     const {icao} = params;
 
