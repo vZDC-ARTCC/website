@@ -107,7 +107,8 @@ export default function TrainingAssignmentForm({
                     }}
                     renderTags={(value, getTagProps) =>
                         value.map((option, index) => (
-                            <Chip {...getTagProps({index})} label={`${option.firstName} ${option.lastName}`}/>
+                            <Chip {...getTagProps({index})} key={index}
+                                  label={`${option.firstName} ${option.lastName}`}/>
                         ))
                     }
                     renderInput={(params) => <TextField {...params} label="Other Trainers"

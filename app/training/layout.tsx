@@ -1,9 +1,10 @@
 import React from 'react';
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/auth/auth";
-import {Grid, Typography} from "@mui/material";
+import {Grid2, Typography} from "@mui/material";
 import TrainingMenu from "@/components/Admin/TrainingMenu";
 import {Metadata} from "next";
+
 export const metadata: Metadata = {
     title: 'Training | vZDC',
     description: 'vZDC training page',
@@ -19,13 +20,17 @@ export default async function Layout({children}: { children: React.ReactNode }) 
     }
 
     return (
-        <Grid container columns={9} spacing={2}>
-            <Grid item xs={9} lg={2}>
+        (<Grid2 container columns={9} spacing={2}>
+            <Grid2
+                size={{
+                    xs: 9,
+                    lg: 2
+                }}>
                 <TrainingMenu/>
-            </Grid>
-            <Grid item xs>
+            </Grid2>
+            <Grid2 size="grow">
                 {children}
-            </Grid>
-        </Grid>
+            </Grid2>
+        </Grid2>)
     );
 }

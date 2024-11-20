@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import {LOA} from "@prisma/client";
-import {Grid, TextField} from "@mui/material";
+import {Grid2, TextField} from "@mui/material";
 import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
@@ -28,27 +28,34 @@ export default function LoaForm({loa}: { loa?: LOA, }) {
     }
 
     return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+        (<LocalizationProvider dateAdapter={AdapterDayjs}>
             <form action={handleSubmit}>
                 <input type="hidden" name="id" value={loa?.id}/>
-                <Grid container columns={2} spacing={2}>
-                    <Grid item xs={2} md={1}>
+                <Grid2 container columns={2} spacing={2}>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
                         <DatePicker disablePast label="Start" name="start" defaultValue={dayjs(loa?.start)}/>
-                    </Grid>
-                    <Grid item xs={2} md={1}>
+                    </Grid2>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
                         <DatePicker disablePast label="End" name="end" defaultValue={dayjs(loa?.end)}/>
-                    </Grid>
-                    <Grid item xs={2}>
+                    </Grid2>
+                    <Grid2 size={2}>
                         <TextField fullWidth variant="filled" multiline rows={4} name="reason" label="Reason for LOA"
                                    defaultValue={loa?.reason || ''}/>
-                    </Grid>
-                    <Grid item xs={2}>
+                    </Grid2>
+                    <Grid2 size={2}>
                         <FormSaveButton/>
-                    </Grid>
-                </Grid>
+                    </Grid2>
+                </Grid2>
             </form>
-        </LocalizationProvider>
-
+        </LocalizationProvider>)
     );
 
 }

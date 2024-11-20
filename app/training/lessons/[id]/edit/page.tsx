@@ -20,7 +20,8 @@ import LessonRubricCriteriaDeleteButton from "@/components/Lesson/LessonRubricCr
 import LessonForm from "@/components/Lesson/LessonForm";
 import LessonRubricCriteriaForm from "@/components/Lesson/LessonRubricCriteriaForm";
 
-export default async function Page({params}: { params: { id: string, }, }) {
+export default async function Page(props: { params: Promise<{ id: string, }>, }) {
+    const params = await props.params;
 
     const {id} = params;
 

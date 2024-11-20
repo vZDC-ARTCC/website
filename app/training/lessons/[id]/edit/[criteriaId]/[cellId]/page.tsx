@@ -4,7 +4,10 @@ import prisma from "@/lib/db";
 import {notFound} from "next/navigation";
 import LessonCriteriaCellForm from "@/components/Lesson/LessonCriteriaCellForm";
 
-export default async function Page({params}: { params: { id: string, criteriaId: string, cellId: string } }) {
+export default async function Page(
+    props: { params: Promise<{ id: string, criteriaId: string, cellId: string }> }
+) {
+    const params = await props.params;
 
     const {cellId} = params;
 

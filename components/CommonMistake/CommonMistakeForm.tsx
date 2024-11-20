@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import {CommonMistake} from "@prisma/client";
-import {Box, Grid, TextField, Typography, useTheme} from "@mui/material";
+import {Box, Grid2, TextField, Typography, useTheme} from "@mui/material";
 import MarkdownEditor from "@uiw/react-markdown-editor";
 import FormSaveButton from "@/components/Form/FormSaveButton";
 import {createOrUpdateMistake} from "@/actions/mistake";
@@ -27,20 +27,28 @@ export default function CommonMistakeForm({mistake}: { mistake?: CommonMistake, 
     }
 
     return (
-        <form action={handleSubmit}>
+        (<form action={handleSubmit}>
             <input type="hidden" name="mistakeId" value={mistake?.id || ''}/>
             <input type="hidden" name="description" value={description}/>
-            <Grid container columns={2} spacing={2}>
-                <Grid item xs={2} md={1}>
+            <Grid2 container columns={2} spacing={2}>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        md: 1
+                    }}>
                     <TextField fullWidth variant="filled" name="name" required label="Name"
                                defaultValue={mistake?.name || ''}/>
-                </Grid>
-                <Grid item xs={2} md={1}>
+                </Grid2>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        md: 1
+                    }}>
                     <TextField fullWidth variant="filled" name="facility" label="Facility (optional)"
                                helperText="Specifying a facility will aid trianers in looking for facility specific mistakes."
                                defaultValue={mistake?.facility || ''}/>
-                </Grid>
-                <Grid item xs={2}>
+                </Grid2>
+                <Grid2 size={2}>
                     <Box sx={{maxWidth: '700px',}} data-color-mode={theme.palette.mode}>
                         <Typography variant="h6" sx={{mb: 2,}}>Description</Typography>
                         <MarkdownEditor
@@ -50,12 +58,12 @@ export default function CommonMistakeForm({mistake}: { mistake?: CommonMistake, 
                             onChange={(d) => setDescription(d)}
                         />
                     </Box>
-                </Grid>
-                <Grid item xs={2}>
+                </Grid2>
+                <Grid2 size={2}>
                     <FormSaveButton/>
-                </Grid>
-            </Grid>
-        </form>
+                </Grid2>
+            </Grid2>
+        </form>)
     );
 
 }

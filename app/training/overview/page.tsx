@@ -2,7 +2,7 @@ import React from 'react';
 import {
     Card,
     CardContent,
-    Grid,
+    Grid2,
     Table,
     TableBody,
     TableCell,
@@ -56,40 +56,60 @@ export default async function Page() {
     });
 
     return (
-        <Grid container columns={4} spacing={2}>
-            <Grid item xs={4} md={2} lg={1}>
+        (<Grid2 container columns={4} spacing={2}>
+            <Grid2
+                size={{
+                    xs: 4,
+                    md: 2,
+                    lg: 1
+                }}>
                 <Card>
                     <CardContent>
                         <Typography>Mentors</Typography>
                         <Typography variant="h4">{mentors.length}</Typography>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={4} md={2} lg={1}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 4,
+                    md: 2,
+                    lg: 1
+                }}>
                 <Card>
                     <CardContent>
                         <Typography>Instructors</Typography>
                         <Typography variant="h4">{instructors.length}</Typography>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={4} md={2} lg={1}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 4,
+                    md: 2,
+                    lg: 1
+                }}>
                 <Card>
                     <CardContent>
                         <Typography>{getMonth(now.getMonth())} Sessions</Typography>
                         <Typography variant="h4">{sessions.length}</Typography>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={4} md={2} lg={1}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 4,
+                    md: 2,
+                    lg: 1
+                }}>
                 <Card>
                     <CardContent>
                         <Typography>{getMonth(now.getMonth())} Training Hours</Typography>
                         <Typography variant="h4">{totalHours}</Typography>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={4}>
+            </Grid2>
+            <Grid2 size={4}>
                 <Card>
                     <CardContent>
                         <Typography variant="h5">Recent Training Activity</Typography>
@@ -120,7 +140,7 @@ export default async function Page() {
                         </TableContainer>}
                     </CardContent>
                 </Card>
-            </Grid>
-        </Grid>
+            </Grid2>
+        </Grid2>)
     );
 }

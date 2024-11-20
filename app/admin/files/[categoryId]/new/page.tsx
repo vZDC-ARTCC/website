@@ -4,7 +4,8 @@ import {notFound} from "next/navigation";
 import {Card, CardContent, Typography} from "@mui/material";
 import FileForm from "@/components/Files/FileForm";
 
-export default async function Page({params}: { params: { categoryId: string } }) {
+export default async function Page(props: { params: Promise<{ categoryId: string }> }) {
+    const params = await props.params;
 
     const {categoryId} = params;
 

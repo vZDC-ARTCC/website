@@ -9,7 +9,8 @@ import {OpenInNew} from "@mui/icons-material";
 
 const ut = new UTApi();
 
-export default async function Page({params}: { params: { categoryId: string, fileId: string, } }) {
+export default async function Page(props: { params: Promise<{ categoryId: string, fileId: string, }> }) {
+    const params = await props.params;
 
     const {fileId} = params;
 

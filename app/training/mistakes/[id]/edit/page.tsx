@@ -6,7 +6,8 @@ import CommonMistakeForm from "@/components/CommonMistake/CommonMistakeForm";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/auth/auth";
 
-export default async function Page({params}: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
 
     const {id} = params;
     const session = await getServerSession(authOptions);

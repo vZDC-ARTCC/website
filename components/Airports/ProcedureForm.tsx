@@ -3,7 +3,7 @@ import React from 'react';
 import {RunwayInstruction} from "@prisma/client";
 import {toast} from "react-toastify";
 import {upsertInstruction} from "@/actions/airports";
-import {Grid, TextField} from "@mui/material";
+import {Grid2, TextField} from "@mui/material";
 import FormSaveButton from "@/components/Form/FormSaveButton";
 
 export default function ProcedureForm({instruction, runwayId}: { instruction?: RunwayInstruction, runwayId: string, }) {
@@ -19,20 +19,28 @@ export default function ProcedureForm({instruction, runwayId}: { instruction?: R
     }
 
     return (
-        <form action={handleSubmit}>
+        (<form action={handleSubmit}>
             <input type="hidden" name="id" value={instruction?.id}/>
             <input type="hidden" name="runwayId" value={runwayId}/>
-            <Grid container columns={2} spacing={2}>
-                <Grid item xs={2} md={1}>
+            <Grid2 container columns={2} spacing={2}>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        md: 1
+                    }}>
                     <TextField fullWidth variant="filled" label="Route" name="route" defaultValue={instruction?.route || ''}/>
-                </Grid>
-                <Grid item xs={2} md={1}>
+                </Grid2>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        md: 1
+                    }}>
                     <TextField fullWidth variant="filled" label="Instruction" name="procedure" defaultValue={instruction?.procedure || ''}/>
-                </Grid>
-                <Grid item xs={2}>
+                </Grid2>
+                <Grid2 size={2}>
                     <FormSaveButton />
-                </Grid>
-            </Grid>
-        </form>
+                </Grid2>
+            </Grid2>
+        </form>)
     );
 }

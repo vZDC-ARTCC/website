@@ -4,7 +4,8 @@ import {notFound} from "next/navigation";
 import {Card, CardContent, Typography} from "@mui/material";
 import TraconGroupForm from "@/components/Airports/TraconGroupForm";
 
-export default async function Page({params}: { params: { traconGroupId: string, }, }) {
+export default async function Page(props: { params: Promise<{ traconGroupId: string, }>, }) {
+    const params = await props.params;
 
     const {traconGroupId} = params;
     const traconGroup = await prisma.traconGroup.findUnique({

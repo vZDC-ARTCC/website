@@ -46,7 +46,7 @@ export default async function RootLayout({
             <InitColorSchemeScript attribute="class" defaultMode="system"/>
             <div>
                 <Navbar/>
-                <Container maxWidth="xl" sx={{marginTop: 5,}}>
+                <Container maxWidth="xl" sx={{marginTop: 2,}}>
                     {children}
                 </Container>
                 <Footer/>

@@ -3,7 +3,8 @@ import prisma from "@/lib/db";
 import {notFound} from "next/navigation";
 import FeedbackCard from "@/components/Feedback/FeedbackCard";
 
-export default async function Page({params}: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
 
     const {id} = params;
 

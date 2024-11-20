@@ -6,7 +6,8 @@ import FileCategoryForm from "@/components/Files/FileCategoryForm";
 import FileTable from "@/components/Files/FileTable";
 import FileForm from "@/components/Files/FileForm";
 
-export default async function Page({params}: { params: { categoryId: string } }) {
+export default async function Page(props: { params: Promise<{ categoryId: string }> }) {
+    const params = await props.params;
 
     const fileCategory = await prisma.fileCategory.findUnique({
         where: {
@@ -48,5 +49,4 @@ export default async function Page({params}: { params: { categoryId: string } })
             </Card>
         </Stack>
     );
-
 }

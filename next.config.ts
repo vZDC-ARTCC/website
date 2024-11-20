@@ -1,7 +1,7 @@
 import config from './package.json' with {type: 'json'};
+import {NextConfig} from "next";
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
     images: {
         remotePatterns: [
             {
@@ -12,11 +12,11 @@ const nextConfig = {
             },
         ],
     },
+    serverExternalPackages: ['mjml'],
     experimental: {
         serverActions: {
             bodySizeLimit: '5MB',
         },
-        serverComponentsExternalPackages: ['mjml'],
     },
     output: 'standalone',
     publicRuntimeConfig: {

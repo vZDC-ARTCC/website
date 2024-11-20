@@ -1,14 +1,15 @@
 import React from 'react';
 import prisma from "@/lib/db";
 import {getMonth} from "@/lib/date";
-import {Box, Card, CardContent, Grid, IconButton, Stack, Tooltip, Typography} from "@mui/material";
+import {Box, Card, CardContent, Grid2, IconButton, Stack, Tooltip, Typography} from "@mui/material";
 import Link from "next/link";
 import {StackedLineChart} from "@mui/icons-material";
 import {getRating} from "@/lib/vatsim";
 import StatisticsTable from "@/components/Statistics/StatisticsTable";
 import {getControllerLog, getTop3Controllers, getTotalHours} from "@/lib/hours";
 
-export default async function Page({params}: { params: { year: string, month: string } }) {
+export default async function Page(props: { params: Promise<{ year: string, month: string }> }) {
+    const params = await props.params;
 
     const {year, month} = params;
 
@@ -45,55 +46,85 @@ export default async function Page({params}: { params: { year: string, month: st
     const controllerLog = getControllerLog(logs);
 
     return (
-        <Grid container columns={30} spacing={2}>
-            <Grid item xs={30}>
+        (<Grid2 container columns={30} spacing={2}>
+            <Grid2 size={30}>
                 <Card>
                     <CardContent>
                         <Typography variant="h4">{getMonth(parseInt(month))}, {year} Statistics</Typography>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={30} sm={15} md={5}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 30,
+                    sm: 15,
+                    md: 5
+                }}>
                 <Card>
                     <CardContent>
                         <Typography>Delivery Hours</Typography>
                         <Typography variant="h6">{totalHours.deliveryHours.toPrecision(3)} hours</Typography>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={30} sm={15} md={5}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 30,
+                    sm: 15,
+                    md: 5
+                }}>
                 <Card>
                     <CardContent>
                         <Typography>Ground Hours</Typography>
                         <Typography variant="h6">{totalHours.groundHours.toPrecision(3)} hours</Typography>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={30} sm={15} md={5}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 30,
+                    sm: 15,
+                    md: 5
+                }}>
                 <Card>
                     <CardContent>
                         <Typography>Tower Hours</Typography>
                         <Typography variant="h6">{totalHours.towerHours.toPrecision(3)} hours</Typography>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={30} sm={15} md={5}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 30,
+                    sm: 15,
+                    md: 5
+                }}>
                 <Card>
                     <CardContent>
                         <Typography>TRACON Hours</Typography>
                         <Typography variant="h6">{totalHours.approachHours.toPrecision(3)} hours</Typography>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={30} sm={15} md={5}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 30,
+                    sm: 15,
+                    md: 5
+                }}>
                 <Card>
                     <CardContent>
                         <Typography>Center Hours</Typography>
                         <Typography variant="h6">{totalHours.centerHours.toPrecision(3)} hours</Typography>
                     </CardContent>
                 </Card>
-            </Grid>
-            <Grid item xs={30} sm={15} md={5}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 30,
+                    sm: 15,
+                    md: 5
+                }}>
                 <Card>
                     <CardContent>
                         <Typography>Total Hours</Typography>
@@ -101,9 +132,14 @@ export default async function Page({params}: { params: { year: string, month: st
                             variant="h6">{(totalHours.deliveryHours + totalHours.groundHours + totalHours.towerHours + totalHours.approachHours + totalHours.centerHours).toPrecision(3)} hours</Typography>
                     </CardContent>
                 </Card>
-            </Grid>
+            </Grid2>
             {top3Controllers.map((controller, idx) => (
-                <Grid key={controller.user.cid} item xs={30} md={10}>
+                <Grid2
+                    key={controller.user.cid}
+                    size={{
+                        xs: 30,
+                        md: 10
+                    }}>
                     <Card>
                         <CardContent>
                             <Box sx={{mb: 2,}}>
@@ -126,16 +162,16 @@ export default async function Page({params}: { params: { year: string, month: st
                             <Typography variant="h6">{controller.hours.toPrecision(3)} hours</Typography>
                         </CardContent>
                     </Card>
-                </Grid>
+                </Grid2>
             ))}
-            <Grid item xs={30}>
+            <Grid2 size={30}>
                 <Card>
                     <CardContent>
                         <Typography variant="h6">Controller Totals</Typography>
                         <StatisticsTable heading="Controller" logs={controllerLog.filter((log) => !!log)}/>
                     </CardContent>
                 </Card>
-            </Grid>
-        </Grid>
+            </Grid2>
+        </Grid2>)
     );
 }

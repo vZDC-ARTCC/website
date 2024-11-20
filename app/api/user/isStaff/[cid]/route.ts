@@ -1,6 +1,7 @@
 import prisma from "@/lib/db";
 
-export async function GET(request: Request, {params}: { params: { cid: string } }) {
+export async function GET(request: Request, props: { params: Promise<{ cid: string }> }) {
+    const params = await props.params;
 
     const user = await prisma.user.findUnique({
         where: {
@@ -9,5 +10,4 @@ export async function GET(request: Request, {params}: { params: { cid: string } 
     });
 
     return Response.json(user?.roles.includes("STAFF") || false);
-
 }

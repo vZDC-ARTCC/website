@@ -4,7 +4,8 @@ import {Card, CardContent, Typography} from "@mui/material";
 import prisma from "@/lib/db";
 import AirportForm from "@/components/Airports/AirportForm";
 
-export default async function Page({searchParams}: { searchParams: { traconGroupId?: string, } }) {
+export default async function Page(props: { searchParams: Promise<{ traconGroupId?: string, }> }) {
+    const searchParams = await props.searchParams;
 
     const {traconGroupId} = searchParams;
 

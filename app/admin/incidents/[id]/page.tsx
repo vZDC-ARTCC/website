@@ -1,10 +1,11 @@
 import React from 'react';
 import prisma from "@/lib/db";
 import {notFound} from "next/navigation";
-import {Card, CardContent, Chip, Grid, Stack, Typography} from "@mui/material";
+import {Card, CardContent, Chip, Grid2, Stack, Typography} from "@mui/material";
 import IncidentCloseButton from "@/components/Incident/IncidentCloseButton";
 
-export default async function Page({params}: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
 
     const {id} = params;
 
@@ -23,51 +24,75 @@ export default async function Page({params}: { params: { id: string } }) {
     }
 
     return (
-        <Card>
+        (<Card>
             <CardContent>
                 <Stack direction="row" spacing={2} alignItems="center">
                     <Typography variant="h5">Incident Report</Typography>
                     <Chip label={incident.closed ? 'CLOSED' : 'OPEN'} color={incident.closed ? 'success' : 'warning'}/>
                 </Stack>
                 <Typography variant="subtitle2">{incident.timestamp.toUTCString()}</Typography>
-                <Grid container columns={2} spacing={2} sx={{mt: 1,}}>
-                    <Grid item xs={2} md={1}>
+                <Grid2 container columns={2} spacing={2} sx={{mt: 1,}}>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
                         <Typography variant="subtitle2">Reporter</Typography>
                         {incident.closed && <Typography>REDACTED</Typography>}
                         {!incident.closed &&
                             <Typography>{incident.reporter.firstName} {incident.reporter.lastName} ({incident.reporter.cid})</Typography>}
-                    </Grid>
-                    <Grid item xs={2} md={1}>
+                    </Grid2>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
                         <Typography variant="subtitle2">Reporter Email</Typography>
                         {incident.closed && <Typography>REDACTED</Typography>}
                         {!incident.closed && <Typography>{incident.reporter.email}</Typography>}
-                    </Grid>
-                    <Grid item xs={2} md={1}>
+                    </Grid2>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
                         <Typography variant="subtitle2">Reporter CID</Typography>
                         {incident.closed && <Typography>REDACTED</Typography>}
                         {!incident.closed && <Typography>{incident.reporter.cid}</Typography>}
-                    </Grid>
-                    <Grid item xs={2} md={1}>
+                    </Grid2>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
                         <Typography variant="subtitle2">Reported Controller</Typography>
                         <Typography>{incident.reportee.firstName} {incident.reportee.lastName} ({incident.reportee.cid})</Typography>
-                    </Grid>
-                    <Grid item xs={2} md={1}>
+                    </Grid2>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
                         <Typography variant="subtitle2">Controller Callsign</Typography>
                         <Typography>{incident.reporteeCallsign || 'N/A'}</Typography>
-                    </Grid>
-                    <Grid item xs={2} md={1}>
+                    </Grid2>
+                    <Grid2
+                        size={{
+                            xs: 2,
+                            md: 1
+                        }}>
                         <Typography variant="subtitle2">Reporter Callsign</Typography>
                         <Typography>{incident.reporterCallsign || 'N/A'}</Typography>
-                    </Grid>
-                    <Grid item xs={2}>
+                    </Grid2>
+                    <Grid2 size={2}>
                         <Typography variant="subtitle2">Description</Typography>
                         <Typography>{incident.reason}</Typography>
-                    </Grid>
-                    {!incident.closed && <Grid item xs={2}>
+                    </Grid2>
+                    {!incident.closed && <Grid2 size={2}>
                         <IncidentCloseButton incident={incident}/>
-                    </Grid>}
-                </Grid>
+                    </Grid2>}
+                </Grid2>
             </CardContent>
-        </Card>
+        </Card>)
     );
 }

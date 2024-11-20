@@ -21,7 +21,8 @@ import {ArrowBack, Edit} from "@mui/icons-material";
 import LessonCriteriaCellDeleteButton from "@/components/Lesson/LessonCriteriaCellDeleteButton";
 import LessonCriteriaCellForm from "@/components/Lesson/LessonCriteriaCellForm";
 
-export default async function Page({params}: { params: { id: string, criteriaId: string } }) {
+export default async function Page(props: { params: Promise<{ id: string, criteriaId: string }> }) {
+    const params = await props.params;
 
     const {id, criteriaId} = params;
 

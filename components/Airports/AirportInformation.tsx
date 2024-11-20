@@ -2,7 +2,7 @@ import React from 'react';
 import {
     Card,
     CardContent,
-    Grid,
+    Grid2,
     Stack,
     Table,
     TableBody,
@@ -37,17 +37,25 @@ export default async function AirportInformation({icao}: { icao: string, },) {
     const charts = await fetchCharts(icao);
 
     return (
-        <Stack direction="column" spacing={2}>
+        (<Stack direction="column" spacing={2}>
             <Typography variant="h5" fontWeight={700} textAlign="center">{airport.name} ({airport.iata})</Typography>
-            <Grid container spacing={2} columns={2}>
-                <Grid item xs={2} md={1}>
+            <Grid2 container spacing={2} columns={2}>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        md: 1
+                    }}>
                     <Card>
                         <CardContent>
                             <ChartsList icao={airport.icao} charts={charts}/>
                         </CardContent>
                     </Card>
-                </Grid>
-                <Grid item xs={2} md={1}>
+                </Grid2>
+                <Grid2
+                    size={{
+                        xs: 2,
+                        md: 1
+                    }}>
                     <Card>
                         <CardContent>
                             <Stack direction="column" spacing={2}>
@@ -79,9 +87,8 @@ export default async function AirportInformation({icao}: { icao: string, },) {
                             </Stack>
                         </CardContent>
                     </Card>
-                </Grid>
-            </Grid>
-        </Stack>
-
+                </Grid2>
+            </Grid2>
+        </Stack>)
     );
 }

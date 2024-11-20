@@ -4,7 +4,8 @@ import {notFound} from "next/navigation";
 import {Card, CardContent, Typography} from "@mui/material";
 import Markdown from "react-markdown";
 
-export default async function Page({params}: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
 
     const {id} = params;
 
@@ -27,5 +28,4 @@ export default async function Page({params}: { params: { id: string } }) {
             </CardContent>
         </Card>
     );
-
 }
