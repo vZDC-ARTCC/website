@@ -101,10 +101,12 @@ export default async function Home() {
             <Grid2 size={8}>
                 <Card>
                     <CardContent>
-                        <Typography {...headingFont.style} variant="h4" sx={{mb: 1, display: {sm: 'none',},}}>Virtual
-                            Washington
+                    <Typography {...headingFont.style} variant="h3" sx={{mb: 1,}}>Virtual Washington
                             ARTCC</Typography>
-                        <Box sx={{display: {xs: 'none', sm: 'flex',},}}>
+                        {/* <Typography {...headingFont.style} variant="h4" sx={{mb: 1, display: {sm: 'none',},}}>Virtual
+                            Washington
+                            ARTCC</Typography> */}
+                        {/* <Box sx={{display: {xs: 'none', sm: 'flex',},}}>
                             <SvgIcon style={{
                                 transform: 'rotate(45deg)',
                                 fontSize: '1.5rem',
@@ -128,7 +130,7 @@ export default async function Home() {
                                 <span>ashington</span>
                             </div> ARTCC
                             </Typography>
-                        </Box>
+                        </Box> */}
                         <Typography {...headingFont.style} sx={{mt: 1,}}>A group of passionate virtual air
                             traffic
                             controllers dedicated to managing some of the busiest airspace in the United
