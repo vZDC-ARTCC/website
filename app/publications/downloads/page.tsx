@@ -15,12 +15,12 @@ export default async function Page() {
         include: {
             files: {
                 orderBy: {
-                    name: 'asc',
+                    order: 'asc',
                 },
             },
         },
         orderBy: {
-            name: 'asc',
+            order: 'asc',
         },
     });
 

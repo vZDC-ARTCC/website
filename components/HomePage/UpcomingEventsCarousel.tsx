@@ -25,8 +25,8 @@ export default function UpcomingEventsCarousel({events, imageUrls}: {
                 <Link key={event.id} href={`/events/${event.id}`} style={{textDecoration: 'none', color: 'inherit',}}>
                     <Box sx={{width: '100%', px: 4,}}>
                         <Box sx={{position: 'relative', width: '100%', height: 400,}}>
-                            <Image src={imageUrls[event.id] || Placeholder} alt={event.name} fill
-                                   style={{objectFit: 'contain',}}/>
+                            <Image priority src={imageUrls[event.id] || Placeholder} alt={event.name} fill
+                                   style={{objectFit: 'contain', position: 'absolute',}}/>
                         </Box>
                         <Typography variant="h6" sx={{mt: 1,}}>{event.name}</Typography>
                         <Typography variant="subtitle2">{formatZuluDate(event.start)}</Typography>

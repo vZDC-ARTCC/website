@@ -5,6 +5,8 @@ import {z} from "zod";
 import prisma from "@/lib/db";
 import {log} from "@/actions/log";
 import {revalidatePath} from "next/cache";
+import {OrderItem} from "@/components/Order/OrderList";
+import {FileCategory} from "@prisma/client";
 
 const ut = new UTApi();
 
@@ -41,6 +43,22 @@ export const createOrUpdateFileCategory = async (formData: FormData) => {
 
     revalidatePath('/admin/files');
     return {fileCategory}
+}
+
+export const updateFileCategoryOrder = async (order: OrderItem[]) => {
+    for (const item of order) {
+        await prisma.fileCategory.update({
+            where: {id: item.id},
+            data: {
+                order: item.order,
+            },
+        });
+    }
+
+    await log("UPDATE", "FILE_CATEGORY", `Updated file category order`);
+
+    revalidatePath('/admin/files', 'layout');
+    revalidatePath('/publications/downloads');
 }
 
 export const deleteFileCategory = async (id: string) => {
@@ -146,6 +164,22 @@ export const createOrUpdateFile = async (formData: FormData) => {
     revalidatePath(`/admin/files/${file.category.id}/${file.id}`);
     revalidatePath('/admin/files');
     return {file}
+}
+
+export const updateFileOrder = async (category: FileCategory, order: OrderItem[]) => {
+    for (const item of order) {
+        await prisma.file.update({
+            where: {id: item.id},
+            data: {
+                order: item.order,
+            },
+        });
+    }
+
+    await log("UPDATE", "FILE", `Updated file order for category ${category.name}`);
+
+    revalidatePath('/admin/files', 'layout');
+    revalidatePath('/publications/downloads');
 }
 
 export const deleteFile = async (id: string) => {

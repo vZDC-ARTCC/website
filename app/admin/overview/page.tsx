@@ -18,15 +18,26 @@ import {getMonthHours} from "@/lib/hours";
 
 export default async function Page() {
 
-    const membership = await prisma.user.findMany({
+    const home = await prisma.user.count({
         where: {
-            controllerStatus: {
-                not: 'NONE'
+            controllerStatus: "HOME",
+        },
+    });
+
+    const visitors = await prisma.user.count({
+        where: {
+            controllerStatus: "VISITOR",
+        },
+    });
+
+    const trainingStaff = await prisma.user.count({
+        where: {
+            roles: {
+                hasSome: ["MENTOR", "INSTRUCTOR"],
             },
         },
     });
-    const visitors = membership.filter((c) => c.controllerStatus === 'VISITOR');
-    const trainingStaff = membership.filter((c) => c.roles.includes('INSTRUCTOR') || c.roles.includes('MENTOR'));
+
     const recentLogs = await prisma.log.findMany({
         take: 10,
         orderBy: {
@@ -53,7 +64,7 @@ export default async function Page() {
                 <Card>
                     <CardContent>
                         <Typography>Membership</Typography>
-                        <Typography variant="h4">{membership.length}</Typography>
+                        <Typography variant="h4">{home + visitors}</Typography>
                     </CardContent>
                 </Card>
             </Grid2>
@@ -66,7 +77,7 @@ export default async function Page() {
                 <Card>
                     <CardContent>
                         <Typography>Visitors</Typography>
-                        <Typography variant="h4">{visitors.length}</Typography>
+                        <Typography variant="h4">{visitors}</Typography>
                     </CardContent>
                 </Card>
             </Grid2>
@@ -79,7 +90,7 @@ export default async function Page() {
                 <Card>
                     <CardContent>
                         <Typography>Training Staff</Typography>
-                        <Typography variant="h4">{trainingStaff.length}</Typography>
+                        <Typography variant="h4">{trainingStaff}</Typography>
                     </CardContent>
                 </Card>
             </Grid2>

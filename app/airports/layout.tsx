@@ -9,6 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default function Layout({children}: { children: React.ReactNode }) {
+
     return (
         <Container maxWidth="lg">
             <Stack direction="column" spacing={2}>

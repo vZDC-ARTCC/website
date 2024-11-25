@@ -105,6 +105,9 @@ model User {
   trainingAssignmentRequestInterestedTrainers TrainingAssignmentRequest[] @relation("TrainingAssignmentRequestInterestedTrainers")
 
   trainerReleaseRequestStudent TrainerReleaseRequest? @relation("TrainingMentorReleaseRequestStudent")
+
+  trainingProgression   TrainingProgression? @relation(fields: [trainingProgressionId], references: [id])
+  trainingProgressionId String?
 }
 
 model TrainingAssignment {
@@ -232,7 +235,7 @@ enum CertificationOption {
 model CertificationType {
   id                   String                @id @default(cuid())
   name                 String
-  order                Int
+  order                Int                   @default(0)
   canSoloCert          Boolean
   certificationOptions CertificationOption[]
   soloCertifications   SoloCertification[]
@@ -424,6 +427,7 @@ model StaffingRequest {
 
 model FileCategory {
   id    String @id @default(cuid())
+  order Int    @default(0)
   name  String
   files File[]
 }
@@ -431,6 +435,7 @@ model FileCategory {
 model File {
   id          String       @id @default(cuid())
   name        String
+  order       Int          @default(0)
   description String
   category    FileCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId  String
@@ -439,19 +444,20 @@ model File {
 }
 
 model Lesson {
-  id                     String           @id @default(cuid())
+  id                     String                    @id @default(cuid())
   identifier             String
   location               Int
   name                   String
   description            String
   position               String
   facility               String
-  rubric                 LessonRubric?    @relation(fields: [rubricId], references: [id])
-  rubricId               String?          @unique
+  rubric                 LessonRubric?             @relation(fields: [rubricId], references: [id])
+  rubricId               String?                   @unique
   updatedAt              DateTime
   instructorOnly         Boolean
   notifyInstructorOnPass Boolean
   trainingTickets        TrainingTicket[]
+  progressions           TrainingProgressionStep[]
 }
 
 model LessonRubric {
@@ -585,4 +591,22 @@ model ChangeDetail {
   detail    String
   versionId String
   version   Version @relation(fields: [versionId], references: [id], onDelete: Cascade)
+}
+
+model TrainingProgression {
+  id       String                    @id @default(cuid())
+  name     String
+  steps    TrainingProgressionStep[]
+  students User[]
+}
+
+model TrainingProgressionStep {
+  id            String              @id @default(cuid())
+  order         Int                 @default(0)
+  lesson        Lesson              @relation(fields: [lessonId], references: [id])
+  lessonId      String
+  progression   TrainingProgression @relation(fields: [progressionId], references: [id])
+  progressionId String
+
+  @@unique([lessonId, progressionId])
 }

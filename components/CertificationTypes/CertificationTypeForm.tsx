@@ -34,9 +34,9 @@ export default function CertificationTypeForm({certificationType}: { certificati
             <input type="hidden" name="id" value={certificationType?.id}/>
             <Stack direction="column" spacing={2}>
                 <TextField variant="filled" name="name" label="Name" defaultValue={certificationType?.name || ''}/>
-                <TextField variant="filled" type="number" name="order" label="Order"
-                           defaultValue={certificationType?.order || 0}
-                           helperText="Lower number will put this certification higher in lists or first in table columns."/>
+                {/*<TextField variant="filled" type="number" name="order" label="Order"*/}
+                {/*           defaultValue={certificationType?.order || 0}*/}
+                {/*           helperText="Lower number will put this certification higher in lists or first in table columns."/>*/}
                 <Autocomplete
                     multiple
                     disableCloseOnSelect
