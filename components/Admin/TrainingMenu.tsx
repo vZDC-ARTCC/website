@@ -13,6 +13,7 @@ import {
     People,
     PersonAdd,
     School,
+    ViewWeek,
     WorkspacePremium,
 } from "@mui/icons-material";
 import prisma from "@/lib/db";
@@ -124,6 +125,14 @@ export default async function TrainingMenu() {
                                 <Class/>
                             </ListItemIcon>
                             <ListItemText primary="Lessons"/>
+                        </ListItemButton>
+                    </Link>
+                    <Link href="/training/progressions" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <ViewWeek/>
+                            </ListItemIcon>
+                            <ListItemText primary="Progressions"/>
                         </ListItemButton>
                     </Link>
                     <Link href="/training/mistakes" style={{textDecoration: 'none', color: 'inherit',}}>

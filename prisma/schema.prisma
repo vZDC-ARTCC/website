@@ -299,6 +299,9 @@ enum LogModel {
   TRAINING_ASSIGNMENT
   TRAINING_ASSIGNMENT_REQUEST
   TRAINER_RELEASE_REQUEST
+  TRAINING_PROGRESSION
+  TRAINING_PROGRESSION_STEP
+  TRAINING_PROGRESSION_ASSIGNMENT
 }
 
 model Log {
@@ -598,6 +601,9 @@ model TrainingProgression {
   name     String
   steps    TrainingProgressionStep[]
   students User[]
+
+  autoAssignNewHomeObs Boolean @default(false)
+  autoAssignNewVisitor Boolean @default(false)
 }
 
 model TrainingProgressionStep {
