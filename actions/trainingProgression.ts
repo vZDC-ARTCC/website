@@ -13,6 +13,7 @@ export const createOrUpdateTrainingProgression = async (formData: FormData) => {
         name: z.string().min(1, {message: "Name is required"}),
         autoAssignNewHomeObs: z.boolean(),
         autoAssignNewVisitor: z.boolean(),
+        nextProgressionId: z.string().optional(),
     });
 
     const result = trainingProgressionZ.safeParse({
@@ -20,10 +21,15 @@ export const createOrUpdateTrainingProgression = async (formData: FormData) => {
         name: formData.get('name') as string,
         autoAssignNewHomeObs: formData.get('autoAssignNewHomeObs') === 'on',
         autoAssignNewVisitor: formData.get('autoAssignNewVisitor') === 'on',
+        nextProgressionId: formData.get('nextProgressionId') as string,
     });
 
     if (!result.success) {
         return {errors: result.error.errors};
+    }
+
+    if (result.data.id && result.data.id === result.data.nextProgressionId) {
+        return {errors: [{message: "A progression cannot point to itself"}]};
     }
 
     const trainingProgression = await prisma.trainingProgression.upsert({
@@ -31,11 +37,13 @@ export const createOrUpdateTrainingProgression = async (formData: FormData) => {
             name: result.data.name,
             autoAssignNewHomeObs: result.data.autoAssignNewHomeObs,
             autoAssignNewVisitor: result.data.autoAssignNewVisitor,
+            nextProgressionId: result.data.nextProgressionId || undefined,
         },
         update: {
             name: result.data.name,
             autoAssignNewHomeObs: result.data.autoAssignNewHomeObs,
             autoAssignNewVisitor: result.data.autoAssignNewVisitor,
+            nextProgressionId: result.data.nextProgressionId || undefined,
         },
         where: {
             id: result.data.id,
@@ -68,6 +76,8 @@ export const fetchTrainingProgressions = async (pagination: GridPaginationModel,
             case 'students':
                 orderBy.students = {_count: sortModel.sort === 'asc' ? 'asc' : 'desc'};
                 break;
+            default:
+                orderBy[sortModel.field as keyof Prisma.TrainingProgressionOrderByWithRelationInput] = sortModel.sort === 'asc' ? 'asc' : 'desc';
         }
     }
 
@@ -81,6 +91,7 @@ export const fetchTrainingProgressions = async (pagination: GridPaginationModel,
             include: {
                 steps: true,
                 students: true,
+                nextProgression: true,
             },
             take: pagination.pageSize,
             skip: pagination.page * pagination.pageSize,
@@ -142,6 +153,23 @@ const getWhere = (filter?: GridFilterItem): Prisma.TrainingProgressionWhereInput
                         ],
                     },
                 },
+            };
+        case 'nextProgression':
+            return {
+                nextProgression: {
+                    name: {
+                        [filter.operator]: filter.value as string,
+                        mode: 'insensitive',
+                    },
+                },
+            };
+        case 'autoAssignNewHomeObs':
+            return {
+                autoAssignNewHomeObs: filter.value === 'true',
+            };
+        case 'autoAssignNewVisitor':
+            return {
+                autoAssignNewVisitor: filter.value === 'true',
             };
         default:
             return {};

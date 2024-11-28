@@ -6,6 +6,7 @@ import DataTable, {containsOnlyFilterOperator, equalsOnlyFilterOperator} from "@
 import {Edit, Layers, Visibility} from "@mui/icons-material";
 import TrainingProgressionDeleteButton from "@/components/TrainingProgression/TrainingProgressionDeleteButton";
 import {fetchTrainingProgressions} from "@/actions/trainingProgression";
+import {Chip} from "@mui/material";
 
 export default function TrainingProgressionTable({allowEdit = false}: { allowEdit?: boolean }) {
 
@@ -35,6 +36,33 @@ export default function TrainingProgressionTable({allowEdit = false}: { allowEdi
             filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
         },
         {
+            field: 'nextProgression',
+            flex: 1,
+            headerName: 'Next Progression',
+            filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
+            renderCell: (params) => {
+                return params.row.nextProgression ? (
+                    <Chip
+                        key={params.row.nextProgression.id}
+                        label={params.row.nextProgression.name}
+                        size="small"
+                    />
+                ) : '';
+            },
+        },
+        {
+            field: 'autoAssignNewHomeObs',
+            flex: 1,
+            headerName: 'Auto Assign New Home OBS',
+            type: 'boolean',
+        },
+        {
+            field: 'autoAssignNewVisitor',
+            flex: 1,
+            headerName: 'Auto Assign New Visitor',
+            type: 'boolean',
+        },
+        {
             field: 'actions',
             type: 'actions',
             headerName: 'Actions',
@@ -49,7 +77,7 @@ export default function TrainingProgressionTable({allowEdit = false}: { allowEdi
                 allowEdit ? <GridActionsCellItem
                     icon={<Layers/>}
                     label="Progression Steps"
-                    onClick={() => router.push(`/training/progressions/${params.row.id}/steps`)}
+                    onClick={() => router.push(`/training/progressions/${params.row.id}/edit/steps`)}
                 /> : <></>,
                 allowEdit ? <GridActionsCellItem
                     icon={<Edit/>}

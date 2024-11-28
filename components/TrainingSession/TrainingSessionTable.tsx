@@ -36,8 +36,6 @@ export default function TrainingSessionTable({admin, isInstructor, mentorCID, on
                                 key={params.row.student.id}
                                 label={`${params.row.student.firstName} ${params.row.student.lastName}` || 'Unknown'}
                                 size="small"
-                                color='info'
-                                style={{margin: '2px'}}
                             />
                     </Link>
                 )
@@ -50,7 +48,15 @@ export default function TrainingSessionTable({admin, isInstructor, mentorCID, on
             field: 'instructor',
             flex: 1,
             headerName: 'Trainer',
-            renderCell: (params) => `${params.row.instructor.firstName} ${params.row.instructor.lastName}` || 'Unknown',
+            renderCell: (params) => {
+                return (
+                    <Chip
+                        key={params.row.instructor.id}
+                        label={`${params.row.instructor.firstName} ${params.row.instructor.lastName}` || 'Unknown'}
+                        size="small"
+                    />
+                )
+            },
             sortable: false,
             filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
         },

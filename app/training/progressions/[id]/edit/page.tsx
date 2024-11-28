@@ -14,6 +14,12 @@ export default async function Page({params}: { params: Promise<{ id: string }> }
         }
     });
 
+    const allProgressions = await prisma.trainingProgression.findMany({
+        orderBy: {
+            name: 'asc',
+        },
+    });
+
     if (!trainingProgression) {
         notFound();
     }
@@ -22,7 +28,7 @@ export default async function Page({params}: { params: Promise<{ id: string }> }
         <Card>
             <CardContent>
                 <Typography variant="h5" gutterBottom>Edit Training Progression</Typography>
-                <TrainingProgressionForm trainingProgression={trainingProgression}/>
+                <TrainingProgressionForm allProgressions={allProgressions} trainingProgression={trainingProgression}/>
             </CardContent>
         </Card>
     );

@@ -65,6 +65,7 @@ declare module "next-auth" {
         excludedFromVatusaRosterUpdate: boolean,
         hiddenFromRoster: boolean,
         receiveEmail:   boolean
+        flagAutoAssignSinglePass: boolean,
     }
 
     interface AdapterUser extends User {

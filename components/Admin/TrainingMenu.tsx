@@ -2,6 +2,7 @@ import React from 'react';
 import {Badge, Card, CardContent, List, ListItemButton, ListItemIcon, ListItemText, Typography} from "@mui/material";
 import Link from "next/link";
 import {
+    Assignment,
     Class,
     Clear,
     FmdBad,
@@ -133,6 +134,14 @@ export default async function TrainingMenu() {
                                 <ViewWeek/>
                             </ListItemIcon>
                             <ListItemText primary="Progressions"/>
+                        </ListItemButton>
+                    </Link>
+                    <Link href="/training/progressions/assignments" style={{textDecoration: 'none', color: 'inherit',}}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <Assignment/>
+                            </ListItemIcon>
+                            <ListItemText primary="Progression Assignments"/>
                         </ListItemButton>
                     </Link>
                     <Link href="/training/mistakes" style={{textDecoration: 'none', color: 'inherit',}}>

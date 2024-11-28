@@ -6,6 +6,8 @@ import {formatZuluDate} from "@/lib/date";
 import {fetchTrainerReleases} from "@/actions/trainingAssignmentRelease";
 import TrainerReleaseRequestApproveButton from "@/components/TrainerReleaseRequest/TrainerReleaseRequestApproveButton";
 import TrainerReleaseDeleteButton from "@/components/TrainerReleaseRequest/TrainerReleaseDeleteButton";
+import {Chip, Tooltip} from "@mui/material";
+import Link from "next/link";
 
 export default function TrainerReleaseRequestTable({manageMode}: { manageMode: boolean }) {
 
@@ -14,7 +16,23 @@ export default function TrainerReleaseRequestTable({manageMode}: { manageMode: b
             field: 'student',
             flex: 1,
             headerName: 'Student',
-            renderCell: (params) => `${params.row.student.firstName} ${params.row.student.lastName} (${params.row.student.cid})` || 'Unknown',
+            renderCell: (params) => {
+                const color = params.row.student.controllerStatus === "HOME" ? 'default' : 'secondary';
+
+                return (
+                    <Tooltip title={`${params.row.student.controllerStatus}`}>
+                        <Link href={`/admin/controller/${params.row.student.cid}`} target="_blank"
+                              style={{textDecoration: 'none',}}>
+                            <Chip
+                                key={params.row.student.id}
+                                label={`${params.row.student.firstName} ${params.row.student.lastName}` || 'Unknown'}
+                                size="small"
+                                color={color}
+                            />
+                        </Link>
+                    </Tooltip>
+                )
+            },
             sortable: false,
             filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
         },

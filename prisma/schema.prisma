@@ -108,6 +108,8 @@ model User {
 
   trainingProgression   TrainingProgression? @relation(fields: [trainingProgressionId], references: [id])
   trainingProgressionId String?
+
+  flagAutoAssignSinglePass Boolean @default(false)
 }
 
 model TrainingAssignment {
@@ -597,10 +599,13 @@ model ChangeDetail {
 }
 
 model TrainingProgression {
-  id       String                    @id @default(cuid())
-  name     String
-  steps    TrainingProgressionStep[]
-  students User[]
+  id                   String                    @id @default(cuid())
+  name                 String
+  steps                TrainingProgressionStep[]
+  students             User[]
+  nextProgression      TrainingProgression?      @relation("NextProgression", fields: [nextProgressionId], references: [id])
+  nextProgressionId    String?
+  previousProgressions TrainingProgression[]     @relation("NextProgression")
 
   autoAssignNewHomeObs Boolean @default(false)
   autoAssignNewVisitor Boolean @default(false)
@@ -609,6 +614,7 @@ model TrainingProgression {
 model TrainingProgressionStep {
   id            String              @id @default(cuid())
   order         Int                 @default(0)
+  optional      Boolean             @default(false)
   lesson        Lesson              @relation(fields: [lessonId], references: [id])
   lessonId      String
   progression   TrainingProgression @relation(fields: [progressionId], references: [id])

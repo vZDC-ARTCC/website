@@ -14,6 +14,7 @@ import Link from "next/link";
 import {Edit} from "@mui/icons-material";
 import {LOAStatus} from "@prisma/client";
 import AssignedMentorsCard from "@/components/Profile/AssignedMentorsCard";
+import ProgressionCard from "@/components/Profile/ProgressionCard";
 
 export default async function Page() {
 
@@ -94,7 +95,7 @@ export default async function Page() {
                     xs: 6,
                     md: 4
                 }}>
-                <FeedbackCard user={user}/>
+                <ProgressionCard user={user}/>
             </Grid2>
             <Grid2
                 size={{
@@ -108,7 +109,7 @@ export default async function Page() {
                     xs: 6,
                     md: 4
                 }}>
-                <TrainingCard user={user}/>
+                <FeedbackCard user={user}/>
             </Grid2>
             <Grid2
                 size={{
@@ -117,6 +118,11 @@ export default async function Page() {
                 }}>
                 <EventSignupCard user={user}/>
             </Grid2>
+            <Grid2
+                size={8}>
+                <TrainingCard user={user}/>
+            </Grid2>
+
         </Grid2>
     );
 }
