@@ -211,7 +211,7 @@ export const assignNextProgressionOrRemove = async (userId: string, currentProgr
             id: userId,
         },
         data: {
-            trainingProgressionId: currentProgression.nextProgressionId || undefined,
+            trainingProgressionId: currentProgression.nextProgressionId || null,
         },
         include: {
             trainingProgression: true,
