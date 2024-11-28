@@ -29,7 +29,7 @@ export default function TrainingProgressionForm({trainingProgression, allProgres
 
         toast.success(trainingProgression?.id ? "Training progression updated!" : "Training progression created!");
         if (!trainingProgression?.id) {
-            router.push(`/training/progressions/${newTp.id}/steps`);
+            router.push(`/training/progressions/${newTp.id}/edit/steps`);
         }
     }
 

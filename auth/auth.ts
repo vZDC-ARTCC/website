@@ -4,6 +4,7 @@ import VatsimProvider from "@/auth/vatsimProvider";
 import {Adapter} from "next-auth/adapters";
 import prisma from "@/lib/db";
 import {getRating} from "@/lib/vatsim";
+import {sendProgressionAssignedEmail} from "@/actions/mail/progression";
 
 
 export const authOptions: NextAuthOptions = {
@@ -36,6 +37,8 @@ export const authOptions: NextAuthOptions = {
                             trainingProgressionId: newHomeObsProgression.id,
                         },
                     });
+
+                    await sendProgressionAssignedEmail(user, newHomeObsProgression);
                 }
             } else if (!user.flagAutoAssignSinglePass) {
                 await prisma.user.update({

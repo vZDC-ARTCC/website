@@ -12,6 +12,8 @@ import {
 import prisma from "@/lib/db";
 import {log} from "@/actions/log";
 import {revalidatePath} from "next/cache";
+import {User} from "next-auth";
+import {sendProgressionAssignedEmail, sendProgressionRemovedEmail} from "@/actions/mail/progression";
 
 export const setProgressionAssignment = async (id: string, progressionId: string) => {
     const user = await prisma.user.update({
@@ -31,6 +33,8 @@ export const setProgressionAssignment = async (id: string, progressionId: string
     });
 
     await log("UPDATE", "TRAINING_PROGRESSION_ASSIGNMENT", `Assigned training progression ${user.trainingProgression?.name} to ${user.firstName} ${user.lastName} (${user.cid})`);
+
+    await sendProgressionAssignedEmail(user as User, user.trainingProgression as TrainingProgression);
 
     revalidatePath('/training/progressions/assignments', 'layout');
 }
@@ -125,6 +129,8 @@ export const deleteProgressionAssignment = async (id: string) => {
 
     await log("DELETE", "TRAINING_PROGRESSION_ASSIGNMENT", `Deleted training progression assignment for ${user.firstName} ${user.lastName} (${user.cid})`);
 
+    await sendProgressionRemovedEmail(user as User);
+
     revalidatePath('/training/progressions/assignments', 'layout');
 }
 
@@ -197,4 +203,26 @@ export type TrainingProgressionStepStatus = {
     trainingTicket?: TrainingTicket,
     trainingSession?: TrainingSession,
     passed: boolean,
+}
+
+export const assignNextProgressionOrRemove = async (userId: string, currentProgression: TrainingProgression) => {
+    const user = await prisma.user.update({
+        where: {
+            id: userId,
+        },
+        data: {
+            trainingProgressionId: currentProgression.nextProgressionId || undefined,
+        },
+        include: {
+            trainingProgression: true,
+        },
+    });
+
+    if (user.trainingProgression) {
+        await sendProgressionAssignedEmail(user as User, user.trainingProgression);
+        await log("UPDATE", "TRAINING_PROGRESSION_ASSIGNMENT", `Automatically assigned next progression ${user.trainingProgression.name} to ${user.firstName} ${user.lastName} (${user.cid}) after passing final required training session in ${currentProgression.name}`)
+    } else {
+        await sendProgressionRemovedEmail(user as User);
+        await log("DELETE", "TRAINING_PROGRESSION_ASSIGNMENT", `Removed progression ${currentProgression.name} from ${user.firstName} ${user.lastName} (${user.cid}) upon passing final required training session.`)
+    }
 }

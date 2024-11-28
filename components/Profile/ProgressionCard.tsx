@@ -34,6 +34,7 @@ export default async function ProgressionCard({user}: { user: User }) {
                             <Grid2 size={{
                                 xs: 11,
                                 md: 4,
+                                lg: 2,
                             }} key={step.step.id}>
                                 <Card variant="outlined" sx={{height: '100%',}}>
                                     <CardContent>
@@ -53,7 +54,8 @@ export default async function ProgressionCard({user}: { user: User }) {
                                                 variant="subtitle2">Attempted {formatZuluDate(step.trainingSession.start)}</Typography> :
                                             <Typography variant="subtitle2">Never Attempted</Typography>}
                                         {!step.trainingSession &&
-                                            <Button variant="outlined" size="small" color="inherit" sx={{mt: 2,}}
+                                            <Button variant="outlined" size="small" color="inherit"
+                                                    sx={{mt: 2, width: '100%',}}
                                                     disabled>Schedule {step.lesson.identifier}</Button>}
                                     </CardContent>
                                 </Card>
