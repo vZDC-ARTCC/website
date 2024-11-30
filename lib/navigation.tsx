@@ -7,7 +7,6 @@ import {
     CalendarMonth,
     Chat,
     Description,
-    DeveloperBoard,
     FileOpen,
     Forum,
     Group,
@@ -83,17 +82,7 @@ export const NAVIGATION: NavigationButton[] = [
                     label: 'Preferred Routes Database',
                     link: '/prd',
                     icon: <Route/>,
-                },
-                {
-                    label: 'IDS',
-                    link: 'https://ids.vzdc.org',
-                    icon: <DeveloperBoard/>,
-                },
-                {
-                    label: 'ASX',
-                    link: 'https://asx.vzdc.org',
-                    icon: <Radar/>,
-                },
+                }
             ],
         },
     },
