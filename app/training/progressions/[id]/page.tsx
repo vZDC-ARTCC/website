@@ -1,9 +1,20 @@
 import React from 'react';
 import prisma from "@/lib/db";
 import {notFound} from "next/navigation";
-import {Card, CardContent, List, ListItem, ListItemIcon, ListItemText, Typography} from "@mui/material";
-import {ArrowDownward, Circle, Done} from "@mui/icons-material";
+import {
+    Card,
+    CardContent,
+    IconButton,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText, Stack,
+    Tooltip,
+    Typography
+} from "@mui/material";
+import {ArrowBack, ArrowDownward, Circle, Done} from "@mui/icons-material";
 import {TrainingProgressionStepWithLesson} from "@/components/TrainingProgressionStep/TrainingProgressionStepForm";
+import Link from "next/link";
 
 export default async function Page({params}: { params: Promise<{ id: string }> }) {
 
@@ -34,7 +45,17 @@ export default async function Page({params}: { params: Promise<{ id: string }> }
     return (
         <Card>
             <CardContent>
-                <Typography variant="h5" gutterBottom>{trainingProgression.name}</Typography>
+                <Stack direction="row" spacing={2} alignItems="center">
+                    <Link href={`/training/progressions/`}
+                          style={{color: 'inherit',}}>
+                        <Tooltip title="Go Back">
+                            <IconButton color="inherit">
+                                <ArrowBack fontSize="large"/>
+                            </IconButton>
+                        </Tooltip>
+                    </Link>
+                    <Typography variant="h5" gutterBottom>{trainingProgression.name}</Typography>
+                </Stack>
                 <List>
                     {trainingProgression.steps.map((step) => (
                         <ListItem key={step.id}>

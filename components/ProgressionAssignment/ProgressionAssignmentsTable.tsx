@@ -61,11 +61,15 @@ export default function ProgressionAssignmentsTable({allowEdit}: { allowEdit: bo
             flex: 1,
             getActions: (params) => [
                 <ProgressionAssignmentStatusButton user={params.row} progression={params.row.trainingProgression}/>,
-                allowEdit ? <GridActionsCellItem
-                    icon={<Edit/>}
-                    label="Edit"
-                    onClick={() => router.push(`/training/progressions/assignments/${params.row.cid}`)}
-                /> : <></>,
+                 allowEdit ? (
+                    <Tooltip title="Edit">
+                        <GridActionsCellItem
+                            icon={<Edit />}
+                            label="Edit"
+                            onClick={() => router.push(`/training/progressions/assignments/${params.row.cid}`)}
+                        />
+                    </Tooltip>
+                ) : <></>,
                 allowEdit ? <ProgressionAssignmentDeleteButton user={params.row}/> : <></>,
             ],
         }

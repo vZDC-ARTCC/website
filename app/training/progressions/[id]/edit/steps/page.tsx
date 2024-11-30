@@ -1,11 +1,11 @@
 import React from 'react';
-import {Button, Card, CardContent, Stack, Typography} from "@mui/material";
+import {Button, Card, CardContent, IconButton, Stack, Tooltip, Typography} from "@mui/material";
 import prisma from "@/lib/db";
 import {notFound} from "next/navigation";
 import TrainingProgressionStepTable from "@/components/TrainingProgressionStep/TrainingProgressionStepTable";
 import TrainingProgressionStepForm from "@/components/TrainingProgressionStep/TrainingProgressionStepForm";
 import Link from "next/link";
-import {Reorder} from "@mui/icons-material";
+import {ArrowBack, Reorder} from "@mui/icons-material";
 
 export default async function Page({params}: { params: Promise<{ id: string }> }) {
 
@@ -31,7 +31,17 @@ export default async function Page({params}: { params: Promise<{ id: string }> }
         <Card>
             <CardContent>
                 <Stack direction={{xs: 'column', md: 'row',}} justifyContent="space-between">
-                    <Typography variant="h5" gutterBottom>{trainingProgression.name} - Progression Steps</Typography>
+                    <Stack direction="row" spacing={2} alignItems="center">
+                        <Link href={`/training/progressions/`}
+                              style={{color: 'inherit',}}>
+                            <Tooltip title="Go Back">
+                                <IconButton color="inherit">
+                                    <ArrowBack fontSize="large"/>
+                                </IconButton>
+                            </Tooltip>
+                        </Link>
+                        <Typography variant="h5" gutterBottom>{trainingProgression.name} - Progression Steps</Typography>
+                    </Stack>
                     <Link href={`/training/progressions/${trainingProgression.id}/edit/steps/order`}
                           style={{color: 'inherit',}}>
                         <Button variant="outlined" color="inherit" size="small" startIcon={<Reorder/>}
