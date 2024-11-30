@@ -17,7 +17,6 @@ import {
 import {getDuration} from "@/lib/date";
 import {sendInstructorsTrainingSessionCreatedEmail, sendTrainingSessionCreatedEmail} from "@/actions/mail/training";
 import {GridFilterItem, GridPaginationModel, GridSortModel} from "@mui/x-data-grid";
-import {assignNextProgressionOrRemove, getProgressionStatus} from "@/actions/progressionAssignment";
 
 
 export async function deleteTrainingSession(id: string) {
@@ -166,19 +165,11 @@ export async function createOrUpdateTrainingSession(
 
         revalidatePath('/training/sessions', "layout");
 
-        const progressionStatus = await getProgressionStatus(trainingSession.student.id);
-
-        const requiredToPass = progressionStatus.filter((ps) => !ps.step.optional && !ps.passed);
-
         for (const newTicket of trainingSession.tickets) {
             const oldTicket = oldTickets.find((ticket) => ticket.id === newTicket.id);
 
             if (oldTicket && !oldTicket.passed && newTicket.passed && newTicket.lesson.notifyInstructorOnPass) {
                 await sendInstructorsTrainingSessionCreatedEmail(trainingSession.student as User, trainingSession, newTicket.lesson);
-            }
-
-            if (requiredToPass.length === 1 && requiredToPass[0].lesson.id === newTicket.lesson.id && newTicket.passed) {
-                await assignNextProgressionOrRemove(trainingSession.student.id, requiredToPass[0].progression);
             }
         }
 
@@ -240,17 +231,9 @@ export async function createOrUpdateTrainingSession(
 
         revalidatePath('/training/sessions', "layout");
 
-        const progressionStatus = await getProgressionStatus(trainingSession.student.id);
-
-        const requiredToPass = progressionStatus.filter((ps) => !ps.step.optional && !ps.passed);
-
         for (const newTicket of trainingSession.tickets) {
             if (newTicket.passed && newTicket.lesson.notifyInstructorOnPass) {
                 await sendInstructorsTrainingSessionCreatedEmail(trainingSession.student as User, trainingSession, newTicket.lesson);
-            }
-
-            if (requiredToPass.length === 1 && requiredToPass[0].lesson.id === newTicket.lesson.id && newTicket.passed) {
-                await assignNextProgressionOrRemove(trainingSession.student.id, requiredToPass[0].progression);
             }
         }
 

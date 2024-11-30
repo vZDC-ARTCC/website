@@ -79,6 +79,7 @@ model User {
   noRequestLoas                  Boolean?
   noRequestTrainingAssignments   Boolean?
   noRequestTrainerRelease        Boolean?
+  noForceProgressionFinish       Boolean?
   noEventSignup                  Boolean?
   noEditProfile                  Boolean?
   excludedFromVatusaRosterUpdate Boolean?

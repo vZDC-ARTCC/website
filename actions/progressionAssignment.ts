@@ -34,7 +34,7 @@ export const setProgressionAssignment = async (id: string, progressionId: string
 
     await log("UPDATE", "TRAINING_PROGRESSION_ASSIGNMENT", `Assigned training progression ${user.trainingProgression?.name} to ${user.firstName} ${user.lastName} (${user.cid})`);
 
-    await sendProgressionAssignedEmail(user as User, user.trainingProgression as TrainingProgression);
+    sendProgressionAssignedEmail(user as User, user.trainingProgression as TrainingProgression).catch(console.error);
 
     revalidatePath('/training/progressions/assignments', 'layout');
 }
@@ -129,7 +129,7 @@ export const deleteProgressionAssignment = async (id: string) => {
 
     await log("DELETE", "TRAINING_PROGRESSION_ASSIGNMENT", `Deleted training progression assignment for ${user.firstName} ${user.lastName} (${user.cid})`);
 
-    await sendProgressionRemovedEmail(user as User);
+    sendProgressionRemovedEmail(user as User).catch(console.error);
 
     revalidatePath('/training/progressions/assignments', 'layout');
 }
@@ -205,7 +205,14 @@ export type TrainingProgressionStepStatus = {
     passed: boolean,
 }
 
-export const assignNextProgressionOrRemove = async (userId: string, currentProgression: TrainingProgression) => {
+export const assignNextProgressionOrRemove = async (userId: string, currentProgression: TrainingProgression, userInitiated?: boolean) => {
+
+    const status = await getProgressionStatus(userId);
+
+    if (status.filter(step => !step.step.optional && !step.passed).length > 0) {
+        return;
+    }
+
     const user = await prisma.user.update({
         where: {
             id: userId,
@@ -219,10 +226,16 @@ export const assignNextProgressionOrRemove = async (userId: string, currentProgr
     });
 
     if (user.trainingProgression) {
-        await sendProgressionAssignedEmail(user as User, user.trainingProgression);
-        await log("UPDATE", "TRAINING_PROGRESSION_ASSIGNMENT", `Automatically assigned next progression ${user.trainingProgression.name} to ${user.firstName} ${user.lastName} (${user.cid}) after passing final required training session in ${currentProgression.name}`)
+        if (userInitiated) {
+            await log("UPDATE", "TRAINING_PROGRESSION_ASSIGNMENT", `User forced assigned next progression ${user.trainingProgression.name} to themselves after passing all required training sessions in ${currentProgression.name}`)
+        } else {
+            await log("UPDATE", "TRAINING_PROGRESSION_ASSIGNMENT", `Automatically assigned next progression ${user.trainingProgression.name} to ${user.firstName} ${user.lastName} (${user.cid}) after passing final required training session in ${currentProgression.name}`)
+        }
+        sendProgressionAssignedEmail(user as User, user.trainingProgression).catch(console.error);
     } else {
-        await sendProgressionRemovedEmail(user as User);
+        sendProgressionRemovedEmail(user as User).catch(console.error);
         await log("DELETE", "TRAINING_PROGRESSION_ASSIGNMENT", `Removed progression ${currentProgression.name} from ${user.firstName} ${user.lastName} (${user.cid}) upon passing final required training session.`)
     }
+
+    revalidatePath('/profile/overview');
 }
