@@ -54,7 +54,7 @@ export default function TrainingProgressionForm({trainingProgression, allProgres
                     }}
                     renderInput={(params) => <TextField {...params} label="Next Progression (optional)"
                                                         placeholder="Search by name"
-                                                        helperText="This progression will be autoassigned if the current progression has been completed (not including optionals). "/>}
+                                                        helperText="This progression will be autoassigned if the current progression has been completed (including optionals or when a student forces the progression to complete after finishing all steps). "/>}
                 />
                 <Box>
                     <FormSaveButton/>
