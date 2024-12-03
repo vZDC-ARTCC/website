@@ -19,11 +19,11 @@ export default function SoloCertificationTable() {
             sortable: false,
             renderCell: (params) => {
                 return (
-                    <Tooltip title={`${params.row.student.controllerStatus}`}>
-                        <Link href={`/admin/controller/${params.row.student.cid}`} target="_blank"
+                    <Tooltip title={`${params.row.controller.controllerStatus}`}>
+                        <Link href={`/admin/controller/${params.row.controller.cid}`} target="_blank"
                               style={{textDecoration: 'none',}}>
                             <Chip
-                                key={params.row.student.id}
+                                key={params.row.controller.id}
                                 label={`${params.row.controller.firstName} ${params.row.controller.lastName}` || 'Unknown'}
                                 size="small"
                             />
