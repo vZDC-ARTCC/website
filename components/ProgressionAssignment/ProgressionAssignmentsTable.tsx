@@ -60,9 +60,10 @@ export default function ProgressionAssignmentsTable({allowEdit}: { allowEdit: bo
             type: 'actions',
             flex: 1,
             getActions: (params) => [
-                <ProgressionAssignmentStatusButton user={params.row} progression={params.row.trainingProgression}/>,
+                <ProgressionAssignmentStatusButton user={params.row} progression={params.row.trainingProgression}
+                                                   key={`${params.row.id}-stat`}/>,
                  allowEdit ? (
-                    <Tooltip title="Edit">
+                     <Tooltip title="Edit" key={`${params.row.id}-edit`}>
                         <GridActionsCellItem
                             icon={<Edit />}
                             label="Edit"
@@ -70,7 +71,8 @@ export default function ProgressionAssignmentsTable({allowEdit}: { allowEdit: bo
                         />
                     </Tooltip>
                 ) : <></>,
-                allowEdit ? <ProgressionAssignmentDeleteButton user={params.row}/> : <></>,
+                allowEdit ?
+                    <ProgressionAssignmentDeleteButton user={params.row} key={`${params.row.id}-delete`}/> : <></>,
             ],
         }
     ];

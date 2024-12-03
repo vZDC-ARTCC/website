@@ -1,8 +1,8 @@
-import {OAuthConfig} from "@auth/core/providers";
 import {Profile, User} from "next-auth";
 import {ControllerStatus, Role, StaffPosition} from "@prisma/client";
 import prisma from "@/lib/db";
 import {getOperatingInitials} from "@/actions/lib/oi";
+import {OAuthConfig} from "next-auth/providers/oauth";
 
 // vatusa facility id from environment variables
 const VATUSA_FACILITY = process.env['VATUSA_FACILITY'];

@@ -34,7 +34,7 @@ export default function ProgressionAssignmentStatusButton({user, progression,}: 
         if (!status) {
             getProgressionStatus(user.id).then(setStatus);
         }
-    }, [status]);
+    }, [status, user.id]);
 
     const lastRequiredStep = getLastRequiredStep(status?.map((step) => step.step).flat() || []);
 

@@ -1,12 +1,12 @@
 'use client';
 import React from 'react';
-import { useRouter } from "next/navigation";
-import { GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
-import DataTable, { containsOnlyFilterOperator, equalsOnlyFilterOperator } from "@/components/DataTable/DataTable";
-import { Edit, Layers, Visibility } from "@mui/icons-material";
+import {useRouter} from "next/navigation";
+import {GridActionsCellItem, GridColDef} from "@mui/x-data-grid";
+import DataTable, {containsOnlyFilterOperator, equalsOnlyFilterOperator} from "@/components/DataTable/DataTable";
+import {Edit, Layers, Visibility} from "@mui/icons-material";
 import TrainingProgressionDeleteButton from "@/components/TrainingProgression/TrainingProgressionDeleteButton";
-import { fetchTrainingProgressions } from "@/actions/trainingProgression";
-import { Chip, Tooltip } from "@mui/material";
+import {fetchTrainingProgressions} from "@/actions/trainingProgression";
+import {Chip, Tooltip} from "@mui/material";
 
 export default function TrainingProgressionTable({ allowEdit = false }: { allowEdit?: boolean }) {
 
@@ -68,7 +68,7 @@ export default function TrainingProgressionTable({ allowEdit = false }: { allowE
             headerName: 'Actions',
             flex: 1,
             getActions: (params) => [
-                <Tooltip title="View Training Progression">
+                <Tooltip title="View Training Progression" key={`${params.row.id}-view`}>
                     <GridActionsCellItem
                         key={params.row.id}
                         icon={<Visibility />}
@@ -77,7 +77,7 @@ export default function TrainingProgressionTable({ allowEdit = false }: { allowE
                     />
                 </Tooltip>,
                 allowEdit ? (
-                    <Tooltip title="Progression Steps">
+                    <Tooltip title="Progression Steps" key={`${params.row.id}-steps`}>
                         <GridActionsCellItem
                             icon={<Layers />}
                             label="Progression Steps"
@@ -86,7 +86,7 @@ export default function TrainingProgressionTable({ allowEdit = false }: { allowE
                     </Tooltip>
                 ) : <></>,
                 allowEdit ? (
-                    <Tooltip title="Edit">
+                    <Tooltip title="Edit" key={`${params.row.id}-edit`}>
                         <GridActionsCellItem
                             icon={<Edit />}
                             label="Edit"
@@ -94,7 +94,8 @@ export default function TrainingProgressionTable({ allowEdit = false }: { allowE
                         />
                     </Tooltip>
                 ) : <></>,
-                allowEdit ? <TrainingProgressionDeleteButton trainingProgression={params.row} /> : <></>,
+                allowEdit ? <TrainingProgressionDeleteButton trainingProgression={params.row}
+                                                             key={`${params.row.id}-delete`}/> : <></>,
             ],
         },
     ];

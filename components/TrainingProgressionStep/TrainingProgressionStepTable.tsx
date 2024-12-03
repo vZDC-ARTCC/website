@@ -51,8 +51,10 @@ export default function TrainingProgressionStepTable({trainingProgression, allLe
             headerName: 'Actions',
             getActions: (params) => [
                 <TrainingProgressionStepEditButton trainingProgression={trainingProgression}
-                                                   trainingProgressionStep={params.row} allLessons={allLessons}/>,
-                <TrainingProgressionStepDeleteButton trainingProgressionStep={params.row}/>,
+                                                   trainingProgressionStep={params.row} allLessons={allLessons}
+                                                   key={`${params.row.id}-edit`}/>,
+                <TrainingProgressionStepDeleteButton trainingProgressionStep={params.row}
+                                                     key={`${params.row.id}-delete`}/>,
             ],
         }
     ];
