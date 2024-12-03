@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, {useState} from 'react';
 import {Lesson, TrainingProgression, TrainingProgressionStep} from "@prisma/client";
 import Form from "next/form";
 import {Autocomplete, Box, FormControlLabel, Stack, Switch, TextField} from "@mui/material";
@@ -23,7 +23,8 @@ export default function TrainingProgressionStepForm({
     onSubmit?: () => void
 }) {
 
-    const [selectedLesson, setSelectedLesson] = React.useState<Lesson | null>(trainingProgressionStep?.lesson || null);
+    const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(trainingProgressionStep?.lesson || null);
+    const [optional, setOptional] = useState<boolean>(trainingProgressionStep?.optional || false);
 
     const handleSubmit = async (data: FormData) => {
         if (!selectedLesson) {
@@ -42,6 +43,7 @@ export default function TrainingProgressionStepForm({
 
         toast.success(`Training progression step saved successfully`);
         setSelectedLesson(null);
+        setOptional(false);
         onSubmit?.();
     }
 
@@ -60,7 +62,7 @@ export default function TrainingProgressionStepForm({
                     renderInput={(params) => <TextField {...params} label="Lesson (search name or identifier)"/>}
                 />
                 <FormControlLabel name="optional"
-                                  control={<Switch defaultChecked={trainingProgressionStep?.optional}/>}
+                                  control={<Switch checked={optional} onChange={(e, c) => setOptional(c)}/>}
                                   label="Optional?"/>
                 <Box>
                     <FormSaveButton/>
