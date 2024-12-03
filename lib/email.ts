@@ -16,8 +16,8 @@ export const mailTransport = nodemailer.createTransport({
     },
 });
 
-mailTransport.use('compile', trap({
-    to: 'beabravedude@gmail.com',
-}))
+// mailTransport.use('compile', trap({
+//     to: '[EMAIL]',
+// }))
 
 export const FROM_EMAIL = process.env.AWS_SMTP_FROM;
