@@ -7,6 +7,7 @@ import LoginButton from "@/components/Navbar/LoginButton";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/auth/auth";
 import RootSidebar from "@/components/Sidebar/RootSidebar";
+import AppPickerMenu from "@/components/AppPicker/AppPickerMenu";
 
 export default async function Navbar() {
 
@@ -25,6 +26,7 @@ export default async function Navbar() {
                 <span style={{flexGrow: 1,}}></span>
                 <Box>
                     <ColorModeSwitcher/>
+                    <AppPickerMenu/>
                     <Box sx={{display: {xs: 'none', sm: 'inline-block',},}}>
                         <LoginButton session={session}/>
                     </Box>

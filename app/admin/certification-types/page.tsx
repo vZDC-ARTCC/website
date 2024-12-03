@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+    Box,
     Button,
     Card,
     CardContent,
@@ -14,7 +15,7 @@ import {
     Typography
 } from "@mui/material";
 import prisma from "@/lib/db";
-import {Add, Block, Edit} from "@mui/icons-material";
+import {Add, Block, Edit, Reorder} from "@mui/icons-material";
 import Link from "next/link";
 import CertificationTypeDeleteButton from "@/components/CertificationTypes/CertificationTypeDeleteButton";
 
@@ -25,7 +26,13 @@ export default async function Page() {
             order: 'asc',
         },
         include: {
-            certifications: true,
+            certifications: {
+                where: {
+                    certificationOption: {
+                        not: 'NONE',
+                    },
+                }
+            },
             soloCertifications: true,
         }
     });
@@ -33,18 +40,23 @@ export default async function Page() {
     return (
         <Card>
             <CardContent>
-                <Stack direction="row" spacing={2} justifyContent="space-between">
+                <Stack direction={{xs: 'column', md: 'row',}} spacing={2} justifyContent="space-between">
                     <Typography variant="h5">Certification Types</Typography>
-                    <Link href="/admin/certification-types/new">
-                        <Button variant="contained" size="large" startIcon={<Add/>}>New Certification Type</Button>
-                    </Link>
+                    <Box>
+                        <Link href="/admin/certification-types/order" style={{color: 'inherit',}}>
+                            <Button variant="outlined" color="inherit" size="small" startIcon={<Reorder/>}
+                                    sx={{mr: 1,}}>Order</Button>
+                        </Link>
+                        <Link href="/admin/certification-types/new">
+                            <Button variant="contained" size="large" startIcon={<Add/>}>New Certification Type</Button>
+                        </Link>
+                    </Box>
                 </Stack>
                 <TableContainer>
                     <Table>
                         <TableHead>
                             <TableRow>
                                 <TableCell>Name</TableCell>
-                                <TableCell>Order</TableCell>
                                 <TableCell>Controllers Certified</TableCell>
                                 <TableCell>Active Solo Certifications</TableCell>
                                 <TableCell>Actions</TableCell>
@@ -54,7 +66,6 @@ export default async function Page() {
                             {certificationTypes.map((certificationType) => (
                                 <TableRow key={certificationType.id}>
                                     <TableCell>{certificationType.name}</TableCell>
-                                    <TableCell>{certificationType.order}</TableCell>
                                     <TableCell>{certificationType.certifications.length}</TableCell>
                                     <TableCell>{certificationType.canSoloCert ? certificationType.soloCertifications.length :
                                         <Block/>}</TableCell>

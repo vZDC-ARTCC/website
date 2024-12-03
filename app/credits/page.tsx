@@ -1,5 +1,9 @@
-import {Card, CardContent, Grid2, Typography} from "@mui/material";
+import {Card, CardContent, Grid2, Stack, Typography} from "@mui/material";
 import Link from "next/link";
+import {GitHub} from "@mui/icons-material";
+import {Aguafina_Script} from "next/font/google";
+
+const fancyFont = Aguafina_Script({subsets: ['latin'], weight: ["400"]});
 
 export default async function Home() {
 
@@ -8,7 +12,7 @@ export default async function Home() {
             <Grid2 size={6}>
                 <Card>
                     <CardContent>
-                        <Typography variant="h4">Credit Information</Typography>
+                        <Typography variant="h3">Credit Information</Typography>
                         <Typography variant="body2">Full Commit History can be found on <Link
                             href="https://github.com/vZDC-ARTCC/website" target="_blank"
                             style={{color: '#29B6F6', textDecoration: 'none',}}>our public GitHub.</Link></Typography>
@@ -18,11 +22,23 @@ export default async function Home() {
             <Grid2 size={6}>
                 <Card>
                     <CardContent>
-                        <Typography variant="h5" sx={{mb: 1,}}>Main Contributors</Typography>
-                        <Typography variant="h6" color="#29B6F6" fontWeight="bold">Aneesh Reddy</Typography>
-                        <Typography variant="h6" color="#29B6F6" fontWeight="bold">Carson Berget</Typography>
-                        <Typography variant="h6" color="#29B6F6" fontWeight="bold">Leo Roberts</Typography>
-                        <Typography variant="h6" color="#29B6F6" fontWeight="bold">Harry Xu</Typography>
+                        <Typography variant="h4" gutterBottom>Main Contributors</Typography>
+                        <Stack direction="column" spacing={8} sx={{m: 8,}}>
+                            <Typography variant="h5" fontWeight="bold" fontSize={50}
+                                        letterSpacing={9} {...fancyFont.style}>Aneesh Reddy <Link
+                                href="https://github.com/beabravedude" target="_blank"
+                                style={{color: 'inherit',}}><GitHub fontSize="large"/></Link></Typography>
+                            <Typography variant="h5" fontWeight="bold" fontSize={37}
+                                        letterSpacing={7} {...fancyFont.style}>Carson Berget <Link
+                                href="https://github.com/Vainnor" target="_blank" style={{color: 'inherit',}}><GitHub
+                                fontSize="medium"/></Link></Typography>
+                            <Typography variant="h5" fontWeight="bold" letterSpacing={7} {...fancyFont.style}>Harry
+                                Xu <Link href="https://github.com/harryxu2626" target="_blank"
+                                         style={{color: 'inherit',}}><GitHub fontSize="small"/></Link></Typography>
+                            <Typography variant="h5" fontWeight="bold" letterSpacing={7} {...fancyFont.style}>Leo
+                                Roberts <Link href="https://github.com/monty23monty" target="_blank"
+                                              style={{color: 'inherit',}}><GitHub fontSize="small"/></Link></Typography>
+                        </Stack>
                     </CardContent>
                 </Card>
             </Grid2>

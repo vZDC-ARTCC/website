@@ -9,13 +9,13 @@ import {
     TableCell,
     TableContainer,
     TableHead,
-    TableRow,
+    TableRow, Tooltip,
     Typography
 } from "@mui/material";
 import prisma from "@/lib/db";
 import {notFound} from "next/navigation";
 import Link from "next/link";
-import {Edit} from "@mui/icons-material";
+import {ArrowBack, Edit} from "@mui/icons-material";
 import LessonRubricCriteriaDeleteButton from "@/components/Lesson/LessonRubricCriteriaDeleteButton";
 import LessonForm from "@/components/Lesson/LessonForm";
 import LessonRubricCriteriaForm from "@/components/Lesson/LessonRubricCriteriaForm";
@@ -52,7 +52,17 @@ export default async function Page(props: { params: Promise<{ id: string, }>, })
     return (
         <Card>
             <CardContent>
-                <Typography variant="h5" sx={{mb: 2,}}>{lesson.identifier} - {lesson.name}</Typography>
+                <Stack direction="row" spacing={2} alignItems="center">
+                    <Link href={`/training/lessons/`}
+                          style={{color: 'inherit',}}>
+                        <Tooltip title="Go Back">
+                            <IconButton color="inherit">
+                                <ArrowBack fontSize="large"/>
+                            </IconButton>
+                        </Tooltip>
+                    </Link>
+                    <Typography variant="h5" sx={{mb: 2,}}>{lesson.identifier} - {lesson.name}</Typography>
+                </Stack>
                 <Stack direction="column" spacing={2}>
                     <Card variant="outlined">
                         <CardContent>

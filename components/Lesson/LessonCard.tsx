@@ -1,9 +1,11 @@
 import React from 'react';
-import {Card, CardContent, Typography} from "@mui/material";
+import {Card, CardContent, IconButton, Stack, Tooltip, Typography} from "@mui/material";
 import Markdown from "react-markdown";
 import prisma from "@/lib/db";
 import {notFound} from "next/navigation";
 import LessonRubricGrid from "@/components/Lesson/LessonRubricGrid";
+import Link from "next/link";
+import {ArrowBack} from "@mui/icons-material";
 
 export default async function LessonCard({lessonId}: { lessonId: string }) {
 
@@ -31,9 +33,19 @@ export default async function LessonCard({lessonId}: { lessonId: string }) {
     return (
         <Card>
             <CardContent>
-                <Typography variant="h5">{lesson.facility} {lesson.name}</Typography>
-                <Typography variant="subtitle1">{lesson.identifier}</Typography>
-                <Typography variant="subtitle2" sx={{mb: 2,}}>{lesson.position}</Typography>
+                <Stack direction="row" spacing={2} alignItems="center">
+                    <Link href={`/training/lessons/`}
+                          style={{color: 'inherit',}}>
+                        <Tooltip title="Go Back">
+                            <IconButton color="inherit">
+                                <ArrowBack fontSize="large"/>
+                            </IconButton>
+                        </Tooltip>
+                    </Link>
+                    <Typography variant="h5">{lesson.facility} - {lesson.name}</Typography>
+                </Stack>
+                <Typography variant="h6">{lesson.identifier}</Typography>
+                <Typography variant="h6">{lesson.position}</Typography>
                 <Markdown>
                     {lesson.description}
                 </Markdown>

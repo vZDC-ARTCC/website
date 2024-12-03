@@ -1,10 +1,12 @@
 import prisma from "@/lib/db";
 import {getVatusaData} from "@/auth/vatsimProvider";
 import {User} from "next-auth";
-import {revalidatePath} from "next/cache";
 import {refreshAccountData} from "@/actions/user";
 import {updateSyncTime} from "@/actions/lib/sync";
 import {getOperatingInitials} from "@/actions/lib/oi";
+import {getRating} from "@/lib/vatsim";
+import {sendProgressionAssignedEmail} from "@/actions/mail/progression";
+import {assignNextProgressionOrRemove, getProgressionStatus} from "@/actions/progressionAssignment";
 
 export const dynamic = 'force-dynamic';
 
@@ -37,12 +39,52 @@ export async function GET() {
                 },
             });
         }
+
+        await updateProgressionAssignments(user as User);
+
+        await updateProgressionCompletions(user as User);
+
         await refreshAccountData(user as User, true);
     }
 
     await updateSyncTime({roster: new Date()});
 
-    revalidatePath('/', 'layout');
-
     return Response.json({ok: true,});
+}
+
+const updateProgressionAssignments = async (user: User) => {
+    if (!user.flagAutoAssignSinglePass && user.controllerStatus === 'HOME' && getRating(user.rating) === 'OBS') {
+
+        const newHomeObsProgression = await prisma.trainingProgression.findFirst({
+            where: {
+                autoAssignNewHomeObs: true,
+            },
+        });
+        if (newHomeObsProgression) {
+            await prisma.user.update({
+                where: {
+                    id: user.id,
+                },
+                data: {
+                    trainingProgressionId: newHomeObsProgression.id,
+                    flagAutoAssignSinglePass: true,
+                },
+            });
+
+            sendProgressionAssignedEmail(user as User, newHomeObsProgression).catch(console.error);
+
+        }
+    }
+}
+
+const updateProgressionCompletions = async (user: User) => {
+    const progressionStatus = await getProgressionStatus(user.id);
+
+    if (progressionStatus.length === 0) {
+        return;
+    }
+
+    if (progressionStatus.every(step => step.passed)) {
+        await assignNextProgressionOrRemove(user.id, progressionStatus[0].progression);
+    }
 }

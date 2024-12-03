@@ -4,6 +4,7 @@ import React from 'react';
 import {z} from "zod";
 import {toast} from "react-toastify";
 import {useRouter} from "next/navigation";
+import Form from "next/form";
 
 export default function IcaoForm({basePath}: { basePath: string }) {
 
@@ -28,14 +29,14 @@ export default function IcaoForm({basePath}: { basePath: string }) {
     }
 
     return (
-        <form action={handleSubmit} style={{width: '100%',}}>
+        <Form action={handleSubmit} style={{width: '100%',}}>
             <Stack direction={{xs: 'column', md: 'row',}} spacing={2}>
                 <TextField slotProps={{htmlInput: {style: {textTransform: "uppercase"}}}} fullWidth name="icao"
                            label="ICAO"
                            placeholder="KIAD" variant="filled" helperText="Must be 4 characters long"/>
                 <Button type="submit" variant="contained" size="large">Search</Button>
             </Stack>
-        </form>
+        </Form>
     );
 
 }

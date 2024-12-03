@@ -62,9 +62,11 @@ declare module "next-auth" {
         noRequestTrainerRelease: boolean,
         noEventSignup: boolean,
         noEditProfile: boolean,
+        noForceProgressionFinish: boolean,
         excludedFromVatusaRosterUpdate: boolean,
         hiddenFromRoster: boolean,
         receiveEmail:   boolean
+        flagAutoAssignSinglePass: boolean,
     }
 
     interface AdapterUser extends User {

@@ -24,7 +24,7 @@ export default function TrainerAssignmentRequestsTable({manageMode}: { manageMod
             flex: 1,
             headerName: 'Student',
             renderCell: (params) => {
-                const color = params.row.student.controllerStatus === "HOME" ? 'error' : 'success';
+                const color = params.row.student.controllerStatus === "HOME" ? 'default' : 'secondary';
 
                 return (
                     <Tooltip title={`${params.row.student.controllerStatus}`}>
@@ -35,7 +35,6 @@ export default function TrainerAssignmentRequestsTable({manageMode}: { manageMod
                                 label={`${params.row.student.firstName} ${params.row.student.lastName}` || 'Unknown'}
                                 size="small"
                                 color={color}
-                                style={{margin: '2px'}}
                             />
                         </Link>
                     </Tooltip>

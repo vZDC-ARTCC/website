@@ -5,12 +5,13 @@ import {z} from "zod";
 import prisma from "@/lib/db";
 import {revalidatePath} from "next/cache";
 import {log} from "@/actions/log";
+import {OrderItem} from "@/components/Order/OrderList";
 
 export const createOrUpdateCertificationType = async (formData: FormData) => {
     const certificationTypeZ = z.object({
         id: z.string().optional(),
         name: z.string().min(1, "Name is required").max(20, "Name cannot be longer than 20 characters"),
-        order: z.number().int("Order must be a whole number"),
+        // order: z.number().int("Order must be a whole number"),
         canSoloCert: z.boolean(),
         certificationOptions: z.array(z.nativeEnum(CertificationOption)),
     });
@@ -18,7 +19,7 @@ export const createOrUpdateCertificationType = async (formData: FormData) => {
     const result = certificationTypeZ.safeParse({
         id: formData.get('id'),
         name: formData.get('name'),
-        order: parseInt(formData.get('order') as string),
+        // order: parseInt(formData.get('order') as string),
         canSoloCert: formData.get('canSoloCert') === 'on',
         certificationOptions: (formData.get('certificationOptions') as unknown as string).split(',') as CertificationOption[],
     });
@@ -30,13 +31,12 @@ export const createOrUpdateCertificationType = async (formData: FormData) => {
     const certificationType = await prisma.certificationType.upsert({
         create: {
             name: result.data.name,
-            order: result.data.order,
+            order: 0,
             canSoloCert: result.data.canSoloCert,
             certificationOptions: result.data.certificationOptions,
         },
         update: {
             name: result.data.name,
-            order: result.data.order,
             canSoloCert: result.data.canSoloCert,
             certificationOptions: result.data.certificationOptions,
         },
@@ -49,6 +49,24 @@ export const createOrUpdateCertificationType = async (formData: FormData) => {
 
     revalidatePath('/admin/certifications');
     return {certificationType};
+}
+
+export const updateCertificationTypeOrder = async (items: OrderItem[]) => {
+    for (const item of items) {
+        await prisma.certificationType.update({
+            data: {
+                order: item.order,
+            },
+            where: {
+                id: item.id,
+            },
+        });
+    }
+
+    await log('UPDATE', 'CERTIFICATION_TYPE', 'Updated certification type order');
+    revalidatePath('/admin/controller', 'layout');
+    revalidatePath('/admin/certification-types', 'layout');
+    revalidatePath('/controllers/roster', 'layout');
 }
 
 export const deleteCertificationType = async (id: string) => {

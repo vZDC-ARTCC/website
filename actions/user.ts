@@ -22,6 +22,7 @@ export const updateSettings = async (formData: FormData) => {
         noEditProfile: z.boolean(),
         noRequestTrainingAssignments: z.boolean(),
         noRequestTrainerRelease: z.boolean(),
+        noForceProgressionFinish: z.boolean(),
         excludedFromVatusaRosterUpdate: z.boolean(),
         hiddenFromRoster: z.boolean(),
         dossier: z.string().min(1, "Invalid dossier"),
@@ -33,6 +34,7 @@ export const updateSettings = async (formData: FormData) => {
         noEventSignup: formData.get("allowedEventSignup") !== "on",
         noEditProfile: formData.get("allowedEditProfile") !== "on",
         noRequestTrainingAssignments: formData.get("allowedTrainingRequests") !== "on",
+        noForceProgressionFinish: formData.get("allowedForceProgressionFinish") !== "on",
         noRequestTrainerRelease: formData.get("allowedTrainerRelease") !== "on",
         excludedFromVatusaRosterUpdate: formData.get("excludedRosterUpdate") === "on",
         hiddenFromRoster: formData.get("hiddenFromRoster") === "on",
@@ -47,6 +49,7 @@ export const updateSettings = async (formData: FormData) => {
             noRequestTrainingAssignments: result.noRequestTrainingAssignments,
             noRequestTrainerRelease: result.noRequestTrainerRelease,
             excludedFromVatusaRosterUpdate: result.excludedFromVatusaRosterUpdate,
+            noForceProgressionFinish: result.noForceProgressionFinish,
             hiddenFromRoster: result.hiddenFromRoster,
         },
         where: {

@@ -5,8 +5,9 @@ import DataTable, {containsOnlyFilterOperator, equalsOnlyFilterOperator} from "@
 import {fetchSoloCertifications} from "@/actions/solo";
 import SoloCertificationDeleteButton from "@/components/SoloCertification/SoloCertificationDeleteButton";
 import {formatZuluDate} from "@/lib/date";
-import {getRating} from "@/lib/vatsim";
 import {CertificationType} from "@prisma/client";
+import {Chip, Tooltip} from "@mui/material";
+import Link from "next/link";
 
 export default function SoloCertificationTable() {
 
@@ -16,8 +17,20 @@ export default function SoloCertificationTable() {
             headerName: 'Controller',
             flex: 1,
             sortable: false,
-            renderCell: (params) => `${params.row.controller.firstName} ${params.row.controller.lastName} (${params.row.controller.cid}} - ${getRating(params.row.controller.rating)}`,
-            filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
+            renderCell: (params) => {
+                return (
+                    <Tooltip title={`${params.row.controller.controllerStatus}`}>
+                        <Link href={`/admin/controller/${params.row.controller.cid}`} target="_blank"
+                              style={{textDecoration: 'none',}}>
+                            <Chip
+                                key={params.row.controller.id}
+                                label={`${params.row.controller.firstName} ${params.row.controller.lastName}` || 'Unknown'}
+                                size="small"
+                            />
+                        </Link>
+                    </Tooltip>
+                )
+            }, filterOperators: [...equalsOnlyFilterOperator, ...containsOnlyFilterOperator],
         },
         {
             field: 'certificationType',

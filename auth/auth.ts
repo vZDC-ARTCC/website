@@ -18,8 +18,10 @@ export const authOptions: NextAuthOptions = {
     },
     callbacks: {
         session: async ({session, user}) => {
+
             session.user = user;
             return session;
         }
+
     }
 }

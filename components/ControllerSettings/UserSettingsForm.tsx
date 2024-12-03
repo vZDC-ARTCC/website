@@ -29,6 +29,9 @@ export default function UserSettingsForm({user}: { user: User, }) {
                                   label="Allowed to edit profile?" name="allowedEditProfile"/>
                 <FormControlLabel control={<Switch defaultChecked={!user.noRequestTrainingAssignments}/>}
                                   label="Allowed to request training assignments?" name="allowedTrainingRequests"/>
+                <FormControlLabel control={<Switch defaultChecked={!user.noForceProgressionFinish}/>}
+                                  label="Allowed to force complete training progressions after meeting reqs?"
+                                  name="allowedForceProgressionFinish"/>
                 <FormControlLabel control={<Switch defaultChecked={!user.noRequestTrainerRelease}/>}
                                   label="Allowed to release training assignment?" name="allowedTrainerRelease"/>
                 <FormControlLabel control={<Switch defaultChecked={user.excludedFromVatusaRosterUpdate}/>}

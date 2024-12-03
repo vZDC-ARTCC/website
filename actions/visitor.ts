@@ -7,11 +7,9 @@ import {revalidatePath} from "next/cache";
 import {log} from "@/actions/log";
 import {User} from "next-auth";
 import {addVatusaVisitor} from "@/actions/vatusa/roster";
-import {
-    sendVisitorApplicationAcceptedEmail,
-    sendVisitorApplicationRejectedEmail
-} from "@/actions/mail/visitor";
+import {sendVisitorApplicationAcceptedEmail, sendVisitorApplicationRejectedEmail} from "@/actions/mail/visitor";
 import {GridFilterItem, GridPaginationModel, GridSortModel} from "@mui/x-data-grid";
+import {sendProgressionAssignedEmail} from "@/actions/mail/progression";
 
 export const addVisitingApplication = async (formData: FormData) => {
 
@@ -74,12 +72,19 @@ export const addVisitingApplication = async (formData: FormData) => {
 export const addVisitor = async (application: VisitorApplication, user: User) => {
     if (application.status !== "PENDING") return;
 
+    const visitorProgression = await prisma.trainingProgression.findFirst({
+        where: {
+            autoAssignNewVisitor: true,
+        },
+    });
+
     await prisma.user.update({
         where: {
             id: user.id,
         },
         data: {
             controllerStatus: "VISITOR",
+            trainingProgressionId: visitorProgression?.id,
         },
     });
     await prisma.visitorApplication.update({
@@ -100,6 +105,9 @@ export const addVisitor = async (application: VisitorApplication, user: User) =>
     await addVatusaVisitor(user.cid);
 
     await sendVisitorApplicationAcceptedEmail(user);
+    if (visitorProgression) {
+        await sendProgressionAssignedEmail(user, visitorProgression);
+    }
 
     revalidatePath('/controllers/roster');
     revalidatePath('/admin/visitor-applications');

@@ -136,6 +136,7 @@ export async function createOrUpdateTrainingSession(
             },
             include: {
                 student: true,
+                instructor: true,
                 tickets: {
                     include: {
                         lesson: true,

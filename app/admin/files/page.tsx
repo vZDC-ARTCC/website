@@ -1,9 +1,9 @@
 import React from 'react';
-import {Box, Card, CardContent, IconButton, Stack, Typography} from "@mui/material";
+import {Box, Button, Card, CardContent, IconButton, Stack, Typography} from "@mui/material";
 import FileCategoryForm from "@/components/Files/FileCategoryForm";
 import prisma from "@/lib/db";
 import Link from "next/link";
-import {CloudUpload, Edit} from "@mui/icons-material";
+import {CloudUpload, Edit, Reorder} from "@mui/icons-material";
 import FileCategoryDeleteButton from "@/components/Files/FileCategoryDeleteButton";
 import FileTable from "@/components/Files/FileTable";
 
@@ -13,12 +13,12 @@ export default async function Page() {
         include: {
             files: {
                 orderBy: {
-                    name: 'asc',
+                    order: 'asc',
                 },
             },
         },
         orderBy: {
-            name: 'asc',
+            order: 'asc',
         },
     });
 
@@ -26,7 +26,13 @@ export default async function Page() {
         <Stack direction="column" spacing={2}>
             <Card>
                 <CardContent>
-                    <Typography variant="h5">File Center</Typography>
+                    <Stack direction={{xs: 'column', md: 'row',}} justifyContent="space-between">
+                        <Typography variant="h5">File Center</Typography>
+                        <Link href="/admin/files/order" style={{color: 'inherit',}}>
+                            <Button variant="outlined" color="inherit" size="small" startIcon={<Reorder/>}
+                                    sx={{mr: 1,}}>Order</Button>
+                        </Link>
+                    </Stack>
                 </CardContent>
             </Card>
             {fileCategories.map((fileCategory) => (
@@ -35,6 +41,11 @@ export default async function Page() {
                         <Stack direction="row" spacing={1} justifyContent="space-between" sx={{mb: 1,}}>
                             <Typography variant="h6">{fileCategory.name}</Typography>
                             <Box>
+                                <Link href={`/admin/files/${fileCategory.id}/order`} style={{color: 'inherit',}}>
+                                    <IconButton>
+                                        <Reorder/>
+                                    </IconButton>
+                                </Link>
                                 <Link href={`/admin/files/${fileCategory.id}/new`}>
                                     <IconButton>
                                         <CloudUpload/>

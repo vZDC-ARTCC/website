@@ -9,7 +9,7 @@ export const getIconForCertificationOption = (certificationOption: Certification
         case "NONE":
             return <Tooltip title="Not Certified"><Clear fontSize="large" color="error"/></Tooltip>;
         case "UNRESTRICTED":
-            return <Tooltip title="Unrestricted Certification"><Circle fontSize="large" color="warning"/></Tooltip>;
+            return <Tooltip title="Unrestricted Certification"><Check fontSize="large" color="success"/></Tooltip>;
         case "DEL":
             return <Tooltip title="Delivery Certified"><Circle fontSize="large" color="error"/></Tooltip>;
         case "GND":
