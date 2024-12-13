@@ -177,67 +177,77 @@ export async function createOrUpdateTrainingSession(
 
     } else if (session) {
 
-        const trainingSession = await prisma.trainingSession.create({
-            data: {
-                student: {connect: {id: result.data.student}},
-                instructor: {connect: {id: session.user.id}},
-                start,
-                end,
-                additionalComments: result.data.additionalComments,
-                trainerComments: result.data.trainerComments,
-                tickets: {
-                    create: result.data.trainingTickets.map((t) => ({
-                        lesson: {connect: {id: t.lesson.id}},
-                        mistakes: {connect: t.mistakes.map((m) => ({id: m.id}))},
-                        scores: {
-                            create: t.scores.map((s) => (
-                                {
-                                    criteria: {connect: {id: s.criteriaId}},
-                                    cell: {
-                                        connect: {id: s.cellId}
-                                    },
-                                    passed: s.passed
-                                }
-                            ))
+        let submittedSession;
+
+        for (const i in result.data.trainingTickets){
+
+            const trainingSession = await prisma.trainingSession.create({
+                data: {
+                    student: {connect: {id: result.data.student}},
+                    instructor: {connect: {id: session.user.id}},
+                    start,
+                    end,
+                    additionalComments: result.data.additionalComments,
+                    trainerComments: result.data.trainerComments,
+                    tickets: {
+                        create: {
+                            lesson: {connect: {id: result.data.trainingTickets[i].lesson.id}},
+                            mistakes: {connect: result.data.trainingTickets[i].mistakes.map((m) => ({id: m.id}))},
+                            scores: {
+                                create: result.data.trainingTickets[i].scores.map((s) => (
+                                    {
+                                        criteria: {connect: {id: s.criteriaId}},
+                                        cell: {
+                                            connect: {id: s.cellId}
+                                        },
+                                        passed: s.passed
+                                    }
+                                ))
+                            },
+                            passed: result.data.trainingTickets[i].passed,
                         },
-                        passed: t.passed,
-                    })),
+                    },
+                    enableMarkdown: result.data.enableMarkdown,
                 },
-                enableMarkdown: result.data.enableMarkdown,
-            },
-            include: {
-                student: true,
-                instructor: true,
-                tickets: {
-                    include: {
-                        lesson: true,
+                include: {
+                    student: true,
+                    instructor: true,
+                    tickets: {
+                        include: {
+                            lesson: true,
+                        },
                     },
                 },
-            },
-        });
+            });
 
-        await log("CREATE", "TRAINING_SESSION", `Created training session with student ${trainingSession.student.cid} - ${trainingSession.student.firstName} ${trainingSession.student.lastName}`);
+            await log("CREATE", "TRAINING_SESSION", `Created training session with student ${trainingSession.student.cid} - ${trainingSession.student.firstName} ${trainingSession.student.lastName}`);
 
-        const vatusaId = await createVatusaTrainingSession(trainingSession.tickets[0].lesson.location, trainingSession.student.cid, session.user.cid, start, trainingSession.tickets.map((tt) => tt.lesson.position).join(','), getDuration(trainingSession.start, trainingSession.end), `${result.data.additionalComments || ''}\n\nRefer to your training ticket in the vZDC website to see the scoring rubric.`, getOtsStatus(trainingSession.tickets));
+            const vatusaId = await createVatusaTrainingSession(trainingSession.tickets[0].lesson.location, trainingSession.student.cid, session.user.cid, start, trainingSession.tickets[0].lesson.position, getDuration(trainingSession.start, trainingSession.end), `${result.data.additionalComments || ''}\n\nRefer to your training ticket in the vZDC website to see the scoring rubric.`, getOtsStatus(trainingSession.tickets));
 
-        await prisma.trainingSession.update({
-            where: {id: trainingSession.id},
-            data: {
-                vatusaId: vatusaId,
+            await prisma.trainingSession.update({
+                where: {id: trainingSession.id},
+                data: {
+                    vatusaId: vatusaId,
+                }
+            });
+
+            
+
+            await sendTrainingSessionCreatedEmail(trainingSession.student as User, trainingSession);
+
+            revalidatePath('/training/sessions', "layout");
+
+            for (const newTicket of trainingSession.tickets) {
+                if (newTicket.passed && newTicket.lesson.notifyInstructorOnPass) {
+                    await sendInstructorsTrainingSessionCreatedEmail(trainingSession.student as User, trainingSession, newTicket.lesson);
+                }
             }
-        });
 
-        await sendTrainingSessionCreatedEmail(trainingSession.student as User, trainingSession);
+            submittedSession = trainingSession;
 
-        revalidatePath('/training/sessions', "layout");
-
-        for (const newTicket of trainingSession.tickets) {
-            if (newTicket.passed && newTicket.lesson.notifyInstructorOnPass) {
-                await sendInstructorsTrainingSessionCreatedEmail(trainingSession.student as User, trainingSession, newTicket.lesson);
-            }
         }
 
-        return {session: trainingSession};
+        return {session: submittedSession};
     } else {
         return {
             errors: [{
