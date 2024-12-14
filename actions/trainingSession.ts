@@ -177,77 +177,82 @@ export async function createOrUpdateTrainingSession(
 
     } else if (session) {
 
-        let submittedSession;
-
-        for (const i in result.data.trainingTickets){
-
-            const trainingSession = await prisma.trainingSession.create({
-                data: {
-                    student: {connect: {id: result.data.student}},
-                    instructor: {connect: {id: session.user.id}},
-                    start,
-                    end,
-                    additionalComments: result.data.additionalComments,
-                    trainerComments: result.data.trainerComments,
-                    tickets: {
-                        create: {
-                            lesson: {connect: {id: result.data.trainingTickets[i].lesson.id}},
-                            mistakes: {connect: result.data.trainingTickets[i].mistakes.map((m) => ({id: m.id}))},
-                            scores: {
-                                create: result.data.trainingTickets[i].scores.map((s) => (
-                                    {
-                                        criteria: {connect: {id: s.criteriaId}},
-                                        cell: {
-                                            connect: {id: s.cellId}
-                                        },
-                                        passed: s.passed
-                                    }
-                                ))
-                            },
-                            passed: result.data.trainingTickets[i].passed,
+        const trainingSession = await prisma.trainingSession.create({
+            data: {
+                student: {connect: {id: result.data.student}},
+                instructor: {connect: {id: session.user.id}},
+                start,
+                end,
+                additionalComments: result.data.additionalComments,
+                trainerComments: result.data.trainerComments,
+                tickets: {
+                    create: result.data.trainingTickets.map((t) => ({
+                        lesson: {connect: {id: t.lesson.id}},
+                        mistakes: {connect: t.mistakes.map((m) => ({id: m.id}))},
+                        scores: {
+                            create: t.scores.map((s) => (
+                                {
+                                    criteria: {connect: {id: s.criteriaId}},
+                                    cell: {
+                                        connect: {id: s.cellId}
+                                    },
+                                    passed: s.passed
+                                }
+                            ))
                         },
-                    },
-                    enableMarkdown: result.data.enableMarkdown,
+                        passed: t.passed,
+                    })),
                 },
-                include: {
-                    student: true,
-                    instructor: true,
-                    tickets: {
-                        include: {
-                            lesson: true,
-                        },
+                enableMarkdown: result.data.enableMarkdown,
+            },
+            include: {
+                student: true,
+                instructor: true,
+                tickets: {
+                    include: {
+                        lesson: true,
                     },
                 },
-            });
+            },
+        });
 
-            await log("CREATE", "TRAINING_SESSION", `Created training session with student ${trainingSession.student.cid} - ${trainingSession.student.firstName} ${trainingSession.student.lastName}`);
+        let ticketComment = "";
 
-            const vatusaId = await createVatusaTrainingSession(trainingSession.tickets[0].lesson.location, trainingSession.student.cid, session.user.cid, start, trainingSession.tickets[0].lesson.position, getDuration(trainingSession.start, trainingSession.end), `${result.data.additionalComments || ''}\n\nRefer to your training ticket in the vZDC website to see the scoring rubric.`, getOtsStatus(trainingSession.tickets));
+        if (trainingSession.tickets.length > 1) {
+            trainingSession.tickets.toReversed().map((t)=>{
+                ticketComment = ticketComment.concat(`${t.lesson.identifier}: ${t.passed ? 'PASS' : 'FAIL'}\n`)
+            })
 
-            await prisma.trainingSession.update({
-                where: {id: trainingSession.id},
-                data: {
-                    vatusaId: vatusaId,
-                }
-            });
-
-            
-
-            await sendTrainingSessionCreatedEmail(trainingSession.student as User, trainingSession);
-
-            revalidatePath('/training/sessions', "layout");
-
-            for (const newTicket of trainingSession.tickets) {
-                if (newTicket.passed && newTicket.lesson.notifyInstructorOnPass) {
-                    await sendInstructorsTrainingSessionCreatedEmail(trainingSession.student as User, trainingSession, newTicket.lesson);
-                }
-            }
-
-            submittedSession = trainingSession;
-
+            ticketComment = ticketComment.concat('\nCOMMENTS: \n\n', `${result.data.additionalComments || 'No additional comments from trainer'}`)
+        } else {
+            ticketComment = result.data.additionalComments || '';
         }
 
-        return {session: submittedSession};
+        await log("CREATE", "TRAINING_SESSION", `Created training session with student ${trainingSession.student.cid} - ${trainingSession.student.firstName} ${trainingSession.student.lastName}`);
+
+        const vatusaId = await createVatusaTrainingSession(trainingSession.tickets[0].lesson.location, trainingSession.student.cid, session.user.cid, start, trainingSession.tickets[0].lesson.position, getDuration(trainingSession.start, trainingSession.end), `${ticketComment}\n\nRefer to your training ticket in the vZDC website to see the scoring rubric.`, getOtsStatus(trainingSession.tickets));
+
+        await prisma.trainingSession.update({
+            where: {id: trainingSession.id},
+            data: {
+                vatusaId: vatusaId,
+            }
+        });
+
+        
+
+        await sendTrainingSessionCreatedEmail(trainingSession.student as User, trainingSession);
+
+        revalidatePath('/training/sessions', "layout");
+
+        for (const newTicket of trainingSession.tickets) {
+            if (newTicket.passed && newTicket.lesson.notifyInstructorOnPass) {
+                await sendInstructorsTrainingSessionCreatedEmail(trainingSession.student as User, trainingSession, newTicket.lesson);
+            }
+        }
+
+
+        return {session: trainingSession};
     } else {
         return {
             errors: [{
