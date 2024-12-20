@@ -439,14 +439,26 @@ model FileCategory {
 }
 
 model File {
-  id          String       @id @default(cuid())
-  name        String
-  order       Int          @default(0)
-  description String
-  category    FileCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  categoryId  String
-  key         String
-  updatedAt   DateTime
+  id             String             @id @default(cuid())
+  name           String
+  order          Int                @default(0)
+  description    String
+  category       FileCategory       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId     String
+  key            String
+  updatedAt      DateTime
+  highlightColor HighlightColorType @default(INHERIT)
+}
+
+enum HighlightColorType {
+  INHERIT
+  RED
+  LIGHTSKYBLUE
+  ORANGE
+  DARKCYAN
+  LIGHTGREEN
+  SALMON
+  MEDIUMPURPLE
 }
 
 model Lesson {

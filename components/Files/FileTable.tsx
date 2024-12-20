@@ -22,7 +22,7 @@ export default async function FileTable({files, admin}: { files: File[], admin?:
                     {files.map((file) => (
                         <TableRow key={file.id}>
                             <TableCell>
-                                <Link href={`/publications/${file.id}`} target="_blank" style={{color: 'inherit',}}>
+                                <Link href={`/publications/${file.id}`} target="_blank" style={{color: file.highlightColor || 'inherit', textDecoration: 'none'}}>
                                     <Stack direction="row" alignItems="center">
                                         {file.name}
                                         <OpenInNew fontSize="small"/>
@@ -33,7 +33,7 @@ export default async function FileTable({files, admin}: { files: File[], admin?:
                             <TableCell>{file.updatedAt.toUTCString()}</TableCell>
                             {admin && <TableCell>
                                 <Link href={`/admin/files/${file.categoryId}/${file.id}`}
-                                      style={{color: 'inherit',}}>
+                                      style={{color: file.highlightColor || 'inherit',}}>
                                     <IconButton>
                                         <Edit/>
                                     </IconButton>

@@ -94,6 +94,7 @@ export const createOrUpdateFile = async (formData: FormData) => {
         id: z.string().optional(),
         name: z.string().min(1, 'Name is required').max(100, 'Name is too long'),
         description: z.string().max(255, 'Description is too long'),
+        highlightColor: z.string().min(1, "Type is required"),
     });
 
     const result = fileZ.safeParse({
@@ -101,6 +102,7 @@ export const createOrUpdateFile = async (formData: FormData) => {
         id: formData.get('id') as string,
         name: formData.get('name') as string,
         description: formData.get('description') as string,
+        highlightColor: formData.get('highlightColor') as string
     });
 
     if (!result.success) {
@@ -137,6 +139,7 @@ export const createOrUpdateFile = async (formData: FormData) => {
             description: result.data.description,
             key: fileKey,
             updatedAt: new Date(),
+            highlightColor: result.data.highlightColor,
         },
         create: {
             name: result.data.name,
@@ -148,6 +151,7 @@ export const createOrUpdateFile = async (formData: FormData) => {
                 }
             },
             updatedAt: new Date(),
+            highlightColor: result.data.highlightColor,
         },
         include: {
             category: true,

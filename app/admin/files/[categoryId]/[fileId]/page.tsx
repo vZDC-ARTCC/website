@@ -32,7 +32,7 @@ export default async function Page(props: { params: Promise<{ categoryId: string
     return (
         <Card>
             <CardContent>
-                <Link href={url} target="_blank" style={{color: 'inherit',}}>
+                <Link href={url} target="_blank" style={{color: file.highlightColor || 'inherit',}}>
                     <Stack direction="row" spacing={1} alignItems="center" sx={{mb: 2,}}>
                         <Typography variant="h5" sx={{mb: 2,}}>File - {file.name}</Typography>
                         <OpenInNew fontSize="large"/>
