@@ -6,7 +6,7 @@ import prisma from "@/lib/db";
 import {log} from "@/actions/log";
 import {revalidatePath} from "next/cache";
 import {OrderItem} from "@/components/Order/OrderList";
-import {FileCategory} from "@prisma/client";
+import {FileCategory, HighlightColorType} from "@prisma/client";
 
 const ut = new UTApi();
 
@@ -139,7 +139,7 @@ export const createOrUpdateFile = async (formData: FormData) => {
             description: result.data.description,
             key: fileKey,
             updatedAt: new Date(),
-            highlightColor: result.data.highlightColor,
+            highlightColor: result.data.highlightColor as HighlightColorType,
         },
         create: {
             name: result.data.name,
@@ -151,7 +151,7 @@ export const createOrUpdateFile = async (formData: FormData) => {
                 }
             },
             updatedAt: new Date(),
-            highlightColor: result.data.highlightColor,
+            highlightColor: result.data.highlightColor as HighlightColorType,
         },
         include: {
             category: true,
