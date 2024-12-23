@@ -5,6 +5,7 @@ import {VATUSA_API, VATUSA_API_KEY} from "@/actions/vatusa/config";
 export const createVatusaTrainingSession = async (location: number, studentCid: string, instructor_id: string,
                                                   session_date: Date, position: string, duration: string, notes: string, otsStatus: number) => {
 
+
     const timeSplit = session_date.toISOString().split("T");
 
     const sessionDate = timeSplit[0]+" "+timeSplit[1].split(":")[0]+":"+timeSplit[1].split(":")[1]
@@ -33,6 +34,7 @@ export const createVatusaTrainingSession = async (location: number, studentCid: 
         },
         body: ticketForm.join("&"),
     })
+
 
 
     const data = await res.json();

@@ -83,6 +83,19 @@ export default async function AdminControllerInformation({cid}: { cid: string, }
             <Grid2
                 size={{
                     xs: 4,
+                    lg: 4
+                }}>
+                <Card>
+                    <CardContent>
+                        <Typography variant="h6" sx={{mb: 1,}}>Recent Training History</Typography>
+                        <TrainingSessionTable admin isInstructor={isInstructor} mentorCID={mentorCID}
+                                  onlyUser={controller as User}/>
+                    </CardContent>
+                </Card>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 4,
                     lg: 2
                 }}>
                 <Card>
@@ -108,19 +121,6 @@ export default async function AdminControllerInformation({cid}: { cid: string, }
                         <CertificationForm cid={controller.cid} certificationTypes={certificationTypes}
                                            certifications={controller.certifications}
                                            soloCertifications={controller.soloCertifications}/>
-                    </CardContent>
-                </Card>
-            </Grid2>
-            <Grid2
-                size={{
-                    xs: 4,
-                    lg: 4
-                }}>
-                <Card>
-                    <CardContent>
-                        <Typography variant="h6" sx={{mb: 1,}}>Recent Training History</Typography>
-                        <TrainingSessionTable admin isInstructor={isInstructor} mentorCID={mentorCID}
-                                  onlyUser={controller as User}/>
                     </CardContent>
                 </Card>
             </Grid2>

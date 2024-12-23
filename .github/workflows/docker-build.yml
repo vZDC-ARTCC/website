@@ -1,0 +1,56 @@
+name: Build and Push Docker Image to GitHub Packages and Notify Portainer
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Extract Git Tag or Commit Hash
+      - name: Extract Git version
+        id: version
+        run: |
+          if [ "$(git describe --tags --exact-match 2>/dev/null)" ]; then
+            echo "TAG=$(git describe --tags --exact-match)" >> $GITHUB_ENV
+          else
+            echo "TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+          fi
+
+      # Step 3: Check for localhost in NEXT_PUBLIC_ env variables
+      - name: Check for localhost in NEXT_PUBLIC_ variables
+        run: |
+          for var in $(printenv | grep '^NEXT_PUBLIC_' | cut -d= -f1); do
+            value=$(printenv $var)
+            if [[ "$value" == *"localhost"* ]]; then
+              echo "ERROR: $var contains 'localhost'. This is not allowed."
+              exit 1
+            fi
+          done
+
+      # Step 4: Log in to GitHub Container Registry
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step 5: Build and Push Docker Image
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ env.TAG }}
