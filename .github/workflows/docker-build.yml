@@ -3,7 +3,7 @@ name: Build and Push Docker Image to GitHub Packages and Notify Portainer
 on:
   push:
     branches:
-      - main
+      - master
     tags:
       - 'v*.*.*'
 
