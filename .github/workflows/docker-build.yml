@@ -3,11 +3,14 @@ name: Build and Push Docker Image to GitHub Packages
 on:
   push:
     branches:
-      - master
+      master
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       # Step 1: Check out the repository
@@ -48,5 +51,5 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ghcr.io/vzdc/website:latest
-            ghcr.io/vzdc/website:${{ env.COMMIT_HASH }}
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ env.COMMIT_HASH }}
