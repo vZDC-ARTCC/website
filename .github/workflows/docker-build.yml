@@ -1,11 +1,9 @@
-name: Build and Push Docker Image to GitHub Packages and Notify Portainer
+name: Build and Push Docker Image to GitHub Packages
 
 on:
   push:
     branches:
-      - master
-    tags:
-      - 'v*.*.*'
+      - main
 
 jobs:
   build-and-push:
@@ -16,15 +14,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Extract Git Tag or Commit Hash
-      - name: Extract Git version
-        id: version
+      # Step 2: Extract Commit Hash
+      - name: Extract Commit Hash
+        id: commit_hash
         run: |
-          if [ "$(git describe --tags --exact-match 2>/dev/null)" ]; then
-            echo "TAG=$(git describe --tags --exact-match)" >> $GITHUB_ENV
-          else
-            echo "TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
-          fi
+          COMMIT_HASH=${GITHUB_SHA::7}  # Get the first 7 characters of the commit hash
+          echo "COMMIT_HASH=${COMMIT_HASH,,}" >> $GITHUB_ENV  # Convert to lowercase
 
       # Step 3: Check for localhost in NEXT_PUBLIC_ env variables
       - name: Check for localhost in NEXT_PUBLIC_ variables
@@ -45,7 +40,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Step 5: Build and Push Docker Image
+      # Step 5: Build and Push Docker Image using commit hash as the tag
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
@@ -53,5 +48,5 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:latest
-            ghcr.io/${{ github.repository }}:${{ env.TAG }}
+            ghcr.io/vzdc/website:latest
+            ghcr.io/vzdc/website:${{ env.COMMIT_HASH }}
