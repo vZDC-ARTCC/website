@@ -3,7 +3,7 @@ name: Build and Push Docker Image to GitHub Packages
 on:
   push:
     branches:
-      - main
+      - next
 
 jobs:
   build-and-push:
@@ -48,5 +48,5 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ghcr.io/vzdc/website:latest
-            ghcr.io/vzdc/website:${{ env.COMMIT_HASH }}
+            ghcr.io/${{ github.repository,, }}:latest
+            ghcr.io/${{ github.repository,, }}:${{ env.COMMIT_HASH }}
