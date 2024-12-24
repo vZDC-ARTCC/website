@@ -48,5 +48,5 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository,, }}:latest
-            ghcr.io/${{ github.repository,, }}:${{ env.COMMIT_HASH }}
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ env.COMMIT_HASH }}
