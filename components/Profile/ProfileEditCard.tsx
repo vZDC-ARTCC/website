@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import {User} from "next-auth";
+import {Filter} from 'bad-words';
 import {Card, CardContent, Divider, Stack, Switch, TextField, Tooltip} from "@mui/material";
 import {getRating} from "@/lib/vatsim";
 import {z} from "zod";
@@ -40,10 +41,9 @@ export default function ProfileEditCard({user, sessionUser, admin = false}: {
             return;
         }
 
-        const Filter = require('bad-words');
         const filter = new Filter();
 
-        if (filter.isProfane(result.data.preferredName) || filter.isProfane(result.data.bio)) {
+        if (filter.isProfane(result.data.preferredName || '') || filter.isProfane(result.data.bio || '')) {
             await writeDossier(admin ?
                     `Staff ${sessionUser.cid} attempted to force update profile with profanity in preferred name or bio.` :
                     `Attempted to update profile with profanity in preferred name or bio.`,
